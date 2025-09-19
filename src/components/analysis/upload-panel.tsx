@@ -112,16 +112,16 @@ export default function UploadPanel({
     };
 
     return (
-        <Card className="h-full flex flex-col shadow-lg">
+        <Card className="h-full flex flex-col bg-card/50 border-border/50 shadow-xl">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-xl">
                     1. Upload Image
                 </CardTitle>
                 <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-center items-center gap-4">
+            <CardContent className="flex-1 flex flex-col justify-center items-center gap-6 p-6">
                 {image ? (
-                    <div className="relative w-full aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner">
+                    <div className="relative w-full aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner bg-secondary/20">
                         <Image src={image} alt="Water sample preview" fill style={{ objectFit: 'contain' }} />
                         <Button
                             variant="destructive"
@@ -161,7 +161,7 @@ export default function UploadPanel({
                     </div>
                 )}
 
-                <Button onClick={handleAnalyze} disabled={!image || isLoading} className="w-full text-lg py-6">
+                <Button onClick={handleAnalyze} disabled={!image || isLoading} className="w-full text-lg py-6" size="lg">
                     {isLoading ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
