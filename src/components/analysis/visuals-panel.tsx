@@ -21,8 +21,6 @@ const getParticleColor = (confidence: number) => {
 };
 
 export default function VisualsPanel({ image, particles, isLoading, analysisResult }: VisualsPanelProps) {
-    const hasResults = image && analysisResult;
-
     if (isLoading) {
         return (
             <Card className="shadow-2xl bg-card/80 backdrop-blur-sm border-border/60">
@@ -40,7 +38,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
         );
     }
 
-    if (!hasResults) {
+    if (!image || !analysisResult) {
         return null;
     }
 
@@ -55,7 +53,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
             </CardHeader>
             <CardContent>
                 <div className="relative w-full aspect-video rounded-xl overflow-hidden border-2 border-primary/20 bg-black">
-                    <Image src={image!} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
+                    <Image src={image} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
                     {particles.map((p, i) => (
                         <div
                             key={i}

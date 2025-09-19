@@ -49,7 +49,6 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
 };
 
 export default function ResultsPanel({ analysisResult, particles, isLoading }: ResultsPanelProps) {
-    const hasResults = !!analysisResult;
     const shapeChartData = analysisResult?.particleTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
     const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
 
@@ -73,7 +72,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading }: R
                         <Skeleton className="h-40 w-full rounded-lg" />
                         <Skeleton className="h-10 w-full rounded-lg" />
                     </div>
-                ) : hasResults ? (
+                ) : analysisResult ? (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                             <div className="p-4 bg-background/50 rounded-lg border border-border/50">
