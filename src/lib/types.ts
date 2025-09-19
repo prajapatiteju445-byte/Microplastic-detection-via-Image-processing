@@ -4,6 +4,7 @@ export type Particle = {
   x: number;
   y: number;
   confidence: number;
+  class?: string;
 };
 
 export type AnalysisResult = AnalyzeUploadedImageOutput;

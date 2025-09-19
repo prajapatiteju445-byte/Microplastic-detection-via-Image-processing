@@ -84,17 +84,26 @@ export default function UploadPanel({
 
         if (result.success && result.data) {
             setAnalysisResult(result.data);
-            const particleCount = result.data.particleCount;
+            
+            // Use particles from the API response
+            if (result.data.particles) {
+                const imageElement = document.createElement('img');
+                imageElement.src = image;
+                imageElement.onload = () => {
+                    const { naturalWidth, naturalHeight } = imageElement;
+                    const newParticles = result.data.particles.map(p => ({
+                        // Normalize coordinates from pixels to percentages
+                        x: p.x / naturalWidth,
+                        y: p.y / naturalHeight,
+                        confidence: p.confidence,
+                    }));
+                    setParticles(newParticles);
+                };
+            }
 
-            const newParticles = Array.from({ length: particleCount }, () => ({
-                x: Math.random(),
-                y: Math.random(),
-                confidence: Math.random() * 0.4 + 0.6, // 60-100% confidence
-            }));
-            setParticles(newParticles);
             toast({
                 title: 'Analysis Complete',
-                description: 'Microplastic detection results are ready.',
+                description: `${result.data.particleCount} particles detected.`,
             });
         } else {
             setError(result.error || 'An unknown error occurred.');
