@@ -9,10 +9,11 @@ import { useToast } from '@/hooks/use-toast';
 import { analyzeImageAction } from '@/app/actions';
 import type { Particle } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { AnalyzeUploadedImageOutput } from '@/ai/flows/analyze-uploaded-image';
 
 type UploadPanelProps = {
     setImage: (image: string | null) => void;
-    setAnalysisResult: (result: string | null) => void;
+    setAnalysisResult: (result: AnalyzeUploadedImageOutput | null) => void;
     setParticles: (particles: Particle[]) => void;
     setIsLoading: (loading: boolean) => void;
     setError: (error: string | null) => void;
@@ -81,8 +82,7 @@ export default function UploadPanel({
 
         if (result.success && result.data) {
             setAnalysisResult(result.data);
-            const matches = result.data.match(/(\d+)\s+particles/i);
-            const particleCount = matches ? parseInt(matches[1], 10) : Math.floor(Math.random() * 25) + 5;
+            const particleCount = result.data.particleCount;
 
             const newParticles = Array.from({ length: particleCount }, () => ({
                 x: Math.random(),

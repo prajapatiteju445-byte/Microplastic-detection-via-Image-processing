@@ -5,10 +5,12 @@ import Header from '@/components/layout/header';
 import UploadPanel from '@/components/analysis/upload-panel';
 import ResultsPanel from '@/components/analysis/results-panel';
 import type { Particle } from '@/lib/types';
+import type { AnalyzeUploadedImageOutput } from '@/ai/flows/analyze-uploaded-image';
+
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
-  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<AnalyzeUploadedImageOutput | null>(null);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

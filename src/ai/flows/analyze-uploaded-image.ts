@@ -21,9 +21,17 @@ const AnalyzeUploadedImageInputSchema = z.object({
 export type AnalyzeUploadedImageInput = z.infer<typeof AnalyzeUploadedImageInputSchema>;
 
 const AnalyzeUploadedImageOutputSchema = z.object({
-  analysisResult: z.string().describe('The analysis result, including highlighted microplastic particles, particle counts, and concentration estimates.'),
+  analysisSummary: z.string().describe('A summary of the analysis, including highlighted microplastic particles, particle counts, and concentration estimates.'),
+  particleTypes: z.array(z.object({
+    type: z.string().describe('The type of microplastic particle detected (e.g., Fragment, Fiber, Film).'),
+    count: z.number().describe('The number of particles of this type.'),
+    percentage: z.number().describe('The percentage of this particle type out of the total detected particles.'),
+  })).describe('A list of detected microplastic particle types and their distribution.'),
+  contaminationPercentage: z.number().describe('The overall contamination percentage of the sample area shown in the image.'),
+  particleCount: z.number().describe('The total number of microplastic particles detected.'),
 });
 export type AnalyzeUploadedImageOutput = z.infer<typeof AnalyzeUploadedImageOutputSchema>;
+
 
 export async function analyzeUploadedImage(input: AnalyzeUploadedImageInput): Promise<AnalyzeUploadedImageOutput> {
   return analyzeUploadedImageFlow(input);
@@ -35,9 +43,13 @@ const analyzeUploadedImagePrompt = ai.definePrompt({
   output: {schema: AnalyzeUploadedImageOutputSchema},
   prompt: `You are an expert in analyzing water sample images for microplastic contamination.
 
-You will receive a water sample image and you must analyze it using a pre-trained YOLO model.
+You will receive a water sample image and you must analyze it to identify and quantify microplastic particles.
 
-Based on the analysis, provide a result including highlighted microplastic particles, particle counts, and concentration estimates.
+Based on the analysis, provide a result including:
+1.  A quantitative analysis of the different types of particles (e.g., Fragment, Fiber, Film). Provide the count and percentage for each type.
+2.  The total count of all detected microplastic particles.
+3.  An estimated contamination percentage for the visible area in the image.
+4.  A concise summary of the findings.
 
 Image: {{media url=photoDataUri}}`,
 });
