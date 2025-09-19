@@ -44,7 +44,7 @@ const PARTICLE_TYPE_COLORS = {
 };
 
 export default function ResultsPanel({ image, analysisResult, particles, isLoading }: ResultsPanelProps) {
-    const hasResults = image && analysisResult && particles.length > 0;
+    const hasResults = image && analysisResult && (analysisResult.particleCount > 0 || particles.length > 0) && analysisResult.particleTypes.length > 0;
     const chartData = analysisResult?.particleTypes.map(pt => ({ name: pt.type, value: pt.count })) || [];
 
     return (
@@ -70,7 +70,7 @@ export default function ResultsPanel({ image, analysisResult, particles, isLoadi
                 ) : hasResults ? (
                     <>
                         <div className="relative w-full aspect-video rounded-lg overflow-hidden border bg-secondary/20">
-                            <Image src={image} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
+                            <Image src={image!} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
                             {particles.map((p, i) => (
                                 <div
                                     key={i}
