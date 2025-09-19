@@ -23,10 +23,15 @@ export type AnalyzeUploadedImageInput = z.infer<typeof AnalyzeUploadedImageInput
 const AnalyzeUploadedImageOutputSchema = z.object({
   analysisSummary: z.string().describe('A summary of the analysis, including highlighted microplastic particles, particle counts, and concentration estimates.'),
   particleTypes: z.array(z.object({
-    type: z.string().describe('The type of microplastic particle detected (e.g., Fragment, Fiber, Film).'),
-    count: z.number().describe('The number of particles of this type.'),
-    percentage: z.number().describe('The percentage of this particle type out of the total detected particles.'),
-  })).describe('A list of detected microplastic particle types and their distribution.'),
+    type: z.string().describe('The shape of microplastic particle detected (e.g., Fragment, Fiber, Film, Pellet, Foam).'),
+    count: z.number().describe('The number of particles of this shape.'),
+    percentage: z.number().describe('The percentage of this particle shape out of the total detected particles.'),
+  })).describe('A list of detected microplastic particle shapes and their distribution.'),
+  polymerTypes: z.array(z.object({
+      type: z.string().describe('The polymer type of microplastic particle detected (e.g., PE, PP, PET, PVC).'),
+      count: z.number().describe('The number of particles of this polymer type.'),
+      percentage: z.number().describe('The percentage of this polymer type out of the total detected particles.'),
+  })).describe('A list of detected microplastic polymer types and their distribution.'),
   contaminationPercentage: z.number().describe('The overall contamination percentage of the sample area shown in the image.'),
   particleCount: z.number().describe('The total number of microplastic particles detected.'),
 });
@@ -41,15 +46,32 @@ const analyzeUploadedImagePrompt = ai.definePrompt({
   name: 'analyzeUploadedImagePrompt',
   input: {schema: AnalyzeUploadedImageInputSchema},
   output: {schema: AnalyzeUploadedImageOutputSchema},
-  prompt: `You are an expert in analyzing water sample images for microplastic contamination.
+  prompt: `You are an expert in environmental science and machine learning, specializing in microplastic pollution analysis. You will be using a Gemini ML model for advanced identification.
 
-You will receive a water sample image and you must analyze it to identify and quantify microplastic particles.
+You will receive a water sample image. Your task is to analyze it to identify and quantify microplastic particles, classifying them by both shape and polymer type.
 
-Based on the analysis, provide a result including:
-1.  A quantitative analysis of the different types of particles (e.g., Fragment, Fiber, Film). Provide the count and percentage for each type.
-2.  The total count of all detected microplastic particles.
-3.  An estimated contamination percentage for the visible area in the image.
-4.  A concise summary of the findings.
+### Common Particle Shapes:
+- **Fibers:** Tiny threads shed from synthetic textiles.
+- **Fragments:** Small pieces from the breakdown of larger plastic items.
+- **Pellets/Beads:** Manufactured primary microplastics.
+- **Foam:** Particles from foam packaging or gear.
+- **Films:** Thin sheets from packaging or bags.
+
+### Common Polymer Types:
+- **PE (Polyethylene):** From bottles, packaging.
+- **PP (Polypropylene):** From various plastic products.
+- **PS (Polystyrene):** From foam products, packaging.
+- **PET (Polyethylene Terephthalate):** From beverage bottles, food packaging.
+- **PVC (Polyvinyl Chloride):** From various plastic items.
+- **PA (Polyamide/Nylon):** From textiles, fishing nets.
+- **PU (Polyurethane):** From coatings, consumer goods.
+
+Based on your analysis of the image, provide a result including:
+1.  A quantitative analysis of the different **shapes** of particles. Provide the count and percentage for each shape.
+2.  A quantitative analysis of the different **polymer types** of particles. Provide the count and percentage for each polymer.
+3.  The total count of all detected microplastic particles.
+4.  An estimated contamination percentage for the visible area in the image.
+5.  A concise summary of the findings.
 
 Image: {{media url=photoDataUri}}`,
 });

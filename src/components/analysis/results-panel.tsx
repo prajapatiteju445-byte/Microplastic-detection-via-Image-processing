@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download, FlaskConical, TestTube2, Percent, Layers } from 'lucide-react';
+import { Download, FlaskConical, TestTube2, Percent, Layers, Atom, Shapes } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
 import type { Particle } from '@/lib/types';
@@ -36,112 +36,141 @@ const getParticleColor = (confidence: number) => {
     return 'rgba(234, 179, 8, 0.7)'; // Low - yellow
 };
 
-const PARTICLE_TYPE_COLORS = {
+const PARTICLE_SHAPE_COLORS: { [key: string]: string } = {
     Fragment: '#3b82f6', // blue-500
     Fiber: '#22c55e',    // green-500
     Film: '#eab308',     // yellow-500
-    Other: '#a855f7',    // purple-500
+    Pellet: '#a855f7',   // purple-500
+    Foam: '#f97316',     // orange-500
+    Other: '#84cc16',    // lime-500
+};
+
+const POLYMER_TYPE_COLORS: { [key: string]: string } = {
+    PE: '#ef4444',   // red-500
+    PP: '#f59e0b',   // amber-500
+    PS: '#10b981',   // emerald-500
+    PET: '#06b6d4',  // cyan-500
+    PVC: '#6366f1',  // indigo-500
+    PA: '#d946ef',   // fuchsia-500
+    PU: '#ec4899',   // pink-500
+    Other: '#8b5cf6',// violet-500
 };
 
 export default function ResultsPanel({ image, analysisResult, particles, isLoading }: ResultsPanelProps) {
-    const hasResults = image && analysisResult && (analysisResult.particleCount > 0 || particles.length > 0) && analysisResult.particleTypes.length > 0;
-    const chartData = analysisResult?.particleTypes.map(pt => ({ name: pt.type, value: pt.count })) || [];
+    const hasResults = image && analysisResult && (analysisResult.particleCount > 0 || particles.length > 0) && (analysisResult.particleTypes?.length > 0 || analysisResult.polymerTypes?.length > 0);
+    const shapeChartData = analysisResult?.particleTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
+    const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
 
     return (
-        <Card className="h-full flex flex-col bg-card/50 border-border/50 shadow-xl">
+        <Card className="h-full flex flex-col shadow-2xl bg-card/80 backdrop-blur-sm border-border/60">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                    2. Analysis Results
+                <CardTitle className="flex items-center gap-2 text-xl font-bold text-foreground">
+                    <TestTube2 className="w-6 h-6 text-primary" />
+                    Analysis Results
                 </CardTitle>
                 <CardDescription>Detected microplastics and summary.</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col gap-4">
                 {isLoading ? (
                     <div className="space-y-4">
-                        <Skeleton className="w-full aspect-video rounded-lg" />
+                        <Skeleton className="w-full aspect-video rounded-xl" />
                         <div className="grid grid-cols-3 gap-4">
-                            <Skeleton className="h-24 w-full" />
-                            <Skeleton className="h-24 w-full" />
-                            <Skeleton className="h-24 w-full" />
+                            <Skeleton className="h-24 w-full rounded-lg" />
+                            <Skeleton className="h-24 w-full rounded-lg" />
+                            <Skeleton className="h-24 w-full rounded-lg" />
                         </div>
-                        <Skeleton className="h-40 w-full" />
-                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-40 w-full rounded-lg" />
+                        <Skeleton className="h-10 w-full rounded-lg" />
                     </div>
                 ) : hasResults ? (
                     <>
-                        <div className="relative w-full aspect-video rounded-lg overflow-hidden border bg-secondary/20">
+                        <div className="relative w-full aspect-video rounded-xl overflow-hidden border-2 border-primary/20 bg-black">
                             <Image src={image!} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
                             {particles.map((p, i) => (
                                 <div
                                     key={i}
-                                    className="absolute rounded-full w-2.5 h-2.5 border-2 border-white/80"
+                                    className="absolute rounded-full w-2 h-2 border border-white/50"
                                     style={{
                                         left: `${p.x * 100}%`,
                                         top: `${p.y * 100}%`,
                                         transform: 'translate(-50%, -50%)',
                                         backgroundColor: getParticleColor(p.confidence),
-                                        boxShadow: `0 0 8px 2px ${getParticleColor(p.confidence)}`,
+                                        boxShadow: `0 0 6px 1px ${getParticleColor(p.confidence)}`,
                                     }}
                                     title={`Particle ${i + 1}\nConfidence: ${(p.confidence * 100).toFixed(1)}%`}
                                 />
                             ))}
                         </div>
                         
-                        <div className="grid grid-cols-3 gap-4 text-center">
-                            <div className="p-4 bg-secondary/50 rounded-lg border">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                            <div className="p-4 bg-background/50 rounded-lg border border-border/50">
                                 <FlaskConical className="mx-auto h-7 w-7 text-primary mb-2" />
                                 <p className="text-3xl font-bold">{analysisResult.particleCount}</p>
                                 <p className="text-sm text-muted-foreground">Total Particles</p>
                             </div>
-                            <div className="p-4 bg-secondary/50 rounded-lg border">
-                                <Percent className="mx-auto h-7 w-7 text-green-500 mb-2" />
+                            <div className="p-4 bg-background/50 rounded-lg border border-border/50">
+                                <Percent className="mx-auto h-7 w-7 text-green-400 mb-2" />
                                 <p className="text-3xl font-bold">{analysisResult.contaminationPercentage.toFixed(2)}%</p>
                                 <p className="text-sm text-muted-foreground">Contamination</p>
                             </div>
-                            <div className="p-4 bg-secondary/50 rounded-lg border">
-                                <Layers className="mx-auto h-7 w-7 text-yellow-500 mb-2" />
+                            <div className="p-4 bg-background/50 rounded-lg border border-border/50">
+                                <Layers className="mx-auto h-7 w-7 text-yellow-400 mb-2" />
                                 <p className="text-3xl font-bold">~{(analysisResult.particleCount / 0.5).toFixed(1)}</p>
                                 <p className="text-sm text-muted-foreground">Particles/Liter</p>
                             </div>
                         </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                            <div className="p-4 bg-secondary/50 rounded-lg border">
-                                <h3 className="font-semibold text-base mb-2 text-center">Particle Type Distribution</h3>
-                                <ResponsiveContainer width="100%" height={150}>
-                                    <PieChart>
-                                        <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8">
-                                            {chartData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={PARTICLE_TYPE_COLORS[entry.name as keyof typeof PARTICLE_TYPE_COLORS] || '#8884d8'} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip
-                                            contentStyle={{
-                                                backgroundColor: 'hsl(var(--background))',
-                                                borderColor: 'hsl(var(--border))',
-                                            }}
-                                        />
-                                        <Legend iconSize={10} />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </div>
-                            <div className="p-4 bg-secondary/50 rounded-lg border h-full">
-                                <h3 className="font-semibold text-base mb-2">AI Analysis Summary</h3>
-                                <ScrollArea className="h-32">
-                                    <p className="text-sm whitespace-pre-wrap font-sans">{analysisResult.analysisSummary}</p>
-                                </ScrollArea>
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                            {shapeChartData.length > 0 && (
+                                <div className="p-4 bg-background/50 rounded-lg border border-border/50">
+                                    <h3 className="font-semibold text-base mb-2 text-center flex items-center justify-center gap-2"><Shapes className="w-5 h-5 text-primary"/>Particle Shape Distribution</h3>
+                                    <ResponsiveContainer width="100%" height={150}>
+                                        <PieChart>
+                                            <Pie data={shapeChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                                                {shapeChartData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={PARTICLE_SHAPE_COLORS[entry.name] || '#8884d8'} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }}/>
+                                            <Legend iconSize={10} />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            )}
+                             {polymerChartData.length > 0 && (
+                                <div className="p-4 bg-background/50 rounded-lg border border-border/50">
+                                    <h3 className="font-semibold text-base mb-2 text-center flex items-center justify-center gap-2"><Atom className="w-5 h-5 text-primary"/>Polymer Type Distribution</h3>
+                                    <ResponsiveContainer width="100%" height={150}>
+                                        <PieChart>
+                                            <Pie data={polymerChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                                                {polymerChartData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={POLYMER_TYPE_COLORS[entry.name] || '#8884d8'} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }} />
+                                            <Legend iconSize={10}/>
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="p-4 bg-background/50 rounded-lg border border-border/50 h-full">
+                            <h3 className="font-semibold text-base mb-2">AI Analysis Summary</h3>
+                            <ScrollArea className="h-32">
+                                <div className="prose prose-sm dark:prose-invert max-w-none prose-p:text-muted-foreground whitespace-pre-wrap font-sans">{analysisResult.analysisSummary}</div>
+                            </ScrollArea>
                         </div>
                         
-                        <Button onClick={() => exportToCSV(particles)} className="w-full">
+                        <Button onClick={() => exportToCSV(particles)} className="w-full" variant="outline">
                             <Download className="mr-2 h-4 w-4" />
                             Export Results (CSV)
                         </Button>
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col justify-center items-center text-center text-muted-foreground/80 p-8 border-2 border-dashed rounded-lg bg-secondary/20">
-                        <TestTube2 className="h-16 w-16 mb-4" />
-                        <h3 className="text-lg font-semibold text-foreground">Awaiting Analysis</h3>
+                    <div className="flex-1 flex flex-col justify-center items-center text-center text-muted-foreground/60 p-8 border-2 border-dashed border-border/50 rounded-xl bg-background/20">
+                        <TestTube2 className="h-16 w-16 mb-4 text-primary/50" />
+                        <h3 className="text-lg font-semibold text-foreground/80">Awaiting Analysis</h3>
                         <p className="text-sm mt-1">Upload an image and click "Analyze Sample" to see the results here.</p>
                     </div>
                 )}
