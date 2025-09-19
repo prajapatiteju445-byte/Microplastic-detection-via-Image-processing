@@ -49,7 +49,7 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
 };
 
 export default function ResultsPanel({ analysisResult, particles, isLoading }: ResultsPanelProps) {
-    const hasResults = analysisResult && (analysisResult.particleCount > 0 || particles.length > 0) && (analysisResult.particleTypes?.length > 0 || analysisResult.polymerTypes?.length > 0);
+    const hasResults = !!analysisResult;
     const shapeChartData = analysisResult?.particleTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
     const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
 
@@ -135,7 +135,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading }: R
                             </ScrollArea>
                         </div>
                         
-                        <Button onClick={() => exportToCSV(particles)} className="w-full" variant="outline">
+                        <Button onClick={() => exportToCSV(particles)} className="w-full" variant="outline" disabled={particles.length === 0}>
                             <Download className="mr-2 h-4 w-4" />
                             Export Results (CSV)
                         </Button>

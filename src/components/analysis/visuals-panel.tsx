@@ -21,7 +21,7 @@ const getParticleColor = (confidence: number) => {
 };
 
 export default function VisualsPanel({ image, particles, isLoading, analysisResult }: VisualsPanelProps) {
-    const hasResults = image && analysisResult && (analysisResult.particleCount > 0 || particles.length > 0);
+    const hasResults = image && analysisResult;
 
     if (isLoading) {
         return (

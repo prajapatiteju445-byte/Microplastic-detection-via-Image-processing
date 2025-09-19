@@ -84,11 +84,7 @@ export default function UploadPanel({
 
         if (result.success && result.data) {
             setAnalysisResult(result.data);
-            
-            // Use particles from the API response
-            if (result.data.particles) {
-                setParticles(result.data.particles);
-            }
+            setParticles(result.data.particles);
 
             toast({
                 title: 'Analysis Complete',

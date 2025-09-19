@@ -59,7 +59,7 @@ export default function HelpModal() {
               <Skeleton className="h-4 w-3/4" />
             </div>
           ) : (
-            <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap font-sans prose-p:text-muted-foreground prose-h3:text-foreground prose-strong:text-foreground">
+            <div className="prose prose-sm dark:prose-invert max-w-none prose-p:text-muted-foreground prose-h3:text-foreground prose-strong:text-foreground prose-headings:text-foreground prose-li:text-muted-foreground">
               {helpContent}
             </div>
           )}
