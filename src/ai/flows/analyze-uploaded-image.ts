@@ -36,11 +36,11 @@ const AnalyzeUploadedImageOutputSchema = z.object({
   contaminationPercentage: z.number().describe('The overall contamination percentage of the sample area shown in the image.'),
   particleCount: z.number().describe('The total number of microplastic particles detected.'),
   particles: z.array(z.object({
-    x: z.number(),
-    y: z.number(),
+    x: z.number().describe('The normalized x-coordinate (0-1) of the particle center.'),
+    y: z.number().describe('The normalized y-coordinate (0-1) of the particle center.'),
     confidence: z.number(),
     class: z.string(),
-  })).describe('A list of detected particle objects with their coordinates and confidence levels.'),
+  })).describe('A list of detected particle objects with their normalized coordinates and confidence levels.'),
 });
 export type AnalyzeUploadedImageOutput = z.infer<typeof AnalyzeUploadedImageOutputSchema>;
 
@@ -92,7 +92,7 @@ Based on the provided detection data, provide a result including:
 3. The total count of all detected microplastic particles.
 4. An estimated contamination percentage for the visible area in the image, considering the area covered by the bounding boxes of the detected particles.
 5. A concise summary of the findings.
-6. The original particle detection data.
+6. The original particle detection data, with coordinates normalized to a 0-1 scale.
 
 Detections:
 {{#each predictions}}
@@ -127,10 +127,11 @@ const analyzeUploadedImageFlow = ai.defineFlow(
       throw new Error('Failed to get analysis from the language model.');
     }
     
-    // 4. Combine results
+    // 4. Combine results and normalize coordinates for client
+    const { width: imageWidth, height: imageHeight } = roboflowResult.image;
     const particlesForClient = roboflowResult.predictions.map(p => ({
-      x: p.x,
-      y: p.y,
+      x: p.x / imageWidth,
+      y: p.y / imageHeight,
       confidence: p.confidence,
       class: p.class,
     }));
