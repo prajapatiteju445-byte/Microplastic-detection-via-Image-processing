@@ -1,6 +1,6 @@
 'use server';
 
-import { improveDetectionWithConfidenceThreshold } from '@/ai/flows/improve-detection-with-confidence-threshold';
+import { analyzeUploadedImage } from '@/ai/flows/analyze-uploaded-image';
 import { provideHelpAndInstructions } from '@/ai/flows/provide-help-and-instructions';
 
 export async function analyzeImageAction(imageDataUri: string) {
@@ -8,7 +8,7 @@ export async function analyzeImageAction(imageDataUri: string) {
     return { success: false, error: 'No image data provided.' };
   }
   try {
-    const result = await improveDetectionWithConfidenceThreshold({ photoDataUri: imageDataUri });
+    const result = await analyzeUploadedImage({ photoDataUri: imageDataUri });
     return { success: true, data: result.analysisResult };
   } catch (error) {
     console.error('Analysis failed:', error);

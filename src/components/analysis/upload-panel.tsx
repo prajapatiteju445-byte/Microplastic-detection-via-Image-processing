@@ -81,7 +81,9 @@ export default function UploadPanel({
 
         if (result.success && result.data) {
             setAnalysisResult(result.data);
-            const particleCount = (result.data.match(/particle/gi) || []).length || Math.floor(Math.random() * 25) + 5;
+            const matches = result.data.match(/(\d+)\s+particles/i);
+            const particleCount = matches ? parseInt(matches[1], 10) : Math.floor(Math.random() * 25) + 5;
+
             const newParticles = Array.from({ length: particleCount }, () => ({
                 x: Math.random(),
                 y: Math.random(),
