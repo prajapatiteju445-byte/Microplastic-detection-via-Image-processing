@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, FlaskConical, TestTube2, Percent, Layers, Atom, Shapes } from 'lucide-react';
@@ -11,7 +10,6 @@ import type { AnalyzeUploadedImageOutput } from '@/ai/flows/analyze-uploaded-ima
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 type ResultsPanelProps = {
-    image: string | null;
     analysisResult: AnalyzeUploadedImageOutput | null;
     particles: Particle[];
     isLoading: boolean;
@@ -28,12 +26,6 @@ const exportToCSV = (particles: Particle[]) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-};
-
-const getParticleColor = (confidence: number) => {
-    if (confidence > 0.9) return 'rgba(59, 130, 246, 0.9)'; // High confidence - blue
-    if (confidence > 0.75) return 'rgba(34, 197, 94, 0.8)'; // Medium - green
-    return 'rgba(234, 179, 8, 0.7)'; // Low - yellow
 };
 
 const PARTICLE_SHAPE_COLORS: { [key: string]: string } = {
@@ -56,8 +48,8 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
     Other: '#8b5cf6',// violet-500
 };
 
-export default function ResultsPanel({ image, analysisResult, particles, isLoading }: ResultsPanelProps) {
-    const hasResults = image && analysisResult && (analysisResult.particleCount > 0 || particles.length > 0) && (analysisResult.particleTypes?.length > 0 || analysisResult.polymerTypes?.length > 0);
+export default function ResultsPanel({ analysisResult, particles, isLoading }: ResultsPanelProps) {
+    const hasResults = analysisResult && (analysisResult.particleCount > 0 || particles.length > 0) && (analysisResult.particleTypes?.length > 0 || analysisResult.polymerTypes?.length > 0);
     const shapeChartData = analysisResult?.particleTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
     const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
 
@@ -73,7 +65,6 @@ export default function ResultsPanel({ image, analysisResult, particles, isLoadi
             <CardContent className="flex-1 flex flex-col gap-4">
                 {isLoading ? (
                     <div className="space-y-4">
-                        <Skeleton className="w-full aspect-video rounded-xl" />
                         <div className="grid grid-cols-3 gap-4">
                             <Skeleton className="h-24 w-full rounded-lg" />
                             <Skeleton className="h-24 w-full rounded-lg" />
@@ -84,24 +75,6 @@ export default function ResultsPanel({ image, analysisResult, particles, isLoadi
                     </div>
                 ) : hasResults ? (
                     <>
-                        <div className="relative w-full aspect-video rounded-xl overflow-hidden border-2 border-primary/20 bg-black">
-                            <Image src={image!} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
-                            {particles.map((p, i) => (
-                                <div
-                                    key={i}
-                                    className="absolute rounded-full w-2 h-2 border border-white/50"
-                                    style={{
-                                        left: `${p.x * 100}%`,
-                                        top: `${p.y * 100}%`,
-                                        transform: 'translate(-50%, -50%)',
-                                        backgroundColor: getParticleColor(p.confidence),
-                                        boxShadow: `0 0 6px 1px ${getParticleColor(p.confidence)}`,
-                                    }}
-                                    title={`Particle ${i + 1}\nConfidence: ${(p.confidence * 100).toFixed(1)}%`}
-                                />
-                            ))}
-                        </div>
-                        
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                             <div className="p-4 bg-background/50 rounded-lg border border-border/50">
                                 <FlaskConical className="mx-auto h-7 w-7 text-primary mb-2" />

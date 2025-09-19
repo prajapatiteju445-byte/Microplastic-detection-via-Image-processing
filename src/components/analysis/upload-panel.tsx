@@ -77,6 +77,8 @@ export default function UploadPanel({
 
         setIsLoading(true);
         setError(null);
+        setAnalysisResult(null);
+        setParticles([]);
 
         const result = await analyzeImageAction(image);
 
