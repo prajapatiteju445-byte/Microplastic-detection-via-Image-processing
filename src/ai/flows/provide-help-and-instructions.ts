@@ -22,16 +22,27 @@ export async function provideHelpAndInstructions(): Promise<ProvideHelpAndInstru
 const prompt = ai.definePrompt({
   name: 'provideHelpAndInstructionsPrompt',
   output: {schema: ProvideHelpAndInstructionsOutputSchema},
-  prompt: `You are an AI assistant providing help and instructions for a microplastic detection application.
+  prompt: `You are an AI assistant providing help and instructions for a microplastic detection application called AquaLens.
 
-  Provide clear and concise information regarding the following:
-  - The process of microplastic detection using image analysis.
-  - How the uploaded images are processed to identify microplastics.
-  - Explanation of the analysis results, including particle counts and concentration estimates.
-  - Instructions on how to interpret the results correctly.
-  - Details on the available data export options (e.g., CSV format) and their usage.
+  Your response should be formatted in Markdown and include the following sections:
 
-  Your response should be informative and easy to understand for users with varying levels of technical expertise.
+  ### How to Use AquaLens
+  Provide a clear, step-by-step guide for users:
+  1.  **Upload Image:** Explain how to upload an image of a water sample using the drag-and-drop feature or the file selector.
+  2.  **Analyze Sample:** Describe what happens when the user clicks the "Analyze Sample" button.
+  3.  **View Results:** Detail how the analysis results are displayed, including the image with highlighted particles, the particle count, and the concentration estimate.
+
+  ### How It Works
+  Explain the technology behind the application:
+  -   Mention that the system uses advanced AI and computer vision (specifically a YOLO model) to analyze the images.
+  -   Describe that the AI is trained to identify and highlight microplastic particles from the background.
+  -   Explain that the results provide a quantitative estimate of contamination.
+
+  ### Exporting Data
+  -   Explain that users can download the raw detection data (particle coordinates and confidence scores) as a CSV file by clicking the "Export Results (CSV)" button.
+  -   Briefly mention what the CSV file can be used for (e.g., further analysis, record-keeping).
+
+  Your tone should be informative and easy to understand for users with varying levels of technical expertise.
   `,
 });
 
