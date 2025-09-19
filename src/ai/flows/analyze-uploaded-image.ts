@@ -112,22 +112,16 @@ const analyzeUploadedImageFlow = ai.defineFlow(
     // 1. Get detections from Roboflow model
     const roboflowResult = await detectParticles(input.photoDataUri);
 
-    // 2. Augment and prepare data for the LLM
-    const particlesForLlm = roboflowResult.predictions.map((p) => ({
-      ...p,
-      class: p.class, 
-    }));
-
-    // 3. Get summary and analysis from Gemini
+    // 2. Get summary and analysis from Gemini
     const { output } = await analysisPrompt({
-      predictions: particlesForLlm,
+      predictions: roboflowResult.predictions,
     });
     
     if (!output) {
       throw new Error('Failed to get analysis from the language model.');
     }
     
-    // 4. Combine results and normalize coordinates for client
+    // 3. Combine results and normalize coordinates for client
     const { width: imageWidth, height: imageHeight } = roboflowResult.image;
     const particlesForClient = roboflowResult.predictions.map(p => ({
       x: p.x / imageWidth,

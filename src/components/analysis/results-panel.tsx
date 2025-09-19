@@ -98,7 +98,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading }: R
                                     <h3 className="font-semibold text-base mb-2 text-center flex items-center justify-center gap-2"><Shapes className="w-5 h-5 text-primary"/>Particle Shape Distribution</h3>
                                     <ResponsiveContainer width="100%" height={150}>
                                         <PieChart>
-                                            <Pie data={shapeChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                                            <Pie data={shapeChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" labelLine={false}>
                                                 {shapeChartData.map((entry, index) => (
                                                     <Cell key={`cell-${index}`} fill={PARTICLE_SHAPE_COLORS[entry.name] || '#8884d8'} />
                                                 ))}
@@ -114,7 +114,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading }: R
                                     <h3 className="font-semibold text-base mb-2 text-center flex items-center justify-center gap-2"><Atom className="w-5 h-5 text-primary"/>Polymer Type Distribution</h3>
                                     <ResponsiveContainer width="100%" height={150}>
                                         <PieChart>
-                                            <Pie data={polymerChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                                            <Pie data={polymerChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" labelLine={false}>
                                                 {polymerChartData.map((entry, index) => (
                                                     <Cell key={`cell-${index}`} fill={POLYMER_TYPE_COLORS[entry.name] || '#8884d8'} />
                                                 ))}
