@@ -35,9 +35,9 @@ export default function HelpModal() {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="flex items-center gap-2">
+        <Button variant="ghost" size="sm">
             <HelpCircle className="h-5 w-5" />
-            <span className="hidden sm:inline">Help & Instructions</span>
+            <span className="hidden sm:inline ml-2">Help & Instructions</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
@@ -59,7 +59,7 @@ export default function HelpModal() {
               <Skeleton className="h-4 w-3/4" />
             </div>
           ) : (
-            <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap text-sm font-sans prose-p:text-muted-foreground prose-headings:text-foreground prose-strong:text-foreground">
+            <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap font-sans prose-p:text-muted-foreground prose-h3:text-foreground prose-strong:text-foreground">
               {helpContent}
             </div>
           )}
