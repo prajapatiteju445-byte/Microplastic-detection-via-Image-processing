@@ -21,7 +21,7 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 231 20% 80%;
-    --input: 0 0% 100%;
+    --input: 231 20% 80%;
     --ring: 231 48% 54%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -38,6 +38,7 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
