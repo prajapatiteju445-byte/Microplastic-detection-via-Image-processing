@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { getHelpContentAction } from '@/app/actions';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -59,10 +61,12 @@ export default function HelpModal() {
               <Skeleton className="h-4 w-3/4" />
             </div>
           ) : (
-            <div 
+            <ReactMarkdown 
+              rehypePlugins={[rehypeRaw]}
               className="prose prose-sm dark:prose-invert max-w-none prose-p:text-muted-foreground prose-h3:text-foreground prose-strong:text-foreground prose-headings:text-foreground prose-li:text-muted-foreground"
-              dangerouslySetInnerHTML={{ __html: helpContent || '' }}
-            />
+            >
+              {helpContent || ''}
+            </ReactMarkdown>
           )}
         </ScrollArea>
       </DialogContent>
