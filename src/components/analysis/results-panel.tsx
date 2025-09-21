@@ -77,7 +77,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading }: R
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                             <div className="p-4 bg-background/50 rounded-lg border">
                                 <FlaskConical className="mx-auto h-7 w-7 text-primary mb-2" />
-                                <p className="text-3xl font-bold">{analysisResult.particleCount}</p>
+                                <p className="text-3xl font-bold" title={`${analysisResult.particleCount} particles`}>{analysisResult.particleCount}</p>
                                 <p className="text-sm text-muted-foreground">Total Particles</p>
                             </div>
                             <div className="p-4 bg-background/50 rounded-lg border">

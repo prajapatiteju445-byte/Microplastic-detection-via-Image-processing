@@ -1,4 +1,3 @@
-
 'use server';
 import axios from 'axios';
 import { z } from 'zod';
@@ -38,7 +37,7 @@ export async function detectParticles(imageAsDataUri: string): Promise<RoboflowR
     const apiKey = process.env.ROBOFLOW_API_KEY;
 
     if (!apiKey) {
-        throw new Error("Roboflow API key is not configured.");
+        throw new Error("The Roboflow API key is not configured in the environment variables. Please add it to continue.");
     }
 
     // Roboflow expects the image as a base64 string, without the data URI prefix.
@@ -57,14 +56,25 @@ export async function detectParticles(imageAsDataUri: string): Promise<RoboflowR
         const validationResult = RoboflowResponseSchema.safeParse(response.data);
 
         if (!validationResult.success) {
-            console.error("Roboflow API response validation failed:", validationResult.error);
-            throw new Error("Invalid response structure from Roboflow API.");
+            console.error("Roboflow API response validation failed:", validationResult.error.flatten());
+            throw new Error("Received an invalid response structure from the Roboflow API. Unable to process detections.");
         }
         
         return validationResult.data;
 
     } catch (error: any) {
-        console.error("Error calling Roboflow API:", error.response?.data || error.message);
-        throw new Error(`Failed to get detections from Roboflow: ${error.response?.data?.message || error.message}`);
+        if (axios.isAxiosError(error) && error.response) {
+            console.error("Error calling Roboflow API:", error.response.data);
+            const status = error.response.status;
+            let userMessage = `Failed to get detections from Roboflow. The service returned an error (Status: ${status}).`;
+            if (status === 401 || status === 403) {
+                userMessage = "Authentication with Roboflow failed. Please check if the API key is correct and has the required permissions.";
+            } else if (status >= 500) {
+                userMessage = "The Roboflow service seems to be temporarily unavailable. Please try again later.";
+            }
+            throw new Error(userMessage);
+        }
+        console.error("An unexpected error occurred during Roboflow API call:", error.message);
+        throw new Error(`An unexpected error occurred while trying to connect to Roboflow. Please check the console for details.`);
     }
 }
