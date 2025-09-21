@@ -10,9 +10,9 @@ export async function analyzeImageAction(imageDataUri: string): Promise<{ succes
   try {
     const result = await analyzeUploadedImage({ photoDataUri: imageDataUri });
     return { success: true, data: result };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Analysis failed:', error);
-    const errorMessage = error.message || 'Failed to analyze image. The AI model may be unavailable or an external service has failed. Please try again later.';
+    const errorMessage = error instanceof Error ? error.message : 'Failed to analyze image. The AI model may be unavailable or an external service has failed. Please try again later.';
     return { success: false, error: errorMessage };
   }
 }

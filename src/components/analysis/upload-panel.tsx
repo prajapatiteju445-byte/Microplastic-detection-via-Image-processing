@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, DragEvent } from 'react';
+import { useState, useCallback, DragEvent, useRef } from 'react';
 import Image from 'next/image';
 import { UploadCloud, X, Loader2, Microscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { analyzeImageAction } from '@/app/actions';
 import type { Particle } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { AnalyzeUploadedImageOutput } from '@/ai/flows/analyze-uploaded-image';
+import type { AnalyzeUploadedImageOutput } from '@/ai/flows/analyze-uploaded-image';
 
 type UploadPanelProps = {
     setImage: (image: string | null) => void;
@@ -34,6 +34,7 @@ export default function UploadPanel({
 }: UploadPanelProps) {
     const { toast } = useToast();
     const [isDragging, setIsDragging] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFile = useCallback((file: File) => {
         if (!file) return;
@@ -71,6 +72,13 @@ export default function UploadPanel({
     const onDragLeave = () => {
         setIsDragging(false);
     };
+    
+    const handleRemoveImage = () => {
+        resetState();
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    }
 
     const handleAnalyze = async () => {
         if (!image) return;
@@ -125,7 +133,7 @@ export default function UploadPanel({
                             variant="destructive"
                             size="icon"
                             className="absolute top-2 right-2 z-10 rounded-full h-8 w-8 opacity-70 hover:opacity-100 transition-opacity"
-                            onClick={() => { resetState(); (document.getElementById('file-upload') as HTMLInputElement).value = ''; }}
+                            onClick={handleRemoveImage}
                             disabled={isLoading}
                         >
                             <X className="h-4 w-4" />
@@ -145,6 +153,7 @@ export default function UploadPanel({
                         <input
                             type="file"
                             id="file-upload"
+                            ref={fileInputRef}
                             className="hidden"
                             accept="image/*"
                             onChange={handleFileSelect}

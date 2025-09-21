@@ -39,7 +39,25 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
     }
 
     if (!image || !analysisResult) {
-        return null;
+        return (
+            <Card className="shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
+                <CardHeader>
+                     <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                        <Eye className="w-6 h-6 text-primary" />
+                        Visual Analysis
+                    </CardTitle>
+                    <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex justify-center items-center w-full aspect-video rounded-xl border-2 border-dashed border-border/50 bg-background/20">
+                         <div className="text-center text-muted-foreground/60">
+                            <Eye className="h-12 w-12 mx-auto mb-2 text-primary/50" />
+                            <p className="text-sm">Analysis visualization appears here.</p>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        )
     }
 
     return (

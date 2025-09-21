@@ -62,7 +62,7 @@ export async function detectParticles(imageAsDataUri: string): Promise<RoboflowR
         
         return validationResult.data;
 
-    } catch (error: any) {
+    } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             console.error("Error calling Roboflow API:", error.response.data);
             const status = error.response.status;
@@ -74,7 +74,7 @@ export async function detectParticles(imageAsDataUri: string): Promise<RoboflowR
             }
             throw new Error(userMessage);
         }
-        console.error("An unexpected error occurred during Roboflow API call:", error.message);
+        console.error("An unexpected error occurred during Roboflow API call:", error);
         throw new Error(`An unexpected error occurred while trying to connect to Roboflow. Please check the console for details.`);
     }
 }
