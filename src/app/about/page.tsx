@@ -45,7 +45,7 @@ export default function AboutPage() {
                         </p>
                     </section>
 
-                    <section>
+                    <section className="mb-12">
                         <h2 className="text-3xl font-bold text-center mb-8 text-foreground">
                             Meet Our Team
                         </h2>
@@ -67,6 +67,12 @@ export default function AboutPage() {
                                 </Card>
                             ))}
                         </div>
+                    </section>
+
+                    <section className="text-center mt-12">
+                        <p className="text-xl font-semibold italic text-foreground/80">
+                            "Together, we are dedicated to clearing our waters, one image at a time."
+                        </p>
                     </section>
                 </div>
             </main>
