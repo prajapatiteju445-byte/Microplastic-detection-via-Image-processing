@@ -53,15 +53,15 @@ export default function ResultsPanel({ analysisResult, particles, isLoading }: R
     const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
 
     return (
-        <Card className="h-full flex flex-col shadow-2xl bg-card/80 backdrop-blur-sm border-border/60">
+        <Card className="h-full flex flex-col shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl font-bold text-foreground">
+                <CardTitle className="flex items-center gap-2 text-xl font-bold">
                     <TestTube2 className="w-6 h-6 text-primary" />
                     Analysis Results
                 </CardTitle>
-                <CardDescription>Detected microplastics and summary.</CardDescription>
+                <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col gap-4">
+            <CardContent className="flex-1 flex flex-col gap-6">
                 {isLoading ? (
                     <div className="space-y-4">
                         <div className="grid grid-cols-3 gap-4">
@@ -75,18 +75,18 @@ export default function ResultsPanel({ analysisResult, particles, isLoading }: R
                 ) : analysisResult ? (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                            <div className="p-4 bg-background/50 rounded-lg border border-border/50">
+                            <div className="p-4 bg-background/50 rounded-lg border">
                                 <FlaskConical className="mx-auto h-7 w-7 text-primary mb-2" />
                                 <p className="text-3xl font-bold">{analysisResult.particleCount}</p>
                                 <p className="text-sm text-muted-foreground">Total Particles</p>
                             </div>
-                            <div className="p-4 bg-background/50 rounded-lg border border-border/50">
-                                <Percent className="mx-auto h-7 w-7 text-green-400 mb-2" />
+                            <div className="p-4 bg-background/50 rounded-lg border">
+                                <Percent className="mx-auto h-7 w-7 text-green-500 mb-2" />
                                 <p className="text-3xl font-bold">{analysisResult.contaminationPercentage.toFixed(2)}%</p>
                                 <p className="text-sm text-muted-foreground">Contamination</p>
                             </div>
-                            <div className="p-4 bg-background/50 rounded-lg border border-border/50">
-                                <Layers className="mx-auto h-7 w-7 text-yellow-400 mb-2" />
+                            <div className="p-4 bg-background/50 rounded-lg border">
+                                <Layers className="mx-auto h-7 w-7 text-yellow-500 mb-2" />
                                 <p className="text-3xl font-bold">~{(analysisResult.particleCount / 0.5).toFixed(1)}</p>
                                 <p className="text-sm text-muted-foreground">Particles/Liter</p>
                             </div>
@@ -94,11 +94,11 @@ export default function ResultsPanel({ analysisResult, particles, isLoading }: R
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                             {shapeChartData.length > 0 && (
-                                <div className="p-4 bg-background/50 rounded-lg border border-border/50">
+                                <div className="p-4 bg-background/50 rounded-lg border">
                                     <h3 className="font-semibold text-base mb-2 text-center flex items-center justify-center gap-2"><Shapes className="w-5 h-5 text-primary"/>Particle Shape Distribution</h3>
                                     <ResponsiveContainer width="100%" height={150}>
                                         <PieChart>
-                                            <Pie data={shapeChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" labelLine={false}>
+                                            <Pie data={shapeChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} fill="#8884d8" labelLine={false} label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => { const radius = innerRadius + (outerRadius - innerRadius) * 0.5; const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180)); const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180)); return ( <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={12}> {`${(percent * 100).toFixed(0)}%`} </text> ); }}>
                                                 {shapeChartData.map((entry, index) => (
                                                     <Cell key={`cell-${index}`} fill={PARTICLE_SHAPE_COLORS[entry.name] || '#8884d8'} />
                                                 ))}
@@ -110,11 +110,11 @@ export default function ResultsPanel({ analysisResult, particles, isLoading }: R
                                 </div>
                             )}
                              {polymerChartData.length > 0 && (
-                                <div className="p-4 bg-background/50 rounded-lg border border-border/50">
+                                <div className="p-4 bg-background/50 rounded-lg border">
                                     <h3 className="font-semibold text-base mb-2 text-center flex items-center justify-center gap-2"><Atom className="w-5 h-5 text-primary"/>Polymer Type Distribution</h3>
                                     <ResponsiveContainer width="100%" height={150}>
                                         <PieChart>
-                                            <Pie data={polymerChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" labelLine={false}>
+                                            <Pie data={polymerChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} fill="#8884d8" labelLine={false} label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => { const radius = innerRadius + (outerRadius - innerRadius) * 0.5; const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180)); const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180)); return ( <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={12}> {`${(percent * 100).toFixed(0)}%`} </text> ); }}>
                                                 {polymerChartData.map((entry, index) => (
                                                     <Cell key={`cell-${index}`} fill={POLYMER_TYPE_COLORS[entry.name] || '#8884d8'} />
                                                 ))}
@@ -127,10 +127,10 @@ export default function ResultsPanel({ analysisResult, particles, isLoading }: R
                             )}
                         </div>
 
-                        <div className="p-4 bg-background/50 rounded-lg border border-border/50 h-full">
+                        <div className="p-4 bg-background/50 rounded-lg border h-full">
                             <h3 className="font-semibold text-base mb-2">AI Analysis Summary</h3>
                             <ScrollArea className="h-32">
-                                <div className="prose prose-sm dark:prose-invert max-w-none prose-p:text-muted-foreground whitespace-pre-wrap font-sans">{analysisResult.analysisSummary}</div>
+                                <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground whitespace-pre-wrap font-sans">{analysisResult.analysisSummary}</div>
                             </ScrollArea>
                         </div>
                         

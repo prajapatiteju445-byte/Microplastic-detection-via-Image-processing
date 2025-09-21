@@ -25,11 +25,11 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background-gradient">
       <Header />
       <main className="flex-1 container mx-auto p-4 sm:p-6 md:p-8">
         {error && (
-            <Alert variant="destructive" className="mb-8">
+            <Alert variant="destructive" className="mb-8 bg-destructive/10 border-destructive/30">
               <Terminal className="h-4 w-4" />
               <AlertTitle>Analysis Error</AlertTitle>
               <AlertDescription>{error}</AlertDescription>

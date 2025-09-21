@@ -110,7 +110,7 @@ export default function UploadPanel({
     };
 
     return (
-        <Card className="h-full flex flex-col bg-card/50 border-border/50 shadow-xl">
+        <Card className="h-full flex flex-col bg-card/50 border-border/20 shadow-lg transition-all duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                     1. Upload Image
@@ -124,7 +124,7 @@ export default function UploadPanel({
                         <Button
                             variant="destructive"
                             size="icon"
-                            className="absolute top-2 right-2 z-10 rounded-full h-8 w-8"
+                            className="absolute top-2 right-2 z-10 rounded-full h-8 w-8 opacity-70 hover:opacity-100 transition-opacity"
                             onClick={() => { resetState(); (document.getElementById('file-upload') as HTMLInputElement).value = ''; }}
                             disabled={isLoading}
                         >
@@ -139,7 +139,7 @@ export default function UploadPanel({
                         onDragLeave={onDragLeave}
                         className={cn(
                             'w-full h-64 border-2 border-dashed rounded-lg flex flex-col justify-center items-center text-center p-4 transition-colors',
-                            isDragging ? 'border-primary bg-primary/10' : 'border-border'
+                            isDragging ? 'border-primary bg-primary/10' : 'border-border/50'
                         )}
                     >
                         <input
@@ -159,7 +159,7 @@ export default function UploadPanel({
                     </div>
                 )}
 
-                <Button onClick={handleAnalyze} disabled={!image || isLoading} className="w-full text-lg py-6" size="lg">
+                <Button onClick={handleAnalyze} disabled={!image || isLoading} className="w-full text-lg py-6 shadow-md hover:shadow-lg transition-shadow" size="lg">
                     {isLoading ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />

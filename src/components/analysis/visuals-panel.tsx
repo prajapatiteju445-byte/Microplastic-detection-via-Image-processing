@@ -23,9 +23,9 @@ const getParticleColor = (confidence: number) => {
 export default function VisualsPanel({ image, particles, isLoading, analysisResult }: VisualsPanelProps) {
     if (isLoading) {
         return (
-            <Card className="shadow-2xl bg-card/80 backdrop-blur-sm border-border/60">
+            <Card className="shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl font-bold text-foreground">
+                    <CardTitle className="flex items-center gap-2 text-xl font-bold">
                         <Eye className="w-6 h-6 text-primary" />
                         Visual Analysis
                     </CardTitle>
@@ -43,16 +43,16 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
     }
 
     return (
-        <Card className="shadow-2xl bg-card/80 backdrop-blur-sm border-border/60">
+        <Card className="shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl font-bold text-foreground">
+                <CardTitle className="flex items-center gap-2 text-xl font-bold">
                     <Eye className="w-6 h-6 text-primary" />
                     Visual Analysis
                 </CardTitle>
                 <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="relative w-full aspect-video rounded-xl overflow-hidden border-2 border-primary/20 bg-black">
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden border-2 border-primary/10 bg-background">
                     <Image src={image} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
                     {particles.map((p, i) => (
                         <div
@@ -63,7 +63,8 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
                                 top: `${p.y * 100}%`,
                                 transform: 'translate(-50%, -50%)',
                                 backgroundColor: getParticleColor(p.confidence),
-                                boxShadow: `0 0 6px 1px ${getParticleColor(p.confidence)}`,
+                                boxShadow: `0 0 6px 2px ${getParticleColor(p.confidence)}`,
+                                transition: 'all 0.3s ease',
                             }}
                             title={`Particle ${i + 1}\nConfidence: ${(p.confidence * 100).toFixed(1)}%`}
                         />
