@@ -20,7 +20,7 @@ export async function provideHelpAndInstructions(): Promise<ProvideHelpAndInstru
 }
 
 const prompt = ai.definePrompt({
-  name: 'provideHelpAndInstructionsPrompt',
+  name: 'provideHelpAndinstructionsPrompt',
   output: {schema: ProvideHelpAndInstructionsOutputSchema},
   prompt: `# 📝 Quick Guide:
 
@@ -42,13 +42,13 @@ const prompt = ai.definePrompt({
     * **Water Body Type** (e.g., River, Tap).
     * **Scale Information** (Enter size if no scale bar is visible).
     * **Contamination Notes** (e.g., "Used glass beakers").
-* Click **"Analyze & Generate Report"**. (Wait 30-60 seconds for YOLOv8 to process).
+* Click **"Analyze & Generate Report"**. (Wait 30-60 seconds for YOLOv5 to process).
 
 ## 3. Understand Your Report
 
 | Section | What You See | Key Data |
 | :--- | :--- | :--- |
-| **Visual Analysis** | Your image with colored **YOLOv11 masks** on particles. | **Predicted Type** (Fiber, Fragment) and **Confidence Score**. |
+| **Visual Analysis** | Your image with colored **YOLOv5 dots** on particles. | **Predicted Type** (Fiber, Fragment) and **Confidence Score**. |
 | **Quantitative Results** | Summary of total findings. | **Total MP Count**, **Concentration**, **Particle Size Range (μm)**. |
 | **Detailed Inventory** | A table of every detected particle. | **Measured Size (μm)** and **Aspect Ratio** (for shape analysis). |
 
