@@ -16,7 +16,7 @@ const AquaLensLogo = () => (
         className="h-8 w-8 text-primary-foreground"
     >
         <rect x="3" y="3" width="18" height="18" rx="4" ry="4" />
-        <path d="M12 16.5c-2.4 0-4.5-2.01-4.5-4.5 0-2.48 4.5-8 4.5-8s4.5 5.52 4.5 8c0 2.49-2.1 4.5-4.5 4.5z" />
+        <path d="M12 15.5c-2.4 0-4-2.01-4-4.5 0-2.48 4-8 4-8s4 5.52 4 8c0 2.49-1.6 4.5-4 4.5z" />
     </svg>
 );
 
