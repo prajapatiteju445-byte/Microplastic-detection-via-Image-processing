@@ -46,11 +46,9 @@ const prompt = ai.definePrompt({
 
 ## 3. Understand Your Report
 
-| Section | What You See | Key Data |
-| :--- | :--- | :--- |
-| **Visual Analysis** | Your image with colored **YOLOv5 dots** on particles. | **Predicted Type** (Fiber, Fragment) and **Confidence Score**. |
-| **Quantitative Results** | Summary of total findings. | **Total MP Count**, **Concentration**, **Particle Size Range (μm)**. |
-| **Detailed Inventory** | A table of every detected particle. | **Measured Size (μm)** and **Aspect Ratio** (for shape analysis). |
+*   **Visual Analysis:** This section shows your image with colored dots (from YOLOv5) on detected particles. Key data includes the **Predicted Type** (like Fiber or Fragment) and the **Confidence Score**.
+*   **Quantitative Results:** This gives you a summary of the total findings, including the **Total MP Count**, **Concentration** (e.g., particles per liter), and the **Particle Size Range (μm)**.
+*   **Detailed Inventory:** Here you'll find a table listing every particle that was detected, along with its **Measured Size (μm)** and **Aspect Ratio** for shape analysis.
 
 ## 4. Share Your Findings
 
