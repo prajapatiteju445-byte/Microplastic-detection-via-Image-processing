@@ -1,0 +1,100 @@
+/**
+ * @file Firestore Security Rules for AquaLens
+ * @core_philosophy This ruleset enforces a strict user-ownership model, where each user has complete control over their own data, including water samples and analysis results.
+ * @data_structure All data is nested under the /users/{userId} path, providing clear ownership and simplifying security rules. Water samples are stored in /users/{userId}/waterSamples/{waterSampleId}, and analysis results are stored in /users/{userId}/waterSamples/{waterSampleId}/analysisResults/{analysisResultId}.
+ * @key_security_decisions User listing is disabled to protect user privacy. Read and write access is strictly limited to the owner of the data, ensuring that only the user who uploaded a water sample can view or modify its associated analysis results.
+ * @denormalization_for_authorization Not applicable, as the path-based ownership model obviates the need for data denormalization.
+ * @structural_segregation Not applicable, as all data is private and user-specific.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Enforces access control for user profiles.
+     * @path /users/{userId}
+     * @allow (create) User with ID 'user123' can create their profile.
+     * @deny (create) User with ID 'user456' cannot create a profile with ID 'user123'.
+     * @allow (get, list, update, delete) User with ID 'user123' can read, update, and delete their profile.
+     * @deny (get, list, update, delete) User with ID 'user456' cannot read, update, or delete user 'user123's profile.
+     * @principle Enforces document ownership for writes.
+     */
+    match /users/{userId} {
+      // Helper function to check if the user is signed in and owns the resource.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create their own profile if the UID matches the document ID
+      allow create: if isOwner(userId) && request.resource.data.id == request.auth.uid;
+      // Allow the user to get their profile
+      allow get: if isOwner(userId);
+      //Deny listing all users
+      allow list: if false;
+      // Allow the user to update their own profile
+      allow update: if isOwner(userId) && resource.data.id == request.resource.data.id;
+      // Allow the user to delete their own profile
+      allow delete: if isOwner(userId);
+    }
+
+    /**
+     * @description Enforces access control for water samples uploaded by a user.
+     * @path /users/{userId}/waterSamples/{waterSampleId}
+     * @allow (create) User with ID 'user123' can create a water sample with ID 'sample456'.
+     * @deny (create) User with ID 'user456' cannot create a water sample with ID 'sample456' under user 'user123'.
+     * @allow (get, list, update, delete) User with ID 'user123' can read, update, and delete their water sample 'sample456'.
+     * @deny (get, list, update, delete) User with ID 'user456' cannot read, update, or delete water sample 'sample456' under user 'user123'.
+     * @principle Enforces document ownership for writes.
+     */
+    match /users/{userId}/waterSamples/{waterSampleId} {
+      // Helper function to check if the user is signed in and owns the resource.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+        function isExistingOwner(userId) {
+            return isOwner(userId) && resource != null;
+        }
+
+      // Only the owner can create a water sample. Must match the authenticated user.
+      allow create: if isOwner(userId) && request.resource.data.userId == request.auth.uid;
+      // Allow the owner to get their own water samples
+      allow get: if isOwner(userId);
+      // The owner can list their own water samples
+      allow list: if isOwner(userId);
+      // Only the owner can update their own water sample.  userId cannot be changed.
+      allow update: if isExistingOwner(userId) && resource.data.userId == request.resource.data.userId;
+      // Only the owner can delete their own water sample.
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Enforces access control for analysis results of a water sample.
+     * @path /users/{userId}/waterSamples/{waterSampleId}/analysisResults/{analysisResultId}
+     * @allow (create) User with ID 'user123' can create an analysis result with ID 'result789' for their water sample 'sample456'.
+     * @deny (create) User with ID 'user456' cannot create an analysis result with ID 'result789' for water sample 'sample456' under user 'user123'.
+     * @allow (get, list, update, delete) User with ID 'user123' can read, update, and delete the analysis result 'result789' for their water sample 'sample456'.
+     * @deny (get, list, update, delete) User with ID 'user456' cannot read, update, or delete analysis result 'result789' for water sample 'sample456' under user 'user123'.
+     * @principle Enforces document ownership for writes.
+     */
+    match /users/{userId}/waterSamples/{waterSampleId}/analysisResults/{analysisResultId} {
+      // Helper function to check if the user is signed in and owns the resource.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+        function isExistingOwner(userId) {
+            return isOwner(userId) && resource != null;
+        }
+
+      // Only the owner can create an analysis result.
+      allow create: if isOwner(userId);
+      // Allow the owner to get their analysis results
+      allow get: if isOwner(userId);
+      // The owner can list their analysis results
+      allow list: if isOwner(userId);
+      // Only the owner can update their own analysis result.
+      allow update: if isExistingOwner(userId);
+      // Only the owner can delete their own analysis result.
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

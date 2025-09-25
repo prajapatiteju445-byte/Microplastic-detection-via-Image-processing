@@ -1,0 +1,187 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the AquaLens application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user account was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "createdAt"
+      ]
+    },
+    "WaterSample": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "WaterSample",
+      "type": "object",
+      "description": "Represents a water sample uploaded by a user for analysis.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the water sample entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N WaterSample)"
+        },
+        "uploadDate": {
+          "type": "string",
+          "description": "Timestamp indicating when the water sample was uploaded.",
+          "format": "date-time"
+        },
+        "fileLocation": {
+          "type": "string",
+          "description": "The location where the uploaded file is stored (e.g., cloud storage URL)."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Latitude of the water sample collection location (if available)."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude of the water sample collection location (if available)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "uploadDate",
+        "fileLocation"
+      ]
+    },
+    "AnalysisResult": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AnalysisResult",
+      "type": "object",
+      "description": "Represents the analysis results for a specific water sample.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the analysis result entity."
+        },
+        "waterSampleId": {
+          "type": "string",
+          "description": "Reference to WaterSample. (Relationship: WaterSample 1:1 AnalysisResult)"
+        },
+        "analysisDate": {
+          "type": "string",
+          "description": "Timestamp indicating when the analysis was performed.",
+          "format": "date-time"
+        },
+        "particleCount": {
+          "type": "number",
+          "description": "The total number of microplastic particles detected in the sample."
+        },
+        "concentrationEstimate": {
+          "type": "number",
+          "description": "Estimated concentration of microplastics in the sample (e.g., particles per liter)."
+        },
+        "visualisationData": {
+          "type": "string",
+          "description": "The file location of the visualization overlayed on the original image."
+        },
+        "rawDetectionData": {
+          "type": "string",
+          "description": "The raw result detection data from the YOLO model. Usually stored as a JSON string.",
+          "format": "json"
+        }
+      },
+      "required": [
+        "id",
+        "waterSampleId",
+        "analysisDate",
+        "particleCount",
+        "concentrationEstimate",
+        "rawDetectionData"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Collection to store user profiles.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/waterSamples/{waterSampleId}",
+        "definition": {
+          "entityName": "WaterSample",
+          "schema": {
+            "$ref": "#/backend/entities/WaterSample"
+          },
+          "description": "Collection to store water samples uploaded by a specific user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the user."
+            },
+            {
+              "name": "waterSampleId",
+              "description": "Unique identifier for the water sample."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/waterSamples/{waterSampleId}/analysisResults/{analysisResultId}",
+        "definition": {
+          "entityName": "AnalysisResult",
+          "schema": {
+            "$ref": "#/backend/entities/AnalysisResult"
+          },
+          "description": "Collection to store analysis results for a specific water sample.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the user."
+            },
+            {
+              "name": "waterSampleId",
+              "description": "Unique identifier for the water sample."
+            },
+            {
+              "name": "analysisResultId",
+              "description": "Unique identifier for the analysis result."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to handle image analysis requests and results efficiently and securely, even with a large number of concurrent users. The core principle is to leverage path-based ownership for private user data and avoid `get()` calls in security rules by denormalizing data where necessary, ensuring authorization independence and enabling scalable list operations. The structure is segregated to maintain a homogenous security posture and to enable clarity of intent. We leverage explicit state modeling for analysis status and enforce naming conventions to maintain consistency.\n\n1.  **User Data:** Each user has a dedicated collection for their water samples and analysis results under `/users/{userId}`. This ensures clear ownership and simplifies security rules.  WaterSample documents are stored in `/users/{userId}/waterSamples/{waterSampleId}`. AnalysisResult documents are stored in `/users/{userId}/waterSamples/{waterSampleId}/analysisResults/{analysisResultId}`.\n\n2.  **Authorization Independence:** The `AnalysisResult` documents do not need to look up to the `WaterSample` to determine authorization. Since analysis results are nested under the water sample and the water sample is under the user, ownership is implicitly determined by the path.\n\n3.  **Scalability and Performance:** Nesting AnalysisResult under WaterSample optimizes queries for a particular user's samples and their corresponding results. To scale the image analysis workers, the file locations can be read from the waterSample object and enqueue an analysis request onto a task queue (e.g. Google Cloud Tasks) which can process samples concurrently. In addition, using ONNX or TensorRT to optimize the underlying YOLO model will allow for faster analysis times.\n\n4.  **QAPs Support:** The structure supports secure list operations because all data related to a user is namespaced under the `/users/{userId}` collection. Rules can securely filter results for a user based on their `userId` without needing to filter based on document content.\n"
+  }
+}
