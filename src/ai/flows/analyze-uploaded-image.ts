@@ -64,7 +64,8 @@ const analysisPrompt = ai.definePrompt({
     }),
   },
   output: { schema: AnalysisResultSchema },
-  prompt: `You are an expert in environmental science and machine learning, specializing in microplastic pollution analysis. You have been provided with a set of microplastic detections from a water sample image, identified by a Roboflow YOLO model.
+  template: {
+    prompt: `You are an expert in environmental science and machine learning, specializing in microplastic pollution analysis. You have been provided with a set of microplastic detections from a water sample image, identified by a Roboflow YOLO model.
 
 Your task is to interpret these raw detection results and generate a comprehensive analysis.
 
@@ -97,6 +98,7 @@ Detections:
 - Class: {{class}}, Confidence: {{confidence}}, BoundingBox: [{{x}}, {{y}}, {{width}}, {{height}}]
 {{/each}}
 `,
+  }
 });
 
 
