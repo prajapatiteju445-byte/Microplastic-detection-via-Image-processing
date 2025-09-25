@@ -114,7 +114,7 @@ export default function AboutPage() {
                             Together, we are driven by the goal of contributing a practical solution to safeguard our water resources and protect ecosystems for future generations.
                         </p>
                         <p className="text-xl font-semibold italic text-foreground/80">
-                            "Together, we are dedicated to clearing our waters, one image at a time."
+                            "We will keep improving to serve you better. Quality of analysis, One Image at a Time."
                         </p>
                     </section>
                 </div>
