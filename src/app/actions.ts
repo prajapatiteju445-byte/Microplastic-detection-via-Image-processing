@@ -7,7 +7,7 @@ import { provideHelpAndInstructions } from '@/ai/flows/provide-help-and-instruct
 
 export async function getHelpContentAction() {
   try {
-    const result = await provideHelpAndinstructions();
+    const result = await provideHelpAndInstructions();
     return { success: true, data: result.helpText };
   } catch (error) {
     console.error('Failed to get help content:', error);
