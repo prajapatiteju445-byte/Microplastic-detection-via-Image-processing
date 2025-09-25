@@ -2,7 +2,7 @@
 
 import { useState, useCallback, DragEvent, useRef } from 'react';
 import Image from 'next/image';
-import { UploadCloud, X, Loader2, Microscope } from 'lucide-react';
+import { UploadCloud, X, Loader2, Microscope, FileUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -121,7 +121,8 @@ export default function UploadPanel({
         <Card className="h-full flex flex-col bg-card/50 border-border/20 shadow-lg transition-all duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
-                    1. Upload Image
+                    <FileUp className="w-6 h-6 text-primary" />
+                    Upload Image
                 </CardTitle>
                 <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
             </CardHeader>
