@@ -42,11 +42,11 @@ const prompt = ai.definePrompt({
     * **Water Body Type** (e.g., River, Tap).
     * **Scale Information** (Enter size if no scale bar is visible).
     * **Contamination Notes** (e.g., "Used glass beakers").
-* Click **"Analyze & Generate Report"**. (Wait 30-60 seconds for YOLOv5 to process).
+* Click **"Analyze & Generate Report"**. (Wait 30-60 seconds for the model to process).
 
 ## 3. Understand Your Report
 
-*   **Visual Analysis:** This section shows your image with colored dots (from YOLOv5) on detected particles. Key data includes the **Predicted Type** (like Fiber or Fragment) and the **Confidence Score**.
+*   **Visual Analysis:** This section shows your image with colored dots (from YOLOv11) on detected particles. Key data includes the **Predicted Type** (like Fiber or Fragment) and the **Confidence Score**.
 *   **Quantitative Results:** This gives you a summary of the total findings, including the **Total MP Count**, **Concentration** (e.g., particles per liter), and the **Particle Size Range (μm)**.
 *   **Detailed Inventory:** Here you'll find a table listing every particle that was detected, along with its **Measured Size (μm)** and **Aspect Ratio** for shape analysis.
 
