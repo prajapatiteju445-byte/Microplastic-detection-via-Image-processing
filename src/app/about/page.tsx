@@ -110,9 +110,6 @@ export default function AboutPage() {
                     </section>
 
                     <section className="text-center mt-12">
-                         <p className="text-lg text-muted-foreground mb-4">
-                            Together, we are dedicated to clearing our waters, one image at a time.
-                        </p>
                         <p className="text-xl font-semibold italic text-foreground/80">
                             "We will keep improving to serve you better. Quality of analysis, One Image at a Time."
                         </p>
