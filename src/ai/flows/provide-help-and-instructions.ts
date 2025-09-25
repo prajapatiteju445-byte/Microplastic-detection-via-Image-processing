@@ -9,7 +9,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const helpTextContent = `# 📝 Quick Guide:
+const helpTextContent = `# 📝 Quick Guide: Submit a Microplastic Report
 
 ## 1. Prepare Your Sample Image
 
@@ -29,13 +29,15 @@ const helpTextContent = `# 📝 Quick Guide:
     * **Water Body Type** (e.g., River, Tap).
     * **Scale Information** (Enter size if no scale bar is visible).
     * **Contamination Notes** (e.g., "Used glass beakers").
-* Click **"Analyze & Generate Report"**. (Wait 30-60 seconds for the model to process).
+* Click **"Analyze & Generate Report"**. (Wait 30-60 seconds for YOLOv8 to process).
 
 ## 3. Understand Your Report
 
-*   **Visual Analysis:** This section shows your image with colored dots (from YOLOv11) on detected particles. Key data includes the **Predicted Type** (like Fiber or Fragment) and the **Confidence Score**.
-*   **Quantitative Results:** This gives you a summary of the total findings, including the **Total MP Count**, **Concentration** (e.g., particles per liter), and the **Particle Size Range (μm)**.
-*   **Detailed Inventory:** Here you'll find a table listing every particle that was detected, along with its **Measured Size (μm)** and **Aspect Ratio** for shape analysis.
+| Section | What You See | Key Data |
+| :--- | :--- | :--- |
+| **Visual Analysis** | Your image with colored **YOLOv8 masks** on particles. | **Predicted Type** (Fiber, Fragment) and **Confidence Score**. |
+| **Quantitative Results** | Summary of total findings. | **Total MP Count**, **Concentration**, **Particle Size Range (μm)**. |
+| **Detailed Inventory** | A table of every detected particle. | **Measured Size (μm)** and **Aspect Ratio** (for shape analysis). |
 
 ## 4. Share Your Findings
 
