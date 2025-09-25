@@ -101,7 +101,7 @@ export default function AboutPage() {
                                         <div className="p-3 bg-primary/10 rounded-full mb-3">
                                             {faculty.icon}
                                         </div>
-                                        <CardTitle className="text-lg">{faculty.name}</CardTitle>
+                                        <CardTitle className="text-lg whitespace-nowrap">{faculty.name}</CardTitle>
                                         <CardDescription className="text-primary font-semibold">{faculty.role}</CardDescription>
                                     </CardHeader>
                                 </Card>
