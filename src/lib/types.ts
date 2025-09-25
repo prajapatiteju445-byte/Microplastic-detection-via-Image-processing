@@ -13,7 +13,7 @@ export type AnalysisResult = AnalyzeUploadedImageOutput;
 export type Analysis = {
   id: string;
   userId: string;
-  status: 'new' | 'processing' | 'complete' | 'error';
+  status: 'new' | 'processing' | 'analyzing' | 'complete' | 'error';
   imageDataUri: string;
   createdAt: Timestamp;
   completedAt?: Timestamp;

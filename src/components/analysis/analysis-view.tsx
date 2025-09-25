@@ -27,6 +27,8 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     const { data: analysis, isLoading, error } = useDoc<Analysis>(analysisDocRef);
 
     const isProcessing = isLoading || (analysis && (analysis.status === 'new' || analysis.status === 'processing'));
+    const isAnalyzing = analysis?.status === 'analyzing';
+    const isComplete = analysis?.status === 'complete';
 
     if (error) {
         return (
@@ -66,7 +68,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                 <div className="flex items-center gap-3 text-lg text-muted-foreground">
                     <Loader2 className="h-6 w-6 animate-spin text-primary" />
                     <p>
-                        {analysis?.status === 'new' ? 'Analysis is in the queue...' : 'Processing your sample... This may take a moment.'}
+                        {analysis?.status === 'new' ? 'Analysis is in the queue...' : 'Detecting particles...'}
                     </p>
                 </div>
                  <div className="relative w-full max-w-lg aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner bg-secondary/20 mt-4">
@@ -85,7 +87,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                      <VisualsPanel
                         image={analysis?.imageDataUri || null}
                         particles={analysis?.result?.particles || []}
-                        isLoading={isProcessing}
+                        isLoading={!isComplete && !isAnalyzing}
                         analysisResult={analysis?.result || null}
                     />
                 </div>
@@ -93,7 +95,8 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                     <ResultsPanel
                         analysisResult={analysis?.result || null}
                         particles={analysis?.result?.particles || []}
-                        isLoading={isProcessing}
+                        isLoading={!isComplete}
+                        isAnalyzing={isAnalyzing}
                     />
                 </div>
             </div>

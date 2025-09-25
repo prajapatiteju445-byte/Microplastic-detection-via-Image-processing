@@ -7,7 +7,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { detectParticles } from '@/services/roboflow';
 import { getFirestore, Timestamp } from 'firebase-admin/firestore';
@@ -129,17 +129,8 @@ export const analyzeImageWorker = ai.defineFlow(
 
       // 2. Get detections from Roboflow model
       const roboflowResult = await detectParticles(data.imageDataUri);
-
-      // 3. Get summary and analysis from Gemini
-      const { output: analysisResult } = await analysisPrompt({
-        predictions: roboflowResult.predictions,
-      });
       
-      if (!analysisResult) {
-        throw new Error('Failed to get analysis from the language model.');
-      }
-      
-      // 4. Normalize coordinates for client-side display
+      // 3. Normalize coordinates and immediately update Firestore for quick UI feedback
       const { width: imageWidth, height: imageHeight } = roboflowResult.image;
       const particlesForClient = roboflowResult.predictions.map(p => ({
         x: p.x / imageWidth,
@@ -148,13 +139,29 @@ export const analyzeImageWorker = ai.defineFlow(
         class: p.class,
       }));
 
+      await docRef.update({
+        status: 'analyzing',
+        'result.particles': particlesForClient,
+        'result.particleCount': roboflowResult.predictions.length,
+      });
+
+
+      // 4. Get summary and detailed analysis from Gemini
+      const { output: analysisResult } = await analysisPrompt({
+        predictions: roboflowResult.predictions,
+      });
+      
+      if (!analysisResult) {
+        throw new Error('Failed to get analysis from the language model.');
+      }
+      
       const finalResult: AnalyzeUploadedImageOutput = {
         ...analysisResult,
         particleCount: roboflowResult.predictions.length,
         particles: particlesForClient,
       };
 
-      // 5. Update document with the final result
+      // 5. Update document with the final, complete result
       await docRef.update({
         status: 'complete',
         result: finalResult,
