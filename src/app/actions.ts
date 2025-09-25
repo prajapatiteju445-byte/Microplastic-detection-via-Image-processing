@@ -2,9 +2,6 @@
 
 import { provideHelpAndInstructions } from '@/ai/flows/provide-help-and-instructions';
 
-// The analyzeImageAction is no longer needed as the analysis is now triggered by a Firestore event.
-// The client will write directly to Firestore to create an analysis job.
-
 export async function getHelpContentAction() {
   try {
     const result = await provideHelpAndInstructions();

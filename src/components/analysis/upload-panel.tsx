@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { useFirebase } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { collection, serverTimestamp } from 'firebase/firestore';
+import { analyzeUploadedImage } from '@/ai/flows/analyze-uploaded-image';
 
 type UploadPanelProps = {
     setAnalysisId: (id: string) => void;
@@ -65,34 +66,51 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
 
         setIsLoading(true);
 
-        const newAnalysis = {
-            userId: user.uid,
-            imageDataUri: image,
-            status: 'new',
-            createdAt: serverTimestamp(),
-        };
-
         try {
+            // First, create the document in Firestore to get an ID and show initial state
+            const initialAnalysisData = {
+                userId: user.uid,
+                imageDataUri: image,
+                status: 'processing' as const,
+                createdAt: serverTimestamp(),
+            };
             const analysesCollection = collection(firestore, 'analyses');
-            const docRef = await addDocumentNonBlocking(analysesCollection, newAnalysis);
+            const docRef = await addDocumentNonBlocking(analysesCollection, initialAnalysisData);
             
-            if (docRef) {
-                toast({
-                    title: 'Sample Submitted',
-                    description: 'Your image is now in the queue for analysis.',
-                });
-                setAnalysisId(docRef.id);
+            if (!docRef) {
+                throw new Error("Failed to create analysis document in Firestore.");
             }
+
+            // Show immediate feedback to the user
+            toast({
+                title: 'Sample Submitted',
+                description: 'Your image is now being analyzed.',
+            });
+            setAnalysisId(docRef.id); // Switch view immediately
+
+            // Now, call the server action to perform the heavy lifting
+            const analysisResult = await analyzeUploadedImage({ imageDataUri: image });
+
+            // Once analysis is complete, update the document with the full results
+            const finalAnalysisData = {
+                status: 'complete' as const,
+                result: analysisResult,
+                completedAt: serverTimestamp(),
+            };
+            // This is a non-blocking update
+            addDocumentNonBlocking(docRef, finalAnalysisData);
+
         } catch(e) {
             const error = e instanceof Error ? e.message : 'An unknown error occurred';
             toast({
-                title: 'Submission Failed',
-                description: `Could not create analysis job: ${error}`,
+                title: 'Analysis Failed',
+                description: `Could not complete analysis: ${error}`,
                 variant: 'destructive',
             });
+            // Reset the UI if the initial submission fails or analysis call fails
             setIsLoading(false);
+            // Optionally, you might want to update the doc to 'error' state here
         }
-        // Don't set isLoading to false here. The parent component will switch views.
     };
     
 
@@ -175,7 +193,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                     {isLoading ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            Submitting...
+                            Analyzing...
                         </>
                     ) : (
                         <>

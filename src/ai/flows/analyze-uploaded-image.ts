@@ -1,23 +1,24 @@
 'use server';
 
 /**
- * @fileOverview This flow is triggered by a new document in the 'analyses' collection.
- * It analyzes an image for microplastics, updates the Firestore document with the status
+ * @fileOverview This flow analyzes an image for microplastics, updates the Firestore document with the status
  * and results, and is designed to run as a scalable background worker.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { detectParticles } from '@/services/roboflow';
-import { getFirestore, Timestamp } from 'firebase-admin/firestore';
-import { initializeApp, getApps } from 'firebase-admin/app';
 
-// Ensure Firebase Admin SDK is initialized
-if (!getApps().length) {
-  initializeApp();
-}
-const db = getFirestore();
+// Define the input schema for the main analysis flow
+const AnalyzeUploadedImageInputSchema = z.object({
+  imageDataUri: z
+    .string()
+    .describe(
+      "A photo of a water sample, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+    ),
+});
+export type AnalyzeUploadedImageInput = z.infer<typeof AnalyzeUploadedImageInputSchema>;
+
 
 // Define the output schema for the analysis result, consistent with frontend types
 const AnalysisResultSchema = z.object({
@@ -99,92 +100,48 @@ Detections:
 });
 
 
-// This is the main flow, now refactored to be a background worker.
-export const analyzeImageWorker = ai.defineFlow(
+// This is the main flow, now refactored to be a callable server action.
+const analyzeUploadedImageFlow = ai.defineFlow(
   {
-    name: 'analyzeImageWorker',
-    inputSchema: z.string(), // Analysis Document ID
-    outputSchema: z.void(),
-    trigger: {
-      name: 'trigger-analysis',
-      type: 'firebase',
-      on: onDocumentCreated("analyses/{analysisId}"),
-    },
+    name: 'analyzeUploadedImageFlow',
+    inputSchema: AnalyzeUploadedImageInputSchema,
+    outputSchema: AnalysisResultSchema,
   },
-  async (analysisId) => {
-    const docRef = db.collection('analyses').doc(analysisId);
+  async (input) => {
+    // 1. Get detections from Roboflow model
+    const roboflowResult = await detectParticles(input.imageDataUri);
+    const { width: imageWidth, height: imageHeight } = roboflowResult.image;
 
-    try {
-      // 1. Update status to 'processing'
-      await docRef.update({ status: 'processing' });
+    // 2. Normalize coordinates for client-side rendering
+    const normalizedParticles = roboflowResult.predictions.map(p => ({
+      x: p.x / imageWidth,
+      y: p.y / imageHeight,
+      confidence: p.confidence,
+      class: p.class,
+    }));
 
-      const doc = await docRef.get();
-      if (!doc.exists) {
-        throw new Error(`Document ${analysisId} does not exist.`);
-      }
-      const data = doc.data();
-      if (!data || !data.imageDataUri) {
-        throw new Error(`Document ${analysisId} is missing imageDataUri.`);
-      }
-
-      // 2. Get detections from Roboflow model
-      const roboflowResult = await detectParticles(data.imageDataUri);
-      
-      // 3. Normalize coordinates and immediately update Firestore for quick UI feedback
-      const { width: imageWidth, height: imageHeight } = roboflowResult.image;
-      const particlesForClient = roboflowResult.predictions.map(p => ({
-        x: p.x / imageWidth,
-        y: p.y / imageHeight,
-        confidence: p.confidence,
-        class: p.class,
-      }));
-
-      await docRef.update({
-        status: 'analyzing',
-        'result.particles': particlesForClient,
-        'result.particleCount': roboflowResult.predictions.length,
-      });
-
-
-      // 4. Get summary and detailed analysis from Gemini
-      const { output: analysisResult } = await analysisPrompt({
-        predictions: roboflowResult.predictions,
-      });
-      
-      if (!analysisResult) {
-        throw new Error('Failed to get analysis from the language model.');
-      }
-      
-      const finalResult: AnalyzeUploadedImageOutput = {
-        ...analysisResult,
-        particleCount: roboflowResult.predictions.length,
-        particles: particlesForClient,
-      };
-
-      // 5. Update document with the final, complete result
-      await docRef.update({
-        status: 'complete',
-        result: finalResult,
-        completedAt: Timestamp.now(),
-      });
-
-    } catch (error) {
-      console.error(`Analysis failed for ${analysisId}:`, error);
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
-      // Update document with error status
-      await docRef.update({
-        status: 'error',
-        error: errorMessage,
-        completedAt: Timestamp.now(),
-      });
+    // 3. Get summary and detailed analysis from Gemini
+    const { output: analysisResult } = await analysisPrompt({
+      predictions: roboflowResult.predictions,
+    });
+    
+    if (!analysisResult) {
+      throw new Error('Failed to get analysis from the language model.');
     }
+    
+    // 4. Combine all results into the final output
+    const finalResult: AnalyzeUploadedImageOutput = {
+      ...analysisResult,
+      particleCount: roboflowResult.predictions.length,
+      particles: normalizedParticles,
+    };
+    
+    return finalResult;
   }
 );
 
-// We need an empty exported function to satisfy the previous app structure
-// and prevent breaking changes where `analyzeUploadedImage` was previously imported.
-// It doesn't need to do anything.
-export async function analyzeUploadedImage(input: any): Promise<any> {
-  console.warn("analyzeUploadedImage is a deprecated function and should not be called directly.");
-  return {};
+
+// Exported wrapper function to be called from the frontend.
+export async function analyzeUploadedImage(input: AnalyzeUploadedImageInput): Promise<AnalyzeUploadedImageOutput> {
+  return await analyzeUploadedImageFlow(input);
 }
