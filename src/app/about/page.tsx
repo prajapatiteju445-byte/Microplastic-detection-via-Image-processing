@@ -35,7 +35,7 @@ const facultyMembers = [
     },
     {
         name: 'Prof. Swapnil M. Kondawar',
-        role: 'Project Coordinator',
+        role: 'Project Co-Ordinator',
         icon: <Users className="h-8 w-8 text-primary" />,
     },
     {
@@ -89,7 +89,7 @@ export default function AboutPage() {
 
                     <section className="mb-12">
                         <h2 className="text-3xl font-bold text-center mb-8 text-foreground">
-                            Our Faculty
+                            Meet Our Faculty
                         </h2>
                         <p className="text-center text-muted-foreground mb-8">
                             This project is undertaken under the esteemed supervision and guidance of the following faculty members. Their leadership and expertise are instrumental in steering the project towards its objectives.
