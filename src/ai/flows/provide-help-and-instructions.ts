@@ -22,27 +22,42 @@ export async function provideHelpAndInstructions(): Promise<ProvideHelpAndInstru
 const prompt = ai.definePrompt({
   name: 'provideHelpAndInstructionsPrompt',
   output: {schema: ProvideHelpAndInstructionsOutputSchema},
-  prompt: `You are an AI assistant providing help and instructions for a microplastic detection application called AquaLens.
+  prompt: `# 📝 Quick Guide:
 
-  Your response should be formatted in Markdown and include the following sections:
+## 1. Prepare Your Sample Image
 
-  ### How to Use AquaLens
-  Provide a clear, step-by-step guide for users:
-  1.  **Upload Image:** Explain how to upload an image of a water sample using the drag-and-drop feature or the file selector.
-  2.  **Analyze Sample:** Describe what happens when the user clicks the "Analyze Sample" button.
-  3.  **View Results:** Detail how the analysis results are displayed, including the image with highlighted particles, the particle count, and the concentration estimate.
+* **Filter** your water sample onto a clean filter or slide.
+* **Photograph** the filter using a microscope or high-magnification lens.
+* **MUST be in focus** and well-lit.
+* **Crucial:** Include a **scale bar** (ruler/micrometer) in the image, or know the exact field-of-view size.
+* Save as **JPEG** or **PNG**.
 
-  ### How It Works
-  Explain the technology behind the application:
-  -   Mention that the system uses advanced AI and computer vision (specifically a YOLO model) to analyze the images.
-  -   Describe that the AI is trained to identify and highlight microplastic particles from the background.
-  -   Explain that the results provide a quantitative estimate of contamination.
+## 2. Submit & Analyze
 
-  ### Exporting Data
-  -   Explain that users can download the raw detection data (particle coordinates and confidence scores) as a CSV file by clicking the "Export Results (CSV)" button.
-  -   Briefly mention what the CSV file can be used for (e.g., further analysis, record-keeping).
+* Go to **"Submit a Sample"**.
+* **Upload** your prepared image file.
+* Fill in required details:
+    * **Location** (GPS/Address).
+    * **Date & Time** collected.
+    * **Water Body Type** (e.g., River, Tap).
+    * **Scale Information** (Enter size if no scale bar is visible).
+    * **Contamination Notes** (e.g., "Used glass beakers").
+* Click **"Analyze & Generate Report"**. (Wait 30-60 seconds for YOLOv8 to process).
 
-  Your tone should be informative and easy to understand for users with varying levels of technical expertise.
+## 3. Understand Your Report
+
+| Section | What You See | Key Data |
+| :--- | :--- | :--- |
+| **Visual Analysis** | Your image with colored **YOLOv11 masks** on particles. | **Predicted Type** (Fiber, Fragment) and **Confidence Score**. |
+| **Quantitative Results** | Summary of total findings. | **Total MP Count**, **Concentration**, **Particle Size Range (μm)**. |
+| **Detailed Inventory** | A table of every detected particle. | **Measured Size (μm)** and **Aspect Ratio** (for shape analysis). |
+
+## 4. Share Your Findings
+
+* Click **"Download Data (CSV)"** for raw results.
+
+---
+**Important Note:** This model is currently in an improvement stage. As a result, there might be variations in the detection of microplastic sizes. Your feedback is valuable as we continue to refine its accuracy.
   `,
 });
 
