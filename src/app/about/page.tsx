@@ -110,7 +110,7 @@ export default function AboutPage() {
                     </section>
 
                     <section className="text-center mt-12">
-                        <p className="text-xl font-semibold italic text-foreground/80">"Continuously Improving Analysis, For Better Results."</p>
+                        <p className="text-xl font-semibold italic text-foreground/80">"Continuously Improving Analysis, For Better Precision"</p>
                     </section>
                 </div>
             </main>
