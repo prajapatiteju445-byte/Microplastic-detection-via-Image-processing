@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,13 +15,13 @@ type VisualsPanelProps = {
     analysisResult: AnalyzeUploadedImageOutput | null;
 };
 
-const getParticleColor = (confidence: number) => {
-    if (confidence > 0.9) return 'rgba(59, 130, 246, 0.9)'; // High confidence - blue
-    if (confidence > 0.75) return 'rgba(34, 197, 94, 0.8)'; // Medium - green
-    return 'rgba(234, 179, 8, 0.7)'; // Low - yellow
-};
-
 export default function VisualsPanel({ image, particles, isLoading, analysisResult }: VisualsPanelProps) {
+    const getParticleColor = useCallback((confidence: number) => {
+        if (confidence > 0.9) return 'rgba(59, 130, 246, 0.9)'; // High confidence - blue
+        if (confidence > 0.75) return 'rgba(34, 197, 94, 0.8)'; // Medium - green
+        return 'rgba(234, 179, 8, 0.7)'; // Low - yellow
+    }, []);
+
     if (isLoading) {
         return (
             <Card className="shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">

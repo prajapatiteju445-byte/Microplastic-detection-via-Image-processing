@@ -1,7 +1,7 @@
 import Header from '@/components/layout/header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Rocket, Cpu, FileText } from 'lucide-react';
+import { User, Rocket, Cpu, Award, Users, BookOpen } from 'lucide-react';
 
 const teamMembers = [
     {
@@ -24,6 +24,24 @@ const teamMembers = [
         initials: 'D',
         description: 'Working alongside Atharva, Deep is crucial to the practical application of our research. He focuses on implementing, testing, and refining the technology, ensuring our models are robust and effective in real-world scenarios.',
         icon: <Cpu className="h-8 w-8 text-primary" />,
+    },
+];
+
+const facultyMembers = [
+    {
+        name: 'Dr. Rajesh K. Behra',
+        role: 'Project Head',
+        icon: <Award className="h-8 w-8 text-primary" />,
+    },
+    {
+        name: 'Prof. Swapnil M. Kondawar',
+        role: 'Project Coordinator',
+        icon: <Users className="h-8 w-8 text-primary" />,
+    },
+    {
+        name: 'Prof. Nikhil Khatekar',
+        role: 'Project Guide',
+        icon: <BookOpen className="h-8 w-8 text-primary" />,
     },
 ];
 
@@ -69,7 +87,32 @@ export default function AboutPage() {
                         </div>
                     </section>
 
+                    <section className="mb-12">
+                        <h2 className="text-3xl font-bold text-center mb-8 text-foreground">
+                            Our Faculty
+                        </h2>
+                        <p className="text-center text-muted-foreground mb-8">
+                            This project is undertaken under the esteemed supervision and guidance of the following faculty members. Their leadership and expertise are instrumental in steering the project towards its objectives.
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {facultyMembers.map((faculty) => (
+                                <Card key={faculty.name} className="flex flex-col text-center items-center shadow-lg bg-card/80 backdrop-blur-sm border-border/20 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-1">
+                                    <CardHeader className="items-center">
+                                        <div className="p-3 bg-primary/10 rounded-full mb-3">
+                                            {faculty.icon}
+                                        </div>
+                                        <CardTitle className="text-lg">{faculty.name}</CardTitle>
+                                        <CardDescription className="text-primary font-semibold">{faculty.role}</CardDescription>
+                                    </CardHeader>
+                                </Card>
+                            ))}
+                        </div>
+                    </section>
+
                     <section className="text-center mt-12">
+                         <p className="text-lg text-muted-foreground mb-4">
+                            Together, we are driven by the goal of contributing a practical solution to safeguard our water resources and protect ecosystems for future generations.
+                        </p>
                         <p className="text-xl font-semibold italic text-foreground/80">
                             "Together, we are dedicated to clearing our waters, one image at a time."
                         </p>
