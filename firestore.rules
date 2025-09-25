@@ -1,103 +1,27 @@
-/**
- * @file Firestore Security Rules
- * @description This ruleset enforces a strict user-ownership model for the AquaLens application.
- *
- * Data Structure:
- * All data is nested under /users/{userId}, ensuring clear ownership and simplifying security rules.
- * - /users/{userId}: Stores user profiles. Only the authenticated user can read/write their own profile.
- * - /users/{userId}/waterSamples/{waterSampleId}: Stores water samples uploaded by a specific user. Only the owning user can manage their water samples.
- * - /users/{userId}/waterSamples/{waterSampleId}/analysisResults/{analysisResultId}: Stores analysis results for a specific water sample. Access is restricted to the owner of the parent water sample.
- *
- * Key Security Decisions:
- * - Users can only access their own data.
- * - Listing other users is disallowed.
- * - The rules leverage path-based authorization to avoid costly `get()` calls.
- * - The data structure is segregated to maintain a homogenous security posture and ensure clarity of intent.
- */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
     /**
-     * @description Controls access to user profile documents.
-     * @path /users/{userId}
-     * @allow (create) User with ID 'user123' can create their own profile.
-     *   - auth.uid: 'user123'
-     *   - request.resource.data.id: 'user123'
-     * @allow (get) User with ID 'user123' can read their own profile.
-     *   - auth.uid: 'user123'
-     * @deny (create) User with ID 'user456' cannot create a profile for 'user123'.
-     *   - auth.uid: 'user456'
-     *   - request.resource.data.id: 'user123'
-     * @deny (get) User with ID 'user456' cannot read profile of 'user123'.
-     *   - auth.uid: 'user456'
-     * @principle Enforces document ownership for all operations on user profiles.
+     * @description This ruleset enforces a user-ownership model for image analyses. Users can create analysis requests,
+     * but only the system or potentially privileged cloud functions are intended to update or delete them.
+     * @data Structure: All analysis documents are stored in the top-level /analyses collection.
+     * @key Security Decisions: Users can only create analyses for themselves. Updates and deletes are explicitly denied to clients.
+     * @denormalization for Authorization: The `userId` field within the `Analysis` document is used to verify ownership.
      */
-    match /users/{userId} {
-      // Helper function to check if the authenticated user is the owner
-      function isOwner(userId) {
-        return request.auth != null && request.auth.uid == userId;
-      }
+    match /analyses/{analysisId} {
+      // Allow anyone to read the analysis
+      allow get, list: if true;
 
-      allow get: if isOwner(userId);
-      allow list: if false;
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      // Allow users to create an analysis if the userId matches their auth UID.
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+
+      // Explicitly deny update and delete operations.
+      allow update, delete: if false;
     }
+  }
 
-    /**
-     * @description Controls access to water sample documents for a specific user.
-     * @path /users/{userId}/waterSamples/{waterSampleId}
-     * @allow (create) User with ID 'user123' can create a water sample under their profile.
-     *   - auth.uid: 'user123'
-     *   - request.resource.data.userId: 'user123'
-     * @allow (get) User with ID 'user123' can read a water sample under their profile.
-     *   - auth.uid: 'user123'
-     * @deny (create) User with ID 'user456' cannot create a water sample for user 'user123'.
-     *   - auth.uid: 'user456'
-     *   - request.resource.data.userId: 'user123'
-     * @deny (get) User with ID 'user456' cannot read a water sample of user 'user123'.
-     *   - auth.uid: 'user456'
-     * @principle Enforces user-based ownership for water sample documents.
-     */
-    match /users/{userId}/waterSamples/{waterSampleId} {
-      // Helper function to check if the authenticated user is the owner and if the document exists
-      function isOwner(userId) {
-        return request.auth != null && request.auth.uid == userId;
-      }
-
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
-    }
-
-    /**
-     * @description Controls access to analysis result documents for a specific water sample.
-     * @path /users/{userId}/waterSamples/{waterSampleId}/analysisResults/{analysisResultId}
-     * @allow (create) User with ID 'user123' can create an analysis result for their water sample.
-     *   - auth.uid: 'user123'
-     * @allow (get) User with ID 'user123' can read an analysis result for their water sample.
-     *   - auth.uid: 'user123'
-     * @deny (create) User with ID 'user456' cannot create an analysis result for user 'user123'.
-     *   - auth.uid: 'user456'
-     * @deny (get) User with ID 'user456' cannot read an analysis result of user 'user123'.
-     *   - auth.uid: 'user456'
-     * @principle Enforces user-based ownership for analysis result documents.
-     */
-    match /users/{userId}/waterSamples/{waterSampleId}/analysisResults/{analysisResultId} {
-      // Helper function to check if the authenticated user is the owner and if the document exists
-      function isOwner(userId) {
-        return request.auth != null && request.auth.uid == userId;
-      }
-
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
-    }
+  // Helper function to determine if a user is signed in.
+  function isSignedIn() {
+    return request.auth != null;
   }
 }
