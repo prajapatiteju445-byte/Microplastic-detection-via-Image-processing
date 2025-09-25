@@ -1,27 +1,26 @@
 'use server';
 
 /**
- * @fileOverview Analyzes an uploaded image to detect and identify microplastics using a YOLO model.
- *
- * - analyzeUploadedImage - A function that handles the image analysis process.
- * - AnalyzeUploadedImageInput - The input type for the analyzeUploadedImage function.
- * - AnalyzeUploadedImageOutput - The return type for the analyzeUploadedImage function.
+ * @fileOverview This flow is triggered by a new document in the 'analyses' collection.
+ * It analyzes an image for microplastics, updates the Firestore document with the status
+ * and results, and is designed to run as a scalable background worker.
  */
 
-import {ai} from '@/ai/genkit';
-import { detectParticles, RoboflowPrediction } from '@/services/roboflow';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
+import { onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { detectParticles } from '@/services/roboflow';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
+import { initializeApp, getApps } from 'firebase-admin/app';
 
-const AnalyzeUploadedImageInputSchema = z.object({
-  photoDataUri: z
-    .string()
-    .describe(
-      "A photo of a water sample, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
-    ),
-});
-export type AnalyzeUploadedImageInput = z.infer<typeof AnalyzeUploadedImageInputSchema>;
+// Ensure Firebase Admin SDK is initialized
+if (!getApps().length) {
+  initializeApp();
+}
+const db = getFirestore();
 
-const AnalyzeUploadedImageOutputSchema = z.object({
+// Define the output schema for the analysis result, consistent with frontend types
+const AnalysisResultSchema = z.object({
   analysisSummary: z.string().describe('A summary of the analysis, including highlighted microplastic particles, particle counts, and concentration estimates.'),
   particleTypes: z.array(z.object({
     type: z.string().describe('The shape of microplastic particle detected (e.g., Fragment, Fiber, Film, Pellet, Foam).'),
@@ -42,14 +41,12 @@ const AnalyzeUploadedImageOutputSchema = z.object({
     class: z.string(),
   })).describe('A list of detected particle objects with their normalized coordinates and confidence levels.'),
 });
-export type AnalyzeUploadedImageOutput = z.infer<typeof AnalyzeUploadedImageOutputSchema>;
+export type AnalyzeUploadedImageOutput = z.infer<typeof AnalysisResultSchema>;
 
-export async function analyzeUploadedImage(input: AnalyzeUploadedImageInput): Promise<AnalyzeUploadedImageOutput> {
-  return analyzeUploadedImageFlow(input);
-}
 
+// This Genkit prompt performs the core AI analysis.
 const analysisPrompt = ai.definePrompt({
-  name: 'roboflowAnalysisPrompt',
+  name: 'microplasticAnalysisPrompt',
   input: {
     schema: z.object({
       predictions: z.array(
@@ -65,8 +62,8 @@ const analysisPrompt = ai.definePrompt({
       ),
     }),
   },
-  output: { schema: AnalyzeUploadedImageOutputSchema },
-  prompt: `You are an expert in environmental science and machine learning, specializing in microplastic pollution analysis. You have been provided with a set of microplastic detections from a water sample image, identified by a Roboflow YOLOv5 model.
+  output: { schema: AnalysisResultSchema },
+  prompt: `You are an expert in environmental science and machine learning, specializing in microplastic pollution analysis. You have been provided with a set of microplastic detections from a water sample image, identified by a Roboflow YOLO model.
 
 Your task is to interpret these raw detection results and generate a comprehensive analysis.
 
@@ -102,38 +99,85 @@ Detections:
 });
 
 
-const analyzeUploadedImageFlow = ai.defineFlow(
+// This is the main flow, now refactored to be a background worker.
+export const analyzeImageWorker = ai.defineFlow(
   {
-    name: 'analyzeUploadedImageFlow',
-    inputSchema: AnalyzeUploadedImageInputSchema,
-    outputSchema: AnalyzeUploadedImageOutputSchema,
+    name: 'analyzeImageWorker',
+    inputSchema: z.string(), // Analysis Document ID
+    outputSchema: z.void(),
+    trigger: {
+      name: 'trigger-analysis',
+      type: 'firebase',
+      on: onDocumentCreated("analyses/{analysisId}"),
+    },
   },
-  async (input) => {
-    // 1. Get detections from Roboflow model
-    const roboflowResult = await detectParticles(input.photoDataUri);
+  async (analysisId) => {
+    const docRef = db.collection('analyses').doc(analysisId);
 
-    // 2. Get summary and analysis from Gemini
-    const { output } = await analysisPrompt({
-      predictions: roboflowResult.predictions,
-    });
-    
-    if (!output) {
-      throw new Error('Failed to get analysis from the language model.');
+    try {
+      // 1. Update status to 'processing'
+      await docRef.update({ status: 'processing' });
+
+      const doc = await docRef.get();
+      if (!doc.exists) {
+        throw new Error(`Document ${analysisId} does not exist.`);
+      }
+      const data = doc.data();
+      if (!data || !data.imageDataUri) {
+        throw new Error(`Document ${analysisId} is missing imageDataUri.`);
+      }
+
+      // 2. Get detections from Roboflow model
+      const roboflowResult = await detectParticles(data.imageDataUri);
+
+      // 3. Get summary and analysis from Gemini
+      const { output: analysisResult } = await analysisPrompt({
+        predictions: roboflowResult.predictions,
+      });
+      
+      if (!analysisResult) {
+        throw new Error('Failed to get analysis from the language model.');
+      }
+      
+      // 4. Normalize coordinates for client-side display
+      const { width: imageWidth, height: imageHeight } = roboflowResult.image;
+      const particlesForClient = roboflowResult.predictions.map(p => ({
+        x: p.x / imageWidth,
+        y: p.y / imageHeight,
+        confidence: p.confidence,
+        class: p.class,
+      }));
+
+      const finalResult: AnalyzeUploadedImageOutput = {
+        ...analysisResult,
+        particleCount: roboflowResult.predictions.length,
+        particles: particlesForClient,
+      };
+
+      // 5. Update document with the final result
+      await docRef.update({
+        status: 'complete',
+        result: finalResult,
+        completedAt: Timestamp.now(),
+      });
+
+    } catch (error) {
+      console.error(`Analysis failed for ${analysisId}:`, error);
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
+      // Update document with error status
+      await docRef.update({
+        status: 'error',
+        error: errorMessage,
+        completedAt: Timestamp.now(),
+      });
     }
-    
-    // 3. Combine results and normalize coordinates for client
-    const { width: imageWidth, height: imageHeight } = roboflowResult.image;
-    const particlesForClient = roboflowResult.predictions.map(p => ({
-      x: p.x / imageWidth,
-      y: p.y / imageHeight,
-      confidence: p.confidence,
-      class: p.class,
-    }));
-
-    return {
-      ...output,
-      particleCount: roboflowResult.predictions.length,
-      particles: particlesForClient,
-    };
   }
 );
+
+// We need an empty exported function to satisfy the previous app structure
+// and prevent breaking changes where `analyzeUploadedImage` was previously imported.
+// It doesn't need to do anything.
+export async function analyzeUploadedImage(input: any): Promise<any> {
+  console.warn("analyzeUploadedImage is a deprecated function and should not be called directly.");
+  return {};
+}

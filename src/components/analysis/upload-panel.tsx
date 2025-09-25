@@ -6,35 +6,31 @@ import { UploadCloud, X, Loader2, Microscope, FileUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { analyzeImageAction } from '@/app/actions';
-import type { Particle } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import type { AnalyzeUploadedImageOutput } from '@/ai/flows/analyze-uploaded-image';
+import { useFirebase } from '@/firebase';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection, serverTimestamp } from 'firebase/firestore';
 
 type UploadPanelProps = {
-    setImage: (image: string | null) => void;
-    setAnalysisResult: (result: AnalyzeUploadedImageOutput | null) => void;
-    setParticles: (particles: Particle[]) => void;
-    setIsLoading: (loading: boolean) => void;
-    setError: (error: string | null) => void;
-    isLoading: boolean;
-    image: string | null;
-    resetState: () => void;
+    setAnalysisId: (id: string) => void;
 };
 
-export default function UploadPanel({
-    setImage,
-    setAnalysisResult,
-    setParticles,
-    setIsLoading,
-    setError,
-    isLoading,
-    image,
-    resetState,
-}: UploadPanelProps) {
+export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     const { toast } = useToast();
+    const { firestore, user } = useFirebase();
+
+    const [image, setImage] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const resetState = useCallback(() => {
+        setImage(null);
+        setIsLoading(false);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    }, []);
 
     const handleFile = useCallback((file: File) => {
         if (!file) return;
@@ -54,7 +50,51 @@ export default function UploadPanel({
             setImage(e.target?.result as string);
         };
         reader.readAsDataURL(file);
-    }, [setImage, toast, resetState]);
+    }, [resetState, toast]);
+
+
+    const handleAnalyze = async () => {
+        if (!image || !firestore || !user) {
+            toast({
+                title: 'Error',
+                description: 'Could not submit analysis. Firebase not ready or user not authenticated.',
+                variant: 'destructive',
+            });
+            return;
+        };
+
+        setIsLoading(true);
+
+        const newAnalysis = {
+            userId: user.uid,
+            imageDataUri: image,
+            status: 'new',
+            createdAt: serverTimestamp(),
+        };
+
+        try {
+            const analysesCollection = collection(firestore, 'analyses');
+            const docRef = await addDocumentNonBlocking(analysesCollection, newAnalysis);
+            
+            if (docRef) {
+                toast({
+                    title: 'Sample Submitted',
+                    description: 'Your image is now in the queue for analysis.',
+                });
+                setAnalysisId(docRef.id);
+            }
+        } catch(e) {
+            const error = e instanceof Error ? e.message : 'An unknown error occurred';
+            toast({
+                title: 'Submission Failed',
+                description: `Could not create analysis job: ${error}`,
+                variant: 'destructive',
+            });
+            setIsLoading(false);
+        }
+        // Don't set isLoading to false here. The parent component will switch views.
+    };
+    
 
     const onDrop = useCallback((event: DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -71,44 +111,6 @@ export default function UploadPanel({
 
     const onDragLeave = () => {
         setIsDragging(false);
-    };
-    
-    const handleRemoveImage = () => {
-        resetState();
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    }
-
-    const handleAnalyze = async () => {
-        if (!image) return;
-
-        setIsLoading(true);
-        setError(null);
-        setAnalysisResult(null);
-        setParticles([]);
-
-        const result = await analyzeImageAction(image);
-
-        if (result.success && result.data) {
-            setAnalysisResult(result.data);
-            setParticles(result.data.particles);
-
-            toast({
-                title: 'Analysis Complete',
-                description: `${result.data.particleCount} particles detected.`,
-            });
-        } else {
-            setError(result.error || 'An unknown error occurred.');
-            toast({
-                title: 'Analysis Failed',
-                description: result.error || 'Please try again.',
-                variant: 'destructive',
-            });
-            setAnalysisResult(null);
-            setParticles([]);
-        }
-        setIsLoading(false);
     };
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,7 +136,7 @@ export default function UploadPanel({
                             variant="destructive"
                             size="icon"
                             className="absolute top-2 right-2 z-10 rounded-full h-8 w-8 opacity-70 hover:opacity-100 transition-opacity"
-                            onClick={handleRemoveImage}
+                            onClick={resetState}
                             disabled={isLoading}
                         >
                             <X className="h-4 w-4" />
@@ -173,7 +175,7 @@ export default function UploadPanel({
                     {isLoading ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            Analyzing...
+                            Submitting...
                         </>
                     ) : (
                         <>

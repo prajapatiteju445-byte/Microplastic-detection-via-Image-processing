@@ -9,20 +9,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const ProvideHelpAndInstructionsOutputSchema = z.object({
-  helpText: z.string().describe('Help and instructions regarding microplastic detection, image processing, and data export options.'),
-});
-
-export type ProvideHelpAndInstructionsOutput = z.infer<typeof ProvideHelpAndInstructionsOutputSchema>;
-
-export async function provideHelpAndInstructions(): Promise<ProvideHelpAndInstructionsOutput> {
-  return provideHelpAndInstructionsFlow();
-}
-
-const prompt = ai.definePrompt({
-  name: 'provideHelpAndinstructionsPrompt',
-  output: {schema: ProvideHelpAndInstructionsOutputSchema},
-  prompt: `# 📝 Quick Guide:
+const helpTextContent = `# 📝 Quick Guide:
 
 ## 1. Prepare Your Sample Image
 
@@ -56,13 +43,21 @@ const prompt = ai.definePrompt({
 
 ---
 **Important Note:** This model is currently in an improvement stage. As a result, there might be variations in the detection of microplastic sizes. Your feedback is valuable as we continue to refine its accuracy.
-  `,
+`;
+
+const ProvideHelpAndInstructionsOutputSchema = z.object({
+  helpText: z.string().describe('Help and instructions regarding microplastic detection, image processing, and data export options.'),
 });
+
+export type ProvideHelpAndInstructionsOutput = z.infer<typeof ProvideHelpAndInstructionsOutputSchema>;
+
+export async function provideHelpAndInstructions(): Promise<ProvideHelpAndInstructionsOutput> {
+  return provideHelpAndInstructionsFlow();
+}
 
 const provideHelpAndInstructionsFlow = ai.defineFlow({
   name: 'provideHelpAndInstructionsFlow',
   outputSchema: ProvideHelpAndInstructionsOutputSchema,
 }, async () => {
-  const {output} = await prompt({});
-  return output!;
+  return { helpText: helpTextContent };
 });
