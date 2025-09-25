@@ -65,40 +65,43 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
         };
 
         setIsLoading(true);
+        toast({
+            title: 'Sample Submitted',
+            description: 'Your image is now being analyzed. This may take a moment.',
+        });
 
         try {
-            // First, create the document in Firestore to get an ID and show initial state
-            const initialAnalysisData = {
-                userId: user.uid,
-                imageDataUri: image,
-                status: 'processing' as const,
-                createdAt: serverTimestamp(),
-            };
-            const analysesCollection = collection(firestore, 'analyses');
-            const docRef = await addDocumentNonBlocking(analysesCollection, initialAnalysisData);
-            
-            if (!docRef) {
-                throw new Error("Failed to create analysis document in Firestore.");
-            }
-
-            // Show immediate feedback to the user
-            toast({
-                title: 'Sample Submitted',
-                description: 'Your image is now being analyzed.',
-            });
-            setAnalysisId(docRef.id); // Switch view immediately
-
-            // Now, call the server action to perform the heavy lifting
+            // 1. Call the server action to perform the heavy lifting first
             const analysisResult = await analyzeUploadedImage({ imageDataUri: image });
 
-            // Once analysis is complete, update the document with the full results
+            // 2. Once analysis is complete, create the document with the full results
             const finalAnalysisData = {
+                userId: user.uid,
+                imageDataUri: image,
                 status: 'complete' as const,
                 result: analysisResult,
+                createdAt: serverTimestamp(),
                 completedAt: serverTimestamp(),
             };
-            // This is a non-blocking update
-            addDocumentNonBlocking(docRef, finalAnalysisData);
+            
+            const analysesCollection = collection(firestore, 'analyses');
+            const docRefPromise = addDocumentNonBlocking(analysesCollection, finalAnalysisData);
+            
+            docRefPromise.then(docRef => {
+                if (docRef) {
+                    setAnalysisId(docRef.id);
+                } else {
+                     throw new Error("Failed to create analysis document in Firestore.");
+                }
+            }).catch(e => {
+                 const error = e instanceof Error ? e.message : 'An unknown error occurred during Firestore write.';
+                 toast({
+                    title: 'Analysis Failed',
+                    description: `Could not save analysis results: ${error}`,
+                    variant: 'destructive',
+                });
+                setIsLoading(false);
+            })
 
         } catch(e) {
             const error = e instanceof Error ? e.message : 'An unknown error occurred';
@@ -107,9 +110,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                 description: `Could not complete analysis: ${error}`,
                 variant: 'destructive',
             });
-            // Reset the UI if the initial submission fails or analysis call fails
             setIsLoading(false);
-            // Optionally, you might want to update the doc to 'error' state here
         }
     };
     
