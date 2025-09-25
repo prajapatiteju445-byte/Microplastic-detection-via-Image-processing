@@ -9,7 +9,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const helpTextContent = `# 📝 Quick Guide: Submit a Microplastic Report
+const helpTextContent = `# 📝 Quick Guide:
 
 ## 1. Prepare Your Sample Image
 
