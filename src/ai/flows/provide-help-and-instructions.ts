@@ -33,11 +33,15 @@ const helpTextContent = `# 📝 Quick Guide:
 
 ## 3. Understand Your Report
 
-| Section | What You See | Key Data |
-| :--- | :--- | :--- |
-| **Visual Analysis** | Your image with colored **YOLOv8 masks** on particles. | **Predicted Type** (Fiber, Fragment) and **Confidence Score**. |
-| **Quantitative Results** | Summary of total findings. | **Total MP Count**, **Concentration**, **Particle Size Range (μm)**. |
-| **Detailed Inventory** | A table of every detected particle. | **Measured Size (μm)** and **Aspect Ratio** (for shape analysis). |
+*   **Visual Analysis**: 
+    *   **What You See**: Your image with colored **YOLOv11 masks** on particles.
+    *   **Key Data**: **Predicted Type** (Fiber, Fragment) and **Confidence Score**.
+*   **Quantitative Results**: 
+    *   **What You See**: Summary of total findings.
+    *   **Key Data**: **Total MP Count**, **Concentration**, **Particle Size Range (μm)**.
+*   **Detailed Inventory**: 
+    *   **What You See**: A table of every detected particle.
+    *   **Key Data**: **Measured Size (μm)** and **Aspect Ratio** (for shape analysis).
 
 ## 4. Share Your Findings
 
