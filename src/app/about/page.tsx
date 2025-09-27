@@ -2,26 +2,30 @@ import Header from '@/components/layout/header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Rocket, Cpu, Award, Users, BookOpen } from 'lucide-react';
+import Image from 'next/image';
 
 const teamMembers = [
     {
         name: 'Tejas',
         role: 'Team Leader | Technical Lead & Documentation',
-        initials: 'T',
+        image: 'https://picsum.photos/seed/tejas/200/200',
+        imageHint: 'leader portrait',
         description: 'As our Team Leader, Tejas provides the vision and direction for the project. He also serves as the Technical Lead, architecting the core image processing technology and meticulously handling all project documentation to ensure our work is clear and reproducible.',
         icon: <User className="h-8 w-8 text-primary" />,
     },
     {
         name: 'Atharva',
         role: 'Research & Development (R&D)',
-        initials: 'A',
+        image: 'https://picsum.photos/seed/atharva/200/200',
+        imageHint: 'researcher portrait',
         description: 'Atharva is at the forefront of our innovation. He leads our research efforts, exploring cutting-edge methodologies and scientific principles to continuously improve the accuracy and efficiency of our detection algorithms.',
         icon: <Rocket className="h-8 w-8 text-primary" />,
     },
     {
         name: 'Deep',
         role: 'Research & Development (R&D)',
-        initials: 'D',
+        image: 'https://picsum.photos/seed/deep/200/200',
+        imageHint: 'developer portrait',
         description: 'Working alongside Atharva, Deep is crucial to the practical application of our research. He focuses on implementing, testing, and refining the technology, ensuring our models are robust and effective in real-world scenarios.',
         icon: <Cpu className="h-8 w-8 text-primary" />,
     },
@@ -71,10 +75,15 @@ export default function AboutPage() {
                             {teamMembers.map((member) => (
                                 <Card key={member.name} className="flex flex-col text-center items-center shadow-lg bg-card/80 backdrop-blur-sm border-border/20 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-1">
                                     <CardHeader className="items-center">
-                                         <Avatar className="h-20 w-20 mb-4 border-4 border-primary/20">
-                                            <AvatarFallback className="text-3xl bg-primary/10 text-primary font-bold">
-                                                {member.initials}
-                                            </AvatarFallback>
+                                         <Avatar className="h-24 w-24 mb-4 border-4 border-primary/20">
+                                            <Image
+                                                src={member.image}
+                                                alt={`Portrait of ${member.name}`}
+                                                width={200}
+                                                height={200}
+                                                className="object-cover"
+                                                data-ai-hint={member.imageHint}
+                                            />
                                         </Avatar>
                                         <CardTitle className="text-xl">{member.name}</CardTitle>
                                         <CardDescription className="text-primary font-semibold">{member.role}</CardDescription>

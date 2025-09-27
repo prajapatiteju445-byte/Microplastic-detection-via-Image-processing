@@ -17,8 +17,8 @@ type ResultsPanelProps = {
 };
 
 const exportToCSV = (particles: Particle[]) => {
-    const headers = 'x_coordinate,y_coordinate,confidence';
-    const rows = particles.map(p => `${p.x.toFixed(4)},${p.y.toFixed(4)},${p.confidence.toFixed(4)}`);
+    const headers = 'x_coordinate,y_coordinate,confidence,class';
+    const rows = particles.map(p => `${p.x.toFixed(4)},${p.y.toFixed(4)},${p.confidence.toFixed(4)},${p.class}`);
     const csvContent = `data:text/csv;charset=utf-8,${headers}\n${rows.join('\n')}`;
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
@@ -84,7 +84,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                             </div>
                             <div className="p-4 bg-background/50 rounded-lg border">
                                 <Layers className="mx-auto h-7 w-7 text-yellow-500 mb-2" />
-                                {isAnalyzing ? <Loader2 className="h-7 w-7 mx-auto animate-spin"/> : <p className="text-3xl font-bold">~{(analysisResult?.particleCount ?? 0 / 0.5).toFixed(1)}</p>}
+                                {isAnalyzing ? <Loader2 className="h-7 w-7 mx-auto animate-spin"/> : <p className="text-3xl font-bold">~{((analysisResult?.particleCount ?? 0) / 0.5).toFixed(1)}</p>}
                                 <p className="text-sm text-muted-foreground">Particles/Liter</p>
                             </div>
                         </div>
