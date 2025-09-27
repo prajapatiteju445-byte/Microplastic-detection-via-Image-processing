@@ -40,6 +40,7 @@ export interface FirebaseServicesAndUser {
   user: User | null;
   isUserLoading: boolean;
   userError: Error | null;
+  areServicesAvailable: boolean;
 }
 
 // Return type for useUser() - specific to user auth state
@@ -133,6 +134,7 @@ export const useFirebase = (): FirebaseServicesAndUser => {
     user: context.user,
     isUserLoading: context.isUserLoading,
     userError: context.userError,
+    areServicesAvailable: context.areServicesAvailable,
   };
 };
 
