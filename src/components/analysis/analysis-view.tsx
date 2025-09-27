@@ -3,12 +3,13 @@
 import { useDoc, useMemoFirebase } from '@/firebase';
 import { doc, DocumentReference, DocumentData } from 'firebase/firestore';
 import { useFirebase } from '@/firebase/provider';
-import type { Analysis, Particle } from '@/lib/types';
+import type { Analysis } from '@/lib/types';
 import ResultsPanel from './results-panel';
 import VisualsPanel from './visuals-panel';
 import { Button } from '../ui/button';
 import { Loader2, AlertTriangle, FileUp } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '../ui/alert';
+import UploadPanel from './upload-panel';
 
 type AnalysisViewProps = {
     analysisId: string | null;
@@ -106,32 +107,28 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     
     if (isComplete) {
         return (
-            <div className="max-w-6xl mx-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                    <div className="flex flex-col gap-8">
-                         <VisualsPanel
-                            image={analysis?.imageDataUri || null}
-                            particles={analysis?.result?.particles || []}
-                            isLoading={!isComplete && !isAnalyzing}
-                            analysisResult={analysis?.result || null}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-8">
-                        <ResultsPanel
-                            analysisResult={analysis?.result || null}
-                            particles={analysis?.result?.particles || []}
-                            isLoading={!isComplete}
-                            isAnalyzing={isAnalyzing}
-                        />
-                    </div>
-                </div>
-                <div className="text-center mt-8">
+            <>
+              <div className="flex flex-col gap-8">
+                  <VisualsPanel
+                      image={analysis?.imageDataUri || null}
+                      particles={analysis?.result?.particles || []}
+                      isLoading={!isComplete && !isAnalyzing}
+                      analysisResult={analysis?.result || null}
+                  />
+                   <ResultsPanel
+                      analysisResult={analysis?.result || null}
+                      particles={analysis?.result?.particles || []}
+                      isLoading={!isComplete}
+                      isAnalyzing={isAnalyzing}
+                  />
+              </div>
+                <div className="text-center mt-8 col-span-1 lg:col-span-2">
                      <Button onClick={onReset} variant="outline" size="lg">
                         <FileUp className="mr-2 h-4 w-4" />
                         Analyze Another Sample
                     </Button>
                 </div>
-            </div>
+            </>
         );
     }
     
