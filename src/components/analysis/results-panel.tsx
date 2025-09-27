@@ -82,7 +82,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
 
     if (!analysisResult) {
         return (
-            <Card className="h-full flex flex-col shadow-sm bg-card transition-all duration-300">
+            <Card className="h-full flex flex-col shadow-none border-none">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <FilePenLine className="w-5 h-5 text-foreground" />
@@ -91,7 +91,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                     <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col justify-center items-center text-center text-muted-foreground p-8">
-                    <div className="w-full h-48 flex flex-col justify-center items-center border-2 border-dashed border-border/50 rounded-xl bg-background/20">
+                     <div className="w-full h-48 flex flex-col justify-center items-center border-2 border-dashed border-border/50 rounded-xl bg-background/20">
                         <TestTube2 className="h-12 w-12 mb-4 text-muted-foreground/60" />
                         <h3 className="text-lg font-semibold text-foreground/80">Awaiting Analysis</h3>
                         <p className="text-sm mt-1 text-muted-foreground/80">Upload an image and click "Analyze Sample" to see the results here.</p>
@@ -126,7 +126,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                             </div>
                             <div className="p-4 bg-background/50 rounded-lg border">
                                 <Layers className="mx-auto h-7 w-7 text-yellow-500 mb-2" />
-                                <p className="text-3xl font-bold">~{(analysisResult.particleCount / 0.5).toFixed(1)}</p>
+                                <p className="text-3xl font-bold">~{((analysisResult.particleCount) / 0.5).toFixed(1)}</p>
                                 <p className="text-sm text-muted-foreground">Particles/Liter</p>
                             </div>
                         </div>

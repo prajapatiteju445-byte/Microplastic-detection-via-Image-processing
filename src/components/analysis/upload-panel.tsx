@@ -137,14 +137,14 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     const canAnalyze = image && !isSubmitting && areServicesAvailable && !isUserLoading;
 
     return (
-        <Card className="h-full flex flex-col bg-card shadow-sm transition-all duration-300">
+        <Card className="h-full flex flex-col bg-card shadow-none border-none">
             <CardHeader>
                 <CardTitle>
                     1. Upload Image
                 </CardTitle>
                 <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-center items-center gap-6 p-6">
+            <CardContent className="flex-1 flex flex-col justify-center items-center gap-6 p-8">
                 {image ? (
                     <div className="relative w-full aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner bg-secondary/20">
                         <img src={image} alt="Water sample preview" style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
