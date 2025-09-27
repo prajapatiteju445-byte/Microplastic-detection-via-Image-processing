@@ -70,7 +70,7 @@ export default function Home() {
                 
                 {/* Left Column */}
                 <div className="flex flex-col gap-8">
-                  {analysisId && analysis ? (
+                  {analysisId ? (
                      <AnalysisView analysisId={analysisId} onReset={handleReset} />
                   ) : (
                      <UploadPanel setAnalysisId={handleNewAnalysis} />
