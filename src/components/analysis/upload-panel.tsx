@@ -16,7 +16,7 @@ type UploadPanelProps = {
 
 export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     const { toast } = useToast();
-    const { firestore, user } = useFirebase();
+    const { firestore, user, isUserLoading } = useFirebase();
 
     const [image, setImage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -131,6 +131,8 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
         }
     };
 
+    const canAnalyze = image && !isLoading && !!firestore && !!user && !isUserLoading;
+
     return (
         <Card className="h-full flex flex-col bg-card/50 border-border/20 shadow-lg transition-all duration-300">
             <CardHeader>
@@ -183,7 +185,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                     </div>
                 )}
 
-                <Button onClick={handleAnalyze} disabled={!image || isLoading} className="w-full text-lg py-6 shadow-md hover:shadow-lg transition-shadow" size="lg">
+                <Button onClick={handleAnalyze} disabled={!canAnalyze} className="w-full text-lg py-6 shadow-md hover:shadow-lg transition-shadow" size="lg">
                     {isLoading ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
