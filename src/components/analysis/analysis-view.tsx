@@ -47,8 +47,8 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
 
     if (error) {
         return (
-            <div className="flex flex-col items-center justify-center gap-4 text-center">
-                 <Alert variant="destructive" className="max-w-lg">
+            <div className="flex flex-col items-center justify-center gap-4 text-center max-w-lg mx-auto">
+                 <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>Error Loading Analysis</AlertTitle>
                     <AlertDescription>{error.message}</AlertDescription>
@@ -63,8 +63,8 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     
     if (analysis && analysis.status === 'error') {
         return (
-            <div className="flex flex-col items-center justify-center gap-4 text-center">
-                 <Alert variant="destructive" className="max-w-lg">
+            <div className="flex flex-col items-center justify-center gap-4 text-center max-w-lg mx-auto">
+                 <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>Analysis Failed</AlertTitle>
                     <AlertDescription>{analysis.error || 'An unknown error occurred during analysis.'}</AlertDescription>
@@ -79,14 +79,14 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
 
     if (isProcessing) {
         return (
-            <div className="flex flex-col items-center justify-center gap-4 text-center">
+            <div className="flex flex-col items-center justify-center gap-4 text-center max-w-lg mx-auto">
                 <div className="flex items-center gap-3 text-lg text-muted-foreground">
                     <Loader2 className="h-6 w-6 animate-spin text-primary" />
                     <p>
                         {getStatusMessage()}
                     </p>
                 </div>
-                 <div className="relative w-full max-w-lg aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner bg-secondary/20 mt-4">
+                 <div className="relative w-full aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner bg-secondary/20 mt-4">
                     {analysis?.imageDataUri && (
                         <img src={analysis.imageDataUri} alt="Water sample preview" style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
                     )}
@@ -96,7 +96,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     }
 
     return (
-        <div>
+        <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 <div className="flex flex-col gap-8">
                      <VisualsPanel

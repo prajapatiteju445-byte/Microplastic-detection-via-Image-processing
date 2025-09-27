@@ -17,9 +17,9 @@ type VisualsPanelProps = {
 
 export default function VisualsPanel({ image, particles, isLoading, analysisResult }: VisualsPanelProps) {
     const getParticleColor = useCallback((confidence: number) => {
-        if (confidence > 0.9) return 'rgba(59, 130, 246, 0.9)'; // High confidence - blue
-        if (confidence > 0.75) return 'rgba(34, 197, 94, 0.8)'; // Medium - green
-        return 'rgba(234, 179, 8, 0.7)'; // Low - yellow
+        if (confidence > 0.9) return 'rgba(96, 165, 250, 0.9)'; // High confidence - blue-400
+        if (confidence > 0.75) return 'rgba(74, 222, 128, 0.8)'; // Medium - green-400
+        return 'rgba(251, 191, 36, 0.7)'; // Low - amber-400
     }, []);
 
     if (isLoading) {
@@ -76,13 +76,13 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
                     {particles.map((p, i) => (
                         <div
                             key={i}
-                            className="absolute rounded-full w-2 h-2 border border-white/50"
+                            className="absolute rounded-full w-2.5 h-2.5 border border-white/50"
                             style={{
                                 left: `${p.x * 100}%`,
                                 top: `${p.y * 100}%`,
                                 transform: 'translate(-50%, -50%)',
                                 backgroundColor: getParticleColor(p.confidence),
-                                boxShadow: `0 0 6px 2px ${getParticleColor(p.confidence)}`,
+                                boxShadow: `0 0 8px 3px ${getParticleColor(p.confidence)}`,
                                 transition: 'all 0.3s ease',
                             }}
                             title={`Particle ${i + 1}\nConfidence: ${(p.confidence * 100).toFixed(1)}%`}
