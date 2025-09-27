@@ -2,7 +2,7 @@
 
 import { useState, useCallback, DragEvent, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { UploadCloud, X, Loader2, Microscope } from 'lucide-react';
+import { UploadCloud, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -158,7 +158,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                         onDragOver={onDragOver}
                         onDragLeave={onDragLeave}
                         className={cn(
-                            "flex flex-col items-center justify-center w-full h-80 border-2 border-dashed rounded-lg cursor-pointer bg-secondary/50 hover:bg-secondary/70 transition-colors",
+                            "flex flex-col items-center justify-center w-full h-80 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-secondary transition-colors",
                             isDragging && "border-primary bg-primary/10"
                         )}
                         onClick={() => fileInputRef.current?.click()}
@@ -190,7 +190,6 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                         </>
                     ) : (
                         <>
-                            <Microscope className="mr-2 h-5 w-5" />
                             Analyze Sample
                         </>
                     )}

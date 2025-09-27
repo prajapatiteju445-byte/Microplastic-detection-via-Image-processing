@@ -58,7 +58,7 @@ export default function Home() {
   const isAnalyzingOrProcessing = isAnalysisLoading || (analysisId && analysis?.status !== 'complete' && analysis?.status !== 'error');
 
   return (
-    <div className="flex flex-col min-h-screen bg-secondary">
+    <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 w-full p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">

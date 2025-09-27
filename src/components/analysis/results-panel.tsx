@@ -47,7 +47,7 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
 };
 
 const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center text-center p-8 min-h-[240px] border-2 border-dashed rounded-lg bg-secondary/50">
+    <div className="flex flex-col items-center justify-center text-center p-8 min-h-[240px] border-2 border-dashed rounded-lg bg-card">
         <TestTube2 className="h-10 w-10 text-muted-foreground mb-4" />
         <h3 className="text-lg font-semibold text-foreground mb-1">Awaiting Analysis</h3>
         <p className="text-sm text-muted-foreground max-w-xs">Upload an image and click "Analyze Sample" to see the results here.</p>
@@ -72,12 +72,12 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
     
     return (
         <Card className="shadow-sm bg-background">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <FilePenLine className="h-5 w-5" />
-                    Analysis Results
-                </CardTitle>
-                <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
+            <CardHeader className="flex flex-row items-center gap-2">
+                 <FilePenLine className="h-5 w-5" />
+                 <div>
+                    <CardTitle>Analysis Results</CardTitle>
+                    <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
+                 </div>
             </CardHeader>
             <CardContent>
                 {isLoading ? <LoadingState /> : !analysisResult ? <EmptyState /> : (
