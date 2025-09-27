@@ -47,10 +47,10 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
 };
 
 const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-48 bg-secondary/20">
+    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg min-h-[400px] bg-secondary/20">
         <TestTube2 className="h-10 w-10 text-muted-foreground mb-4" />
         <h3 className="text-lg font-semibold text-foreground mb-1">Awaiting Analysis</h3>
-        <p className="text-sm text-muted-foreground">Upload an image and click "Analyze Sample" to see the results here.</p>
+        <p className="text-sm text-muted-foreground max-w-xs">Upload an image and click "Analyze Sample" to see the results here.</p>
     </div>
 );
 

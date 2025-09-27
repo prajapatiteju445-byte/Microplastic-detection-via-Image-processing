@@ -5,7 +5,7 @@ import Header from '@/components/layout/header';
 import UploadPanel from '@/components/analysis/upload-panel';
 import { useUser, useAuth } from '@/firebase';
 import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
-import { Loader2 } from 'lucide-react';
+import { Loader2, FileUp } from 'lucide-react';
 import AnalysisView from '@/components/analysis/analysis-view';
 import VisualsPanel from '@/components/analysis/visuals-panel';
 import ResultsPanel from '@/components/analysis/results-panel';
@@ -13,6 +13,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 import { doc, DocumentReference, DocumentData } from 'firebase/firestore';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import type { Analysis } from '@/lib/types';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   const [analysisId, setAnalysisId] = useState<string | null>(null);
@@ -60,7 +61,8 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 w-full p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
             <div className="lg:col-span-3">
               {analysisId ? (
@@ -85,6 +87,7 @@ export default function Home() {
               />
             </div>
           </div>
+        </div>
       </main>
     </div>
   );
