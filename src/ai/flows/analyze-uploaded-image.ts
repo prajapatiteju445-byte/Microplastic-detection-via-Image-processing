@@ -119,14 +119,8 @@ const analyzeUploadedImageFlow = ai.defineFlow(
     }));
 
     // 3. Get summary and detailed analysis from Gemini
-    const {output} = await ai.generate({
-      prompt: analysisPrompt,
-      input: {
+    const { output } = await analysisPrompt({
         predictions: roboflowResult.predictions,
-      },
-      output: {
-        schema: AnalysisResultSchema,
-      },
     });
     
     // 4. Combine all results into the final output
