@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, DragEvent, useRef } from 'react';
-import { UploadCloud, X, Loader2, Microscope } from 'lucide-react';
+import { UploadCloud, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
