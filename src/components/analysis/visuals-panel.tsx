@@ -6,8 +6,6 @@ import { Eye, Loader2 } from 'lucide-react';
 import type { Particle } from '@/lib/types';
 import type { AnalyzeUploadedImageOutput } from '@/ai/flows/schemas/analyze-uploaded-image-schema';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-
 
 type VisualsPanelProps = {
     image: string | null;
@@ -17,15 +15,15 @@ type VisualsPanelProps = {
 };
 
 const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg min-h-[300px] bg-secondary/20">
+    <div className="flex flex-col items-center justify-center text-center p-8 min-h-[200px]">
         <Eye className="h-10 w-10 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold text-foreground mb-1">Visualization</h3>
-        <p className="text-sm text-muted-foreground">Analysis visualization will appear here.</p>
+        <h3 className="text-lg font-semibold text-foreground mb-1">Visual Analysis</h3>
+        <p className="text-sm text-muted-foreground">Your visualization will appear here.</p>
     </div>
 );
 
 const LoadingState = () => (
-     <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-48 bg-secondary/20 animate-pulse">
+     <div className="flex flex-col items-center justify-center text-center p-8 rounded-lg h-48 bg-secondary/50 animate-pulse">
         <Loader2 className="h-10 w-10 text-muted-foreground mb-4 animate-spin" />
         <p className="text-sm text-muted-foreground">Processing Image...</p>
     </div>
@@ -40,7 +38,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
     }, []);
 
     return (
-        <Card>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Eye className="h-5 w-5" />
@@ -50,7 +48,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
             </CardHeader>
             <CardContent>
                 {isLoading ? <LoadingState /> : !analysisResult || !image ? <EmptyState /> : (
-                    <div className="relative w-full aspect-video rounded-lg overflow-hidden border">
+                    <div className="relative w-full aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner">
                         <Image src={image!} alt="Analyzed water sample" layout="fill" objectFit="contain" />
                         {particles.map((p, i) => (
                             <div
@@ -63,9 +61,9 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
                                     height: '12px',
                                     borderRadius: '50%',
                                     backgroundColor: getParticleColor(p.confidence),
-                                    border: '2px solid rgba(255, 255, 255, 0.8)',
+                                    border: '2px solid rgba(255, 255, 255, 0.9)',
                                     transform: 'translate(-50%, -50%)',
-                                    boxShadow: `0 0 6px 2px ${getParticleColor(p.confidence)}`,
+                                    boxShadow: `0 0 8px 3px ${getParticleColor(p.confidence)}`,
                                 }}
                                 title={`Class: ${p.class}\nConfidence: ${(p.confidence * 100).toFixed(1)}%`}
                             />

@@ -47,10 +47,10 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
 };
 
 const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg min-h-[400px] bg-secondary/20">
-        <TestTube2 className="h-10 w-10 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold text-foreground mb-1">Awaiting Analysis</h3>
-        <p className="text-sm text-muted-foreground max-w-xs">Upload an image and click "Analyze Sample" to see the results here.</p>
+    <div className="flex flex-col items-center justify-center text-center p-8 min-h-[200px]">
+        <FilePenLine className="h-10 w-10 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-semibold text-foreground mb-1">Analysis Results</h3>
+        <p className="text-sm text-muted-foreground max-w-xs">Your results will appear here once the analysis is complete.</p>
     </div>
 );
 
@@ -71,7 +71,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
     const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
     
     return (
-        <Card>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <FilePenLine className="h-5 w-5" />

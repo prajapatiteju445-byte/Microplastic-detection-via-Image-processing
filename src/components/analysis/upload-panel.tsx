@@ -2,7 +2,7 @@
 
 import { useState, useCallback, DragEvent, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { UploadCloud, X, Loader2, Microscope } from 'lucide-react';
+import { UploadCloud, X, Loader2, Microscope, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -128,24 +128,20 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     const canAnalyze = image && !isSubmitting && areServicesAvailable && !isUserLoading;
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>1. Upload Image</CardTitle>
-                <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
-            </CardHeader>
-            <CardContent>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <CardContent className="p-0">
                 {image ? (
                     <div className="relative group">
-                        <div className="relative w-full h-64 rounded-lg overflow-hidden border">
+                        <div className="relative w-full h-80 rounded-t-xl overflow-hidden border-b">
                           <Image src={image} alt="Water sample preview" layout="fill" objectFit="contain" />
                         </div>
-                        <div className="absolute top-2 right-2 z-10">
+                        <div className="absolute top-3 right-3 z-10">
                             <Button
                                 variant="destructive"
                                 size="icon"
                                 onClick={resetState}
                                 disabled={isSubmitting}
-                                className="h-8 w-8"
+                                className="h-8 w-8 rounded-full shadow-md"
                             >
                                 <X className="h-4 w-4" />
                                 <span className="sr-only">Remove image</span>
@@ -158,7 +154,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                         onDragOver={onDragOver}
                         onDragLeave={onDragLeave}
                         className={cn(
-                            "flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-secondary/20 hover:bg-secondary/30 transition-colors",
+                            "flex flex-col items-center justify-center w-full h-80 border-2 border-dashed rounded-xl cursor-pointer bg-secondary/50 hover:bg-secondary/70 transition-colors",
                             isDragging && "border-primary bg-primary/10"
                         )}
                         onClick={() => fileInputRef.current?.click()}
@@ -172,21 +168,24 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                             className="hidden"
                         />
                         <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
-                            <UploadCloud className="w-10 h-10 mb-4 text-muted-foreground" />
-                            <p className="mb-2 text-sm text-foreground">
-                                <span className="font-semibold">Click to upload</span> or drag and drop
+                            <div className="p-4 bg-primary/10 text-primary rounded-full mb-4">
+                                <ImageIcon className="w-10 h-10" />
+                            </div>
+                            <p className="mb-2 text-lg text-foreground font-semibold">
+                                Drag & drop your image here
                             </p>
-                            <p className="text-xs text-muted-foreground">PNG, JPG, or other image formats (Max 4MB)</p>
+                            <p className="text-sm text-muted-foreground">or <span className="text-primary font-semibold">click to browse</span></p>
+                             <p className="mt-4 text-xs text-muted-foreground">PNG, JPG, or other image formats (Max 4MB)</p>
                         </div>
                     </div>
                 )}
             </CardContent>
-            <CardFooter>
+            <CardFooter className="p-4">
                 <Button size="lg" onClick={handleAnalyze} disabled={!canAnalyze} className="w-full font-semibold text-base shadow-md">
                     {isSubmitting ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            Submitting...
+                            Submitting for Analysis...
                         </>
                     ) : (
                         "Analyze Sample"
