@@ -8,6 +8,7 @@
 import { ai } from '@/ai/genkit';
 import { detectParticles } from '@/services/roboflow';
 import { AnalyzeUploadedImageInputSchema, AnalyzeUploadedImageOutputSchema, AnalyzeUploadedImageInput, AnalyzeUploadedImageOutput } from '@/ai/flows/schemas/analyze-uploaded-image-schema';
+import { z } from 'genkit';
 
 
 // This Genkit prompt performs the core AI analysis.
