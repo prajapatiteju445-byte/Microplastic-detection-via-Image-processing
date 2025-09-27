@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { Eye } from 'lucide-react';
 import type { Particle } from '@/lib/types';
-import type { AnalyzeUploadedImageOutput } from '@/ai/flows/analyze-uploaded-image';
+import type { AnalyzeUploadedImageOutput } from '@/ai/flows/schemas/analyze-uploaded-image-schema';
 
 type VisualsPanelProps = {
     image: string | null;
@@ -24,7 +24,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
 
     if (isLoading) {
         return (
-            <Card className="shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
+            <Card className="shadow-sm bg-card">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-xl font-bold">
                         <Eye className="w-6 h-6 text-primary" />
@@ -41,7 +41,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
     
     if (!analysisResult) {
          return (
-            <Card className="shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
+            <Card className="shadow-sm bg-card">
                 <CardHeader>
                      <CardTitle className="flex items-center gap-2 text-xl font-bold">
                         <Eye className="w-6 h-6 text-primary" />
@@ -62,7 +62,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
     }
 
     return (
-        <Card className="shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
+        <Card className="shadow-sm bg-card">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl font-bold">
                     <Eye className="w-6 h-6 text-primary" />

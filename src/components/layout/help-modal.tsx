@@ -38,8 +38,8 @@ export default function HelpModal() {
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm">
-            <HelpCircle className="h-5 w-5" />
-            <span className="hidden sm:inline ml-2">Help & Instructions</span>
+            <HelpCircle className="h-5 w-5 mr-1" />
+            <span className="hidden sm:inline">Help & Instructions</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">

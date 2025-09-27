@@ -61,7 +61,7 @@ export default function Home() {
   const isComplete = analysis?.status === 'complete';
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-gradient">
+    <div className="flex flex-col min-h-screen bg-secondary/50 dark:bg-background">
       <Header />
       <main className="flex-1 container mx-auto p-4 sm:p-6 md:p-8">
           <div className="w-full max-w-7xl mx-auto">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, DragEvent, useRef } from 'react';
-import { UploadCloud, X, Loader2, Microscope, FileUp } from 'lucide-react';
+import { UploadCloud, X, Loader2, Microscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -137,10 +137,9 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     const canAnalyze = image && !isSubmitting && areServicesAvailable && !isUserLoading;
 
     return (
-        <Card className="h-full flex flex-col bg-card/50 border-border/20 shadow-lg transition-all duration-300">
+        <Card className="h-full flex flex-col bg-card shadow-sm transition-all duration-300">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                    <FileUp className="w-6 h-6 text-primary" />
+                <CardTitle className="text-xl">
                     1. Upload Image
                 </CardTitle>
                 <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
@@ -183,7 +182,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                             <p className="text-sm text-muted-foreground">
                                 <span className="font-semibold text-primary">Click to upload</span> or drag and drop
                             </p>
-                            <p className="text-xs text-muted-foreground">PNG, JPG, or other image formats (Max 4MB)</p>
+                            <p className="text-xs text-muted-foreground">PNG, JPG, or other image formats</p>
                         </label>
                     </div>
                 )}
@@ -195,10 +194,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                             Submitting...
                         </>
                     ) : (
-                        <>
-                            <Microscope className="mr-2 h-5 w-5" />
-                            Analyze Sample
-                        </>
+                        "Analyze Sample"
                     )}
                 </Button>
             </CardContent>

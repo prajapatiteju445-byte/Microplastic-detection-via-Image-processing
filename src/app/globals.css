@@ -69,12 +69,3 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
-
-@layer utilities {
-  .bg-background-gradient {
-    background-image: linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--secondary)));
-  }
-  .dark .bg-background-gradient {
-    background-image: linear-gradient(to bottom right, hsl(var(--background)), hsla(217.2, 32.6%, 12%, 1));
-  }
-}

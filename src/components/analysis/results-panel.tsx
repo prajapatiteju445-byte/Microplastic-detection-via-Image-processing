@@ -59,7 +59,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
 
     if (!analysisResult) {
         return (
-            <Card className="h-full flex flex-col shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
+            <Card className="h-full flex flex-col shadow-sm bg-card transition-all duration-300">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-xl font-bold">
                         <FilePenLine className="w-6 h-6 text-primary" />
@@ -77,7 +77,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
     }
 
     return (
-        <Card className="h-full flex flex-col shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
+        <Card className="h-full flex flex-col shadow-sm bg-card transition-all duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl font-bold">
                     <FilePenLine className="w-6 h-6 text-primary" />

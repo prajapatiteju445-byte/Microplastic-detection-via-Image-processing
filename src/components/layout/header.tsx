@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Info } from 'lucide-react';
+import { Info, HelpCircle } from 'lucide-react';
 import HelpModal from './help-modal';
 import { ThemeToggle } from './theme-toggle';
 import { Button } from '../ui/button';
@@ -38,8 +38,8 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" asChild>
             <Link href="/about">
-              <Info className="h-5 w-5" />
-              <span className="hidden sm:inline ml-2">About Us</span>
+              <Info className="h-5 w-5 mr-1" />
+              <span className="hidden sm:inline">About Us</span>
             </Link>
           </Button>
           <HelpModal />
