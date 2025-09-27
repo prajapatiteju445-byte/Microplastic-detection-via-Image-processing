@@ -45,13 +45,15 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background-gradient">
       <Header />
       <main className="flex-1 container mx-auto p-4 sm:p-6 md:p-8">
+        <div className="flex-1 flex flex-col items-center justify-center">
         {analysisId ? (
            <AnalysisView analysisId={analysisId} onReset={handleReset} />
         ) : (
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto w-full">
             <UploadPanel setAnalysisId={handleNewAnalysis} />
           </div>
         )}
+        </div>
       </main>
     </div>
   );
