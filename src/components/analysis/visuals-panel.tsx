@@ -32,7 +32,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
                     </CardTitle>
                     <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-8">
                     <div className="flex justify-center items-center w-full aspect-video rounded-xl border-2 border-dashed border-border/50 bg-background/20">
                          <div className="text-center text-muted-foreground/60">
                             <Loader2 className="h-12 w-12 mx-auto mb-2 text-primary/50 animate-spin" />
@@ -46,7 +46,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
     
     if (!analysisResult) {
          return (
-            <Card className="shadow-none border-none">
+            <Card className="shadow-sm bg-card">
                 <CardHeader>
                      <CardTitle className="flex items-center gap-2">
                         <Eye className="w-5 h-5 text-foreground" />
@@ -75,7 +75,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
                 </CardTitle>
                 <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-8">
                 <div className="relative w-full aspect-video rounded-xl overflow-hidden border-2 border-primary/10 bg-background">
                     <Image src={image!} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
                     {particles.map((p, i) => (

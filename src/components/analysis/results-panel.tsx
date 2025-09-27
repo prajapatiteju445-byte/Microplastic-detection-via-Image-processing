@@ -63,7 +63,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                     </CardTitle>
                     <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-1 flex flex-col gap-6">
+                <CardContent className="flex-1 flex flex-col gap-6 p-8">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                         <Skeleton className="h-28 w-full" />
                         <Skeleton className="h-28 w-full" />
@@ -82,7 +82,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
 
     if (!analysisResult) {
         return (
-            <Card className="h-full flex flex-col shadow-none border-none">
+            <Card className="h-full flex flex-col shadow-sm bg-card">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <FilePenLine className="w-5 h-5 text-foreground" />
@@ -91,7 +91,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                     <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col justify-center items-center text-center text-muted-foreground p-8">
-                     <div className="w-full h-48 flex flex-col justify-center items-center border-2 border-dashed border-border/50 rounded-xl bg-background/20">
+                     <div className="w-full aspect-video flex flex-col justify-center items-center border-2 border-dashed border-border/50 rounded-xl bg-background/20">
                         <TestTube2 className="h-12 w-12 mb-4 text-muted-foreground/60" />
                         <h3 className="text-lg font-semibold text-foreground/80">Awaiting Analysis</h3>
                         <p className="text-sm mt-1 text-muted-foreground/80">Upload an image and click "Analyze Sample" to see the results here.</p>
@@ -110,7 +110,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                 </CardTitle>
                 <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col gap-6">
+            <CardContent className="flex-1 flex flex-col gap-6 p-8">
                 
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">

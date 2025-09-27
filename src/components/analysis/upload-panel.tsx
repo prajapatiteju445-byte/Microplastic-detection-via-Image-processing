@@ -137,7 +137,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     const canAnalyze = image && !isSubmitting && areServicesAvailable && !isUserLoading;
 
     return (
-        <Card className="h-full flex flex-col bg-card shadow-none border-none">
+        <Card className="h-full flex flex-col bg-card shadow-sm">
             <CardHeader>
                 <CardTitle>
                     1. Upload Image
