@@ -1,4 +1,4 @@
-import { AnalyzeUploadedImageOutput } from "@/ai/flows/analyze-uploaded-image";
+import { AnalyzeUploadedImageOutput } from "@/ai/flows/schemas/analyze-uploaded-image-schema";
 import { Timestamp } from "firebase/firestore";
 
 export type Particle = {
