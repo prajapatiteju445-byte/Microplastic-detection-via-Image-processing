@@ -46,7 +46,7 @@ export default function Home() {
 
   if (isUserLoading || !user) {
     return (
-       <div className="flex flex-col min-h-screen bg-background-gradient">
+       <div className="flex flex-col min-h-screen bg-background">
         <Header />
         <main className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4 text-center">
@@ -59,10 +59,10 @@ export default function Home() {
   }
   
   const isComplete = analysis?.status === 'complete';
-  const isAnalyzingOrProcessing = isAnalysisLoading || (analysis?.status !== 'complete' && analysis?.status !== 'error');
+  const isAnalyzingOrProcessing = isAnalysisLoading || (analysisId && analysis?.status !== 'complete' && analysis?.status !== 'error');
 
   return (
-    <div className="flex flex-col min-h-screen bg-secondary/50 dark:bg-background">
+    <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-1 container mx-auto p-4 sm:p-6 md:p-8">
           <div className="w-full max-w-7xl mx-auto">
@@ -70,7 +70,7 @@ export default function Home() {
                 
                 {/* Left Column */}
                 <div className="flex flex-col gap-8">
-                  {analysisId ? (
+                  {analysisId && analysis ? (
                      <AnalysisView analysisId={analysisId} onReset={handleReset} />
                   ) : (
                      <UploadPanel setAnalysisId={handleNewAnalysis} />
@@ -82,13 +82,13 @@ export default function Home() {
                     <VisualsPanel 
                        image={analysis?.imageDataUri || null}
                        particles={analysis?.result?.particles || []}
-                       isLoading={isAnalyzingOrProcessing && !!analysisId}
+                       isLoading={isAnalyzingOrProcessing}
                        analysisResult={analysis?.result || null}
                     />
                     <ResultsPanel 
                        analysisResult={analysis?.result || null}
                        particles={analysis?.result?.particles || []}
-                       isLoading={isAnalyzingOrProcessing && !!analysisId}
+                       isLoading={isAnalyzingOrProcessing}
                        isAnalyzing={analysis?.status === 'analyzing'}
                     />
                  </div>

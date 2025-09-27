@@ -6,17 +6,18 @@ import { Button } from '../ui/button';
 
 const AquaLensLogo = () => (
     <svg
-        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        xmlns="http://www.w3.org/2000/svg"
         className="h-8 w-8 text-primary-foreground"
     >
-        <rect x="3" y="3" width="18" height="18" rx="4" ry="4" />
-        <path d="M12 15.5c-2.4 0-4-2.01-4-4.5 0-2.48 4-8 4-8s4 5.52 4 8c0 2.49-1.6 4.5-4 4.5z" />
+        <rect width="24" height="24" rx="4" fill="currentColor" />
+        <path
+            d="M12 18C14.2091 18 16 16.2091 16 14C16 11.7909 12 6 12 6C12 6 8.00001 11.7909 8 14C7.99999 16.2091 9.79086 18 12 18Z"
+            fill="hsl(var(--background))"
+        />
     </svg>
 );
 
@@ -27,7 +28,7 @@ export default function Header() {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3">
-            <div className="bg-primary text-primary-foreground p-2 rounded-lg shadow-md">
+            <div className="bg-primary text-primary-foreground p-0 rounded-lg shadow-md">
               <AquaLensLogo />
             </div>
             <h1 className="text-2xl font-bold text-foreground">

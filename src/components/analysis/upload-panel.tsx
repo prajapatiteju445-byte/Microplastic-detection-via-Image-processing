@@ -139,7 +139,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     return (
         <Card className="h-full flex flex-col bg-card shadow-sm transition-all duration-300">
             <CardHeader>
-                <CardTitle className="text-xl">
+                <CardTitle>
                     1. Upload Image
                 </CardTitle>
                 <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
