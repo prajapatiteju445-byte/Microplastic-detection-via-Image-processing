@@ -6,36 +6,35 @@ import { Button } from '../ui/button';
 
 const Logo = () => (
     <svg
-      width="36"
-      height="36"
-      viewBox="0 0 36 36"
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-primary"
+      className="text-foreground"
     >
-        <path
-            d="M18 33C26.2843 33 33 26.2843 33 18C33 9.71573 26.2843 3 18 3C9.71573 3 3 9.71573 3 18C3 26.2843 9.71573 33 18 33Z"
-            stroke="currentColor"
-            strokeWidth="2"
-        />
-        <path
-            d="M18 24.75C21.7279 24.75 24.75 21.7279 24.75 18C24.75 14.2721 21.7279 11.25 18 11.25C14.2721 11.25 11.25 14.2721 11.25 18C11.25 21.7279 14.2721 24.75 18 24.75Z"
-            stroke="currentColor"
-            strokeWidth="2"
-        />
-        <path
-            d="M18 11.25C17.0796 11.25 15.375 14.2721 15.375 18C15.375 21.7279 18 24.75 18 24.75"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-        />
+      <rect width="32" height="32" rx="8" fill="currentColor" />
+      <path
+        d="M10 22V13C10 12.4477 10.4477 12 11 12H21C21.5523 12 22 12.4477 22 13V22"
+        stroke="hsl(var(--background))"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M16 22V18M16 18C17.1046 18 18 17.1046 18 16C18 14.8954 17.1046 14 16 14C14.8954 14 14 14.8954 14 16C14 17.1046 14.8954 18 16 18Z"
+        stroke="hsl(var(--background))"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
 );
 
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex h-16 items-center">
         <div className="mr-auto flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-3">

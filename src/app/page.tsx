@@ -5,7 +5,7 @@ import Header from '@/components/layout/header';
 import UploadPanel from '@/components/analysis/upload-panel';
 import { useUser, useAuth } from '@/firebase';
 import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
-import { Loader2, Droplets, FlaskConical, TestTube } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import AnalysisView from '@/components/analysis/analysis-view';
 import VisualsPanel from '@/components/analysis/visuals-panel';
 import ResultsPanel from '@/components/analysis/results-panel';
@@ -45,7 +45,7 @@ export default function Home() {
     return (
        <div className="flex flex-col min-h-screen">
         <Header />
-        <main className="flex-1 flex items-center justify-center">
+        <main className="flex-1 flex items-center justify-center bg-background">
             <div className="flex flex-col items-center gap-4 text-muted-foreground">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
                 <p>Authenticating securely...</p>
@@ -58,19 +58,10 @@ export default function Home() {
   const isAnalyzingOrProcessing = isAnalysisLoading || (analysisId && analysis?.status !== 'complete' && analysis?.status !== 'error');
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-secondary">
       <Header />
       <main className="flex-1 w-full p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
-          {!analysisId && (
-            <div className="mb-8 p-8 rounded-xl bg-gradient-to-br from-primary/90 to-primary text-primary-foreground shadow-lg text-center">
-              <div className="flex items-center justify-center gap-3 mb-2">
-                <Droplets className="h-8 w-8"/>
-                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Welcome to AquaLens</h1>
-              </div>
-              <p className="text-lg text-primary-foreground/80">Your AI-powered tool for microplastic analysis.</p>
-            </div>
-          )}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
             <div className="lg:col-span-3">
               {analysisId ? (
