@@ -49,7 +49,7 @@ export type AnalyzeUploadedImageOutput = z.infer<typeof AnalysisResultSchema>;
 const analysisPrompt = ai.definePrompt(
   {
     name: 'microplasticAnalysisPrompt',
-    inputSchema: z.object({
+    input: {schema: z.object({
       predictions: z.array(
         z.object({
           x: z.number(),
@@ -61,11 +61,9 @@ const analysisPrompt = ai.definePrompt(
           class_id: z.number(),
         })
       ),
-    }),
-    outputSchema: AnalysisResultSchema,
-  },
-  async (input) => {
-    return `You are an expert in environmental science and machine learning, specializing in microplastic pollution analysis. You have been provided with a set of microplastic detections from a water sample image, identified by a Roboflow YOLO model.
+    })},
+    output: {schema: AnalysisResultSchema},
+    prompt: `You are an expert in environmental science and machine learning, specializing in microplastic pollution analysis. You have been provided with a set of microplastic detections from a water sample image, identified by a Roboflow YOLO model.
 
 Your task is to interpret these raw detection results and generate a comprehensive analysis.
 
@@ -94,13 +92,8 @@ Based on the provided detection data, provide a result including:
 6. The original particle detection data, with coordinates normalized to a 0-1 scale.
 
 Detections:
-${input.predictions
-  .map(
-    (p) =>
-      `- Class: ${p.class}, Confidence: ${p.confidence}, BoundingBox: [${p.x}, ${p.y}, ${p.width}, ${p.height}]`
-  )
-  .join('\n')}
-`;
+{{{json predictions}}}
+`
   }
 );
 
@@ -126,11 +119,11 @@ const analyzeUploadedImageFlow = ai.defineFlow(
     }));
 
     // 3. Get summary and detailed analysis from Gemini
-    const analysisResult = await ai.generate({
-      prompt: await analysisPrompt({
+    const {output} = await ai.generate({
+      prompt: analysisPrompt,
+      input: {
         predictions: roboflowResult.predictions,
-      }),
-      model: ai.model('gemini-pro'),
+      },
       output: {
         schema: AnalysisResultSchema,
       },
@@ -138,7 +131,7 @@ const analyzeUploadedImageFlow = ai.defineFlow(
     
     // 4. Combine all results into the final output
     const finalResult: AnalyzeUploadedImageOutput = {
-      ...analysisResult.output()!,
+      ...output!,
       particleCount: roboflowResult.predictions.length,
       particles: normalizedParticles,
     };

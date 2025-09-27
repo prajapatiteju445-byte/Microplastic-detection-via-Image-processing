@@ -2,8 +2,10 @@
 import axios from 'axios';
 import { z } from 'zod';
 
-const ROBOFLOW_API_URL = "https://detect.roboflow.com";
-const ROBOFLOW_MODEL_ID = "microplastics-yolov5/1";
+const ROBOFLOW_API_URL = "https://serverless.roboflow.com";
+const ROBOFLOW_WORKSPACE_ID = "research-new-things-m0fiq";
+const ROBOFLOW_WORKFLOW_ID = "detect-count-and-visualize";
+
 
 // Zod schema for a single prediction from Roboflow
 const RoboflowPredictionSchema = z.object({
@@ -19,13 +21,16 @@ export type RoboflowPrediction = z.infer<typeof RoboflowPredictionSchema>;
 
 // Zod schema for the full Roboflow API response
 const RoboflowResponseSchema = z.object({
-  predictions: z.array(RoboflowPredictionSchema),
-  image: z.object({
-    width: z.number(),
-    height: z.number(),
-  }),
+  result: z.array(z.object({
+    predictions: z.array(RoboflowPredictionSchema),
+    image: z.object({
+      width: z.number(),
+      height: z.number(),
+    }),
+  }))
 });
-export type RoboflowResponse = z.infer<typeof RoboflowResponseSchema>;
+
+export type RoboflowWorkflowResponse = z.infer<typeof RoboflowResponseSchema>;
 
 
 /**
@@ -33,22 +38,26 @@ export type RoboflowResponse = z.infer<typeof RoboflowResponseSchema>;
  * @param imageAsDataUri The image to analyze, as a data URI.
  * @returns The detection results from the Roboflow API.
  */
-export async function detectParticles(imageAsDataUri: string): Promise<RoboflowResponse> {
+export async function detectParticles(imageAsDataUri: string): Promise<{ predictions: RoboflowPrediction[], image: { width: number, height: number } }> {
     const apiKey = process.env.ROBOFLOW_API_KEY;
 
     if (!apiKey) {
         throw new Error("The Roboflow API key is not configured in the environment variables. Please add it to continue.");
     }
-
-    // Roboflow expects the image as a base64 string, without the data URI prefix.
-    const base64Image = imageAsDataUri.split(',')[1];
     
-    const url = `${ROBOFLOW_API_URL}/${ROBOFLOW_MODEL_ID}?api_key=${apiKey}&confidence=40&overlap=30`;
+    const url = `${ROBOFLOW_API_URL}/workspace/${ROBOFLOW_WORKSPACE_ID}/workflows/${ROBOFLOW_WORKFLOW_ID}`;
 
     try {
-        const response = await axios.post(url, base64Image, {
+        const response = await axios.post(url, {
+            "api_key": apiKey,
+            "image": {
+              "type": "base64",
+              "value": imageAsDataUri.split(',')[1]
+            }
+        }, {
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             }
         });
 
@@ -60,7 +69,14 @@ export async function detectParticles(imageAsDataUri: string): Promise<RoboflowR
             throw new Error("Received an invalid response structure from the Roboflow API. Unable to process detections.");
         }
         
-        return validationResult.data;
+        // The workflow returns an array of results; we assume we want the first one.
+        const firstResult = validationResult.data.result[0];
+
+        if (!firstResult) {
+            throw new Error("Roboflow workflow did not return any results.");
+        }
+
+        return firstResult;
 
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
