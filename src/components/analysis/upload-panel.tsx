@@ -64,10 +64,10 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
 
     const handleAnalyze = async () => {
         // Final safeguard: Check all dependencies right before the operation.
-        if (!image || !firestore || !user || !areServicesAvailable) {
+        if (!image || !firestore || !user) {
             toast({
                 title: 'Services Not Ready',
-                description: 'The application is still initializing. Please wait a moment and try again.',
+                description: 'The application is still initializing or you are not logged in. Please wait a moment and try again.',
                 variant: 'destructive',
             });
             setIsSubmitting(false); // Ensure button is re-enabled if clicked too early

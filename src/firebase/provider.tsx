@@ -123,8 +123,21 @@ export const useFirebase = (): FirebaseServicesAndUser => {
     throw new Error('useFirebase must be used within a FirebaseProvider.');
   }
 
+  // This check is crucial. If areServicesAvailable is false, it means the provider hasn't received the service instances yet.
   if (!context.areServicesAvailable || !context.firebaseApp || !context.firestore || !context.auth) {
-    throw new Error('Firebase core services not available. Check FirebaseProvider props.');
+    // Instead of throwing an error which crashes the app, we could return a state that indicates services are not ready.
+    // However, for this use case, throwing makes it clear that the setup is incorrect if this is ever reached unexpectedly.
+    // In a properly configured app, FirebaseClientProvider ensures this isn't the case after initial load.
+    // Let's refine this to return a predictable "not ready" state to avoid crashes.
+    return {
+        areServicesAvailable: false,
+        firebaseApp: null as any, // Type assertion to satisfy the return type
+        firestore: null as any,
+        auth: null as any,
+        user: null,
+        isUserLoading: true,
+        userError: null
+    }
   }
 
   return {
@@ -140,19 +153,28 @@ export const useFirebase = (): FirebaseServicesAndUser => {
 
 /** Hook to access Firebase Auth instance. */
 export const useAuth = (): Auth => {
-  const { auth } = useFirebase();
+  const { auth, areServicesAvailable } = useFirebase();
+  if (!areServicesAvailable) {
+      throw new Error("useAuth must be used within a fully initialized FirebaseProvider.")
+  }
   return auth;
 };
 
 /** Hook to access Firestore instance. */
 export const useFirestore = (): Firestore => {
-  const { firestore } = useFirebase();
+  const { firestore, areServicesAvailable } = useFirebase();
+  if (!areServicesAvailable) {
+       throw new Error("useFirestore must be used within a fully initialized FirebaseProvider.")
+  }
   return firestore;
 };
 
 /** Hook to access Firebase App instance. */
 export const useFirebaseApp = (): FirebaseApp => {
-  const { firebaseApp } = useFirebase();
+  const { firebaseApp, areServicesAvailable } = useFirebase();
+   if (!areServicesAvailable) {
+       throw new Error("useFirebaseApp must be used within a fully initialized FirebaseProvider.")
+  }
   return firebaseApp;
 };
 
