@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useCallback, DragEvent, useRef } from 'react';
-import { UploadCloud, X, Loader2 } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { UploadCloud, X, Loader2, Microscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useFirebase } from '@/firebase/provider';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { processAnalysisQueue } from '@/ai/flows/process-analysis-queue';
+import Image from 'next/image';
 
 type UploadPanelProps = {
     setAnalysisId: (id: string) => void;
@@ -51,13 +53,12 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
             return;
         }
 
-        resetState();
         const reader = new FileReader();
         reader.onload = (e) => {
             setImage(e.target?.result as string);
         };
         reader.readAsDataURL(file);
-    }, [resetState, toast]);
+    }, [toast]);
 
 
     const handleAnalyze = async () => {
@@ -67,7 +68,6 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                 description: 'The application is still initializing or you are not logged in. Please wait a moment and try again.',
                 variant: 'destructive',
             });
-            setIsSubmitting(false);
             return;
         };
 
@@ -128,56 +128,71 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     const canAnalyze = image && !isSubmitting && areServicesAvailable && !isUserLoading;
 
     return (
-        <div>
-            <h2>1. Upload Image</h2>
-            <p>Upload a water sample image to begin the analysis.</p>
-            
-            {image ? (
-                <div>
-                    <img src={image} alt="Water sample preview" style={{ objectFit: 'contain', width: '100%', height: '100px' }} />
-                    <Button
-                        variant="destructive"
-                        size="icon"
-                        onClick={resetState}
-                        disabled={isSubmitting}
-                    >
-                        <X className="h-4 w-4" />
-                        <span className="sr-only">Remove image</span>
-                    </Button>
-                </div>
-            ) : (
-                <div
-                    onDrop={onDrop}
-                    onDragOver={onDragOver}
-                    onDragLeave={onDragLeave}
-                >
-                    <input
-                        type="file"
-                        id="file-upload"
-                        ref={fileInputRef}
-                        accept="image/*"
-                        onChange={handleFileSelect}
-                    />
-                    <label htmlFor="file-upload">
-                        <UploadCloud />
-                        <p>
-                            <span>Click to upload</span> or drag and drop
-                        </p>
-                        <p>PNG, JPG, or other image formats</p>
-                    </label>
-                </div>
-            )}
-
-            <Button onClick={handleAnalyze} disabled={!canAnalyze}>
-                {isSubmitting ? (
-                    <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Submitting...
-                    </>
+        <Card>
+            <CardHeader>
+                <CardTitle>1. Upload Image</CardTitle>
+                <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {image ? (
+                    <div className="relative group">
+                        <div className="relative w-full h-64 rounded-lg overflow-hidden border">
+                          <Image src={image} alt="Water sample preview" layout="fill" objectFit="contain" />
+                        </div>
+                        <div className="absolute top-2 right-2 z-10">
+                            <Button
+                                variant="destructive"
+                                size="icon"
+                                onClick={resetState}
+                                disabled={isSubmitting}
+                                className="h-8 w-8"
+                            >
+                                <X className="h-4 w-4" />
+                                <span className="sr-only">Remove image</span>
+                            </Button>
+                        </div>
+                    </div>
                 ) : (
-                    "Analyze Sample"
+                    <div
+                        onDrop={onDrop}
+                        onDragOver={onDragOver}
+                        onDragLeave={onDragLeave}
+                        className={cn(
+                            "flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-secondary/20 hover:bg-secondary/30 transition-colors",
+                            isDragging && "border-primary bg-primary/10"
+                        )}
+                        onClick={() => fileInputRef.current?.click()}
+                    >
+                        <input
+                            type="file"
+                            id="file-upload"
+                            ref={fileInputRef}
+                            accept="image/*"
+                            onChange={handleFileSelect}
+                            className="hidden"
+                        />
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                            <UploadCloud className="w-10 h-10 mb-4 text-muted-foreground" />
+                            <p className="mb-2 text-sm text-foreground">
+                                <span className="font-semibold">Click to upload</span> or drag and drop
+                            </p>
+                            <p className="text-xs text-muted-foreground">PNG, JPG, or other image formats (Max 4MB)</p>
+                        </div>
+                    </div>
                 )}
-            </Button>
-        </div>
+            </CardContent>
+            <CardFooter>
+                <Button size="lg" onClick={handleAnalyze} disabled={!canAnalyze} className="w-full font-semibold text-base shadow-md">
+                    {isSubmitting ? (
+                        <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            Submitting...
+                        </>
+                    ) : (
+                        "Analyze Sample"
+                    )}
+                </Button>
+            </CardFooter>
+        </Card>
     );
 }

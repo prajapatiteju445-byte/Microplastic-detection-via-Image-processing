@@ -13,9 +13,6 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 import { doc, DocumentReference, DocumentData } from 'firebase/firestore';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import type { Analysis } from '@/lib/types';
-import { Button } from '@/components/ui/button';
-import { FileUp } from 'lucide-react';
-
 
 export default function Home() {
   const [analysisId, setAnalysisId] = useState<string | null>(null);
@@ -46,10 +43,10 @@ export default function Home() {
 
   if (isUserLoading || !user) {
     return (
-       <div>
+       <div className="flex flex-col min-h-screen">
         <Header />
-        <main>
-            <div>
+        <main className="flex-1 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4 text-muted-foreground">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
                 <p>Authenticating securely...</p>
             </div>
@@ -58,41 +55,35 @@ export default function Home() {
     )
   }
   
-  const isComplete = analysis?.status === 'complete';
   const isAnalyzingOrProcessing = isAnalysisLoading || (analysisId && analysis?.status !== 'complete' && analysis?.status !== 'error');
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <main>
-          <div>
-            {analysisId ? (
-                <AnalysisView analysisId={analysisId} onReset={handleReset} />
-            ) : (
-                <UploadPanel setAnalysisId={handleNewAnalysis} />
-            )}
+      <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+            <div className="lg:col-span-3">
+              {analysisId ? (
+                  <AnalysisView analysisId={analysisId} onReset={handleReset} />
+              ) : (
+                  <UploadPanel setAnalysisId={handleNewAnalysis} />
+              )}
+            </div>
 
-            <VisualsPanel 
-                image={analysis?.imageDataUri || null}
-                particles={analysis?.result?.particles || []}
-                isLoading={isAnalyzingOrProcessing}
-                analysisResult={analysis?.result || null}
-            />
-            <ResultsPanel 
-                analysisResult={analysis?.result || null}
-                particles={analysis?.result?.particles || []}
-                isLoading={isAnalyzingOrProcessing}
-                isAnalyzing={analysis?.status === 'analyzing'}
-            />
-            
-            {isComplete && (
-               <div>
-                   <Button onClick={handleReset} variant="outline">
-                      <FileUp className="mr-2 h-4 w-4" />
-                      Analyze Another Sample
-                  </Button>
-              </div>
-            )}
+            <div className="lg:col-span-2 flex flex-col gap-8">
+              <ResultsPanel 
+                  analysisResult={analysis?.result || null}
+                  particles={analysis?.result?.particles || []}
+                  isLoading={isAnalyzingOrProcessing}
+                  isAnalyzing={analysis?.status === 'analyzing'}
+              />
+              <VisualsPanel 
+                  image={analysis?.imageDataUri || null}
+                  particles={analysis?.result?.particles || []}
+                  isLoading={isAnalyzingOrProcessing}
+                  analysisResult={analysis?.result || null}
+              />
+            </div>
           </div>
       </main>
     </div>

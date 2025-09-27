@@ -5,6 +5,9 @@ import Image from 'next/image';
 import { Eye, Loader2 } from 'lucide-react';
 import type { Particle } from '@/lib/types';
 import type { AnalyzeUploadedImageOutput } from '@/ai/flows/schemas/analyze-uploaded-image-schema';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 type VisualsPanelProps = {
     image: string | null;
@@ -13,63 +16,63 @@ type VisualsPanelProps = {
     analysisResult: AnalyzeUploadedImageOutput | null;
 };
 
+const EmptyState = () => (
+    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-48 bg-secondary/20">
+        <Eye className="h-10 w-10 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-semibold text-foreground mb-1">Visualization</h3>
+        <p className="text-sm text-muted-foreground">Analysis visualization will appear here.</p>
+    </div>
+);
+
+const LoadingState = () => (
+     <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-48 bg-secondary/20 animate-pulse">
+        <Loader2 className="h-10 w-10 text-muted-foreground mb-4 animate-spin" />
+        <p className="text-sm text-muted-foreground">Processing Image...</p>
+    </div>
+);
+
+
 export default function VisualsPanel({ image, particles, isLoading, analysisResult }: VisualsPanelProps) {
     const getParticleColor = useCallback((confidence: number) => {
-        if (confidence > 0.9) return 'rgba(96, 165, 250, 0.9)'; // High confidence
-        if (confidence > 0.75) return 'rgba(74, 222, 128, 0.8)'; // Medium
-        return 'rgba(251, 191, 36, 0.7)'; // Low
+        if (confidence > 0.9) return 'rgba(239, 68, 68, 0.8)'; // High confidence - red
+        if (confidence > 0.75) return 'rgba(234, 179, 8, 0.8)'; // Medium - yellow
+        return 'rgba(34, 197, 94, 0.7)'; // Low - green
     }, []);
 
-    if (isLoading) {
-        return (
-            <div>
-                <h2><Eye />Visual Analysis</h2>
-                <p>Highlighted microplastic particles in the sample.</p>
-                <div>
-                    <Loader2 className="animate-spin" />
-                    <p>Analyzing image...</p>
-                </div>
-            </div>
-        );
-    }
-    
-    if (!analysisResult) {
-         return (
-            <div>
-                 <h2><Eye />Visual Analysis</h2>
-                <p>Highlighted microplastic particles in the sample.</p>
-                <div>
-                    <Eye />
-                    <p>Analysis visualization appears here.</p>
-                </div>
-            </div>
-        )
-    }
-
     return (
-        <div>
-            <h2><Eye />Visual Analysis</h2>
-            <p>Highlighted microplastic particles in the sample.</p>
-            <div style={{position: 'relative', width: '100%', aspectRatio: '16/9'}}>
-                <Image src={image!} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
-                {particles.map((p, i) => (
-                    <div
-                        key={i}
-                        style={{
-                            position: 'absolute',
-                            left: `${p.x * 100}%`,
-                            top: `${p.y * 100}%`,
-                            transform: 'translate(-50%, -50%)',
-                            width: '10px',
-                            height: '10px',
-                            borderRadius: '50%',
-                            backgroundColor: getParticleColor(p.confidence),
-                            boxShadow: `0 0 8px 3px ${getParticleColor(p.confidence)}`,
-                        }}
-                        title={`Confidence: ${(p.confidence * 100).toFixed(1)}%`}
-                    />
-                ))}
-            </div>
-        </div>
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Eye className="h-5 w-5" />
+                    Visual Analysis
+                </CardTitle>
+                <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {isLoading ? <LoadingState /> : !analysisResult || !image ? <EmptyState /> : (
+                    <div className="relative w-full aspect-video rounded-lg overflow-hidden border">
+                        <Image src={image!} alt="Analyzed water sample" layout="fill" objectFit="contain" />
+                        {particles.map((p, i) => (
+                            <div
+                                key={i}
+                                style={{
+                                    position: 'absolute',
+                                    left: `${p.x * 100}%`,
+                                    top: `${p.y * 100}%`,
+                                    width: '12px',
+                                    height: '12px',
+                                    borderRadius: '50%',
+                                    backgroundColor: getParticleColor(p.confidence),
+                                    border: '2px solid rgba(255, 255, 255, 0.8)',
+                                    transform: 'translate(-50%, -50%)',
+                                    boxShadow: `0 0 6px 2px ${getParticleColor(p.confidence)}`,
+                                }}
+                                title={`Class: ${p.class}\nConfidence: ${(p.confidence * 100).toFixed(1)}%`}
+                            />
+                        ))}
+                    </div>
+                 )}
+            </CardContent>
+        </Card>
     );
 }

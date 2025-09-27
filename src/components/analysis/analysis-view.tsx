@@ -7,6 +7,8 @@ import type { Analysis } from '@/lib/types';
 import { Button } from '../ui/button';
 import { Loader2, AlertTriangle, FileUp } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '../ui/alert';
+import { Card, CardContent } from '../ui/card';
+import Image from 'next/image';
 
 type AnalysisViewProps = {
     analysisId: string | null;
@@ -16,7 +18,6 @@ type AnalysisViewProps = {
 export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps) {
     const { firestore } = useFirebase();
 
-    // Memoize the document reference to prevent re-renders
     const analysisDocRef = useMemoFirebase(() => {
         if (!firestore || !analysisId) return null;
         return doc(firestore, 'analyses', analysisId) as DocumentReference<DocumentData>;
@@ -37,9 +38,9 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
             case 'new':
                 return 'Analysis is in the queue...';
             case 'processing':
-                return 'Detecting particles...';
+                return 'Detecting particles from image...';
             case 'analyzing':
-                return 'Generating AI summary...';
+                return 'Generating AI summary and insights...';
             default:
                 return 'Processing...';
         }
@@ -47,67 +48,78 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
 
     if (error) {
         return (
-            <div>
-                 <Alert variant="destructive">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>Error Loading Analysis</AlertTitle>
-                    <AlertDescription>{error.message}</AlertDescription>
-                </Alert>
-                <Button onClick={onReset} variant="outline">
-                    <FileUp className="mr-2 h-4 w-4" />
-                    Start a New Analysis
-                </Button>
-            </div>
+            <Card className="p-8">
+                <CardContent className="flex flex-col items-center justify-center gap-4 text-center">
+                    <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Error Loading Analysis</AlertTitle>
+                        <AlertDescription>{error.message}</AlertDescription>
+                    </Alert>
+                    <Button onClick={onReset} variant="outline" className="mt-4">
+                        <FileUp className="mr-2 h-4 w-4" />
+                        Start a New Analysis
+                    </Button>
+                </CardContent>
+            </Card>
         );
     }
     
     if (analysis && analysis.status === 'error') {
         return (
-            <div>
-                 <Alert variant="destructive">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>Analysis Failed</AlertTitle>
-                    <AlertDescription>{analysis.error || 'An unknown error occurred during analysis.'}</AlertDescription>
-                </Alert>
-                <Button onClick={onReset} variant="outline">
-                    <FileUp className="mr-2 h-4 w-4" />
-                    Start a New Analysis
-                </Button>
-            </div>
+            <Card className="p-8">
+                 <CardContent className="flex flex-col items-center justify-center gap-4 text-center">
+                    <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Analysis Failed</AlertTitle>
+                        <AlertDescription>{analysis.error || 'An unknown error occurred during analysis.'}</AlertDescription>
+                    </Alert>
+                    <Button onClick={onReset} variant="outline" className="mt-4">
+                        <FileUp className="mr-2 h-4 w-4" />
+                        Start a New Analysis
+                    </Button>
+                </CardContent>
+            </Card>
         )
     }
 
     if (isProcessing) {
         return (
-            <div>
-                <div>
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                    <p>
-                        {getStatusMessage()}
-                    </p>
-                </div>
-                 <div>
-                    {analysis?.imageDataUri && (
-                        <img src={analysis.imageDataUri} alt="Water sample preview" style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
-                    )}
-                 </div>
-                 <p>Analysis is running. The right panels will update automatically upon completion.</p>
-            </div>
+            <Card className="p-8">
+                <CardContent className="flex flex-col items-center justify-center gap-6 text-center">
+                    <div className="flex items-center gap-3 text-lg font-medium text-foreground">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                        <p>
+                            {getStatusMessage()}
+                        </p>
+                    </div>
+                     <div className="relative w-full h-64 rounded-lg overflow-hidden border">
+                        {analysis?.imageDataUri && (
+                            <Image src={analysis.imageDataUri} alt="Water sample preview" layout="fill" objectFit="contain" />
+                        )}
+                     </div>
+                     <p className="text-muted-foreground text-sm">The results will appear on the right as soon as they are ready.</p>
+                </CardContent>
+            </Card>
         )
     }
     
     if (isComplete) {
-       // When complete, we show the main visual panel instead of the loading state.
-        return (
-             <div>
-                 <h2>Analysis Complete</h2>
-                  <div>
-                    {analysis?.imageDataUri && (
-                        <img src={analysis.imageDataUri} alt="Water sample preview" style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
-                    )}
-                 </div>
-                 <p>Review your results in the panels on the right. You can start a new analysis below.</p>
-            </div>
+       return (
+            <Card className="p-8">
+                <CardContent className="flex flex-col items-center justify-center gap-6 text-center">
+                    <h2 className="text-2xl font-semibold">Analysis Complete</h2>
+                    <div className="relative w-full h-64 rounded-lg overflow-hidden border">
+                        {analysis?.imageDataUri && (
+                            <Image src={analysis.imageDataUri} alt="Analyzed water sample" layout="fill" objectFit="contain" />
+                        )}
+                    </div>
+                    <p className="text-muted-foreground">Review your results in the panels on the right.</p>
+                    <Button onClick={onReset} variant="outline" className="mt-4">
+                        <FileUp className="mr-2 h-4 w-4" />
+                        Analyze Another Sample
+                    </Button>
+                </CardContent>
+            </Card>
         );
     }
     

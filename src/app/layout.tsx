@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <head />
-      <body>
+      <body className="bg-secondary/30">
         <FirebaseClientProvider>
           <ThemeProvider
             attribute="class"
