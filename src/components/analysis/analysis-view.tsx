@@ -26,9 +26,24 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     
     const { data: analysis, isLoading, error } = useDoc<Analysis>(analysisDocRef);
 
-    const isProcessing = isLoading || (analysis && (analysis.status === 'new' || analysis.status === 'processing'));
+    const isProcessing = isLoading || (analysis && (analysis.status === 'new' || analysis.status === 'processing' || analysis.status === 'analyzing'));
     const isAnalyzing = analysis?.status === 'analyzing';
     const isComplete = analysis?.status === 'complete';
+    
+    const getStatusMessage = () => {
+        if (!analysis) return 'Loading analysis...';
+        switch (analysis.status) {
+            case 'new':
+                return 'Analysis is in the queue...';
+            case 'processing':
+                return 'Detecting particles...';
+            case 'analyzing':
+                return 'Generating AI summary...';
+            default:
+                return 'Processing...';
+        }
+    }
+
 
     if (error) {
         return (
@@ -68,7 +83,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                 <div className="flex items-center gap-3 text-lg text-muted-foreground">
                     <Loader2 className="h-6 w-6 animate-spin text-primary" />
                     <p>
-                        {analysis?.status === 'new' ? 'Analysis is in the queue...' : 'Detecting particles...'}
+                        {getStatusMessage()}
                     </p>
                 </div>
                  <div className="relative w-full max-w-lg aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner bg-secondary/20 mt-4">
