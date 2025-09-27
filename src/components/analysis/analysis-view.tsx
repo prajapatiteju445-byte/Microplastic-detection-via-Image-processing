@@ -11,7 +11,7 @@ import { Loader2, AlertTriangle, FileUp } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '../ui/alert';
 
 type AnalysisViewProps = {
-    analysisId: string;
+    analysisId: string | null;
     onReset: () => void;
 };
 
@@ -25,6 +25,15 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     }, [firestore, analysisId]);
     
     const { data: analysis, isLoading, error } = useDoc<Analysis>(analysisDocRef);
+    
+    if (!analysisId) {
+        return (
+            <>
+                <ResultsPanel analysisResult={null} particles={[]} isLoading={false} />
+                <VisualsPanel image={null} particles={[]} isLoading={false} analysisResult={null} />
+            </>
+        )
+    }
 
     const isProcessing = isLoading || (analysis && (analysis.status === 'new' || analysis.status === 'processing' || analysis.status === 'analyzing'));
     const isAnalyzing = analysis?.status === 'analyzing';
@@ -94,33 +103,37 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
             </div>
         )
     }
-
-    return (
-        <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <div className="flex flex-col gap-8">
-                     <VisualsPanel
-                        image={analysis?.imageDataUri || null}
-                        particles={analysis?.result?.particles || []}
-                        isLoading={!isComplete && !isAnalyzing}
-                        analysisResult={analysis?.result || null}
-                    />
+    
+    if (isComplete) {
+        return (
+            <div className="max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    <div className="flex flex-col gap-8">
+                         <VisualsPanel
+                            image={analysis?.imageDataUri || null}
+                            particles={analysis?.result?.particles || []}
+                            isLoading={!isComplete && !isAnalyzing}
+                            analysisResult={analysis?.result || null}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-8">
+                        <ResultsPanel
+                            analysisResult={analysis?.result || null}
+                            particles={analysis?.result?.particles || []}
+                            isLoading={!isComplete}
+                            isAnalyzing={isAnalyzing}
+                        />
+                    </div>
                 </div>
-                <div className="flex flex-col gap-8">
-                    <ResultsPanel
-                        analysisResult={analysis?.result || null}
-                        particles={analysis?.result?.particles || []}
-                        isLoading={!isComplete}
-                        isAnalyzing={isAnalyzing}
-                    />
+                <div className="text-center mt-8">
+                     <Button onClick={onReset} variant="outline" size="lg">
+                        <FileUp className="mr-2 h-4 w-4" />
+                        Analyze Another Sample
+                    </Button>
                 </div>
             </div>
-            <div className="text-center mt-8">
-                 <Button onClick={onReset} variant="outline" size="lg">
-                    <FileUp className="mr-2 h-4 w-4" />
-                    Analyze Another Sample
-                </Button>
-            </div>
-        </div>
-    );
+        );
+    }
+    
+    return null;
 }

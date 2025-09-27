@@ -2,11 +2,11 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download, FlaskConical, TestTube2, Percent, Layers, Atom, Shapes, Loader2 } from 'lucide-react';
+import { Download, FlaskConical, TestTube2, Percent, Layers, Atom, Shapes, Loader2, FilePenLine } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
 import type { Particle } from '@/lib/types';
-import type { AnalyzeUploadedImageOutput } from '@/ai/flows/analyze-uploaded-image';
+import type { AnalyzeUploadedImageOutput } from '@/ai/flows/schemas/analyze-uploaded-image-schema';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 type ResultsPanelProps = {
@@ -52,24 +52,41 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
 export default function ResultsPanel({ analysisResult, particles, isLoading, isAnalyzing }: ResultsPanelProps) {
     const shapeChartData = analysisResult?.particleTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
     const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
+    
+    if (isLoading) {
+        return <Skeleton className="h-full min-h-[400px] w-full" />
+    }
+
+    if (!analysisResult) {
+        return (
+            <Card className="h-full flex flex-col shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                        <FilePenLine className="w-6 h-6 text-primary" />
+                        Analysis Results
+                    </CardTitle>
+                    <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col justify-center items-center text-center text-muted-foreground/60 p-8 border-2 border-dashed border-border/50 rounded-xl bg-background/20 m-6 mt-0">
+                    <TestTube2 className="h-16 w-16 mb-4 text-primary/50" />
+                    <h3 className="text-lg font-semibold text-foreground/80">Awaiting Analysis</h3>
+                    <p className="text-sm mt-1">Upload an image and click "Analyze Sample" to see the results here.</p>
+                </CardContent>
+            </Card>
+        )
+    }
 
     return (
         <Card className="h-full flex flex-col shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl font-bold">
-                    <TestTube2 className="w-6 h-6 text-primary" />
+                    <FilePenLine className="w-6 h-6 text-primary" />
                     Analysis Results
                 </CardTitle>
                 <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col gap-6">
-                {isLoading && !isAnalyzing ? (
-                     <div className="flex-1 flex flex-col justify-center items-center text-center text-muted-foreground/60 p-8 border-2 border-dashed border-border/50 rounded-xl bg-background/20">
-                        <TestTube2 className="h-16 w-16 mb-4 text-primary/50" />
-                        <h3 className="text-lg font-semibold text-foreground/80">Awaiting Analysis</h3>
-                        <p className="text-sm mt-1">Upload an image and click "Analyze Sample" to see the results here.</p>
-                    </div>
-                ) : (
+                
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                             <div className="p-4 bg-background/50 rounded-lg border">
@@ -153,7 +170,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                             Export Results (CSV)
                         </Button>
                     </>
-                )}
+                
             </CardContent>
         </Card>
     );

@@ -38,9 +38,9 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
             </Card>
         );
     }
-
-    if (!image || !analysisResult) {
-        return (
+    
+    if (!analysisResult) {
+         return (
             <Card className="shadow-lg bg-card/80 backdrop-blur-sm border-border/20 transition-all duration-300">
                 <CardHeader>
                      <CardTitle className="flex items-center gap-2 text-xl font-bold">
@@ -72,7 +72,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
             </CardHeader>
             <CardContent>
                 <div className="relative w-full aspect-video rounded-xl overflow-hidden border-2 border-primary/10 bg-background">
-                    <Image src={image} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
+                    <Image src={image!} alt="Analyzed water sample" fill style={{ objectFit: 'contain' }} />
                     {particles.map((p, i) => (
                         <div
                             key={i}

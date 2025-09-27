@@ -49,8 +49,15 @@ export default function Home() {
         {analysisId ? (
            <AnalysisView analysisId={analysisId} onReset={handleReset} />
         ) : (
-          <div className="max-w-2xl mx-auto w-full">
-            <UploadPanel setAnalysisId={handleNewAnalysis} />
+          <div className="w-full max-w-6xl mx-auto">
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div className="flex flex-col gap-8">
+                   <UploadPanel setAnalysisId={handleNewAnalysis} />
+                </div>
+                 <div className="flex flex-col gap-8">
+                    <AnalysisView analysisId={analysisId} onReset={handleReset} />
+                </div>
+            </div>
           </div>
         )}
         </div>
