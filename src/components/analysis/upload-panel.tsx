@@ -203,5 +203,3 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
         </Card>
     );
 }
-
-    
