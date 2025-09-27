@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, DragEvent, useRef } from 'react';
-import Image from 'next/image';
 import { UploadCloud, X, Loader2, Microscope, FileUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -150,7 +149,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
             <CardContent className="flex-1 flex flex-col justify-center items-center gap-6 p-6">
                 {image ? (
                     <div className="relative w-full aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner bg-secondary/20">
-                        <Image src={image} alt="Water sample preview" fill style={{ objectFit: 'contain' }} />
+                        <img src={image} alt="Water sample preview" style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
                         <Button
                             variant="destructive"
                             size="icon"
