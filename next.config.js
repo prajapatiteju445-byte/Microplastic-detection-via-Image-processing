@@ -1,15 +1,8 @@
-require('dotenv').config();
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverActions: {
-    bodySizeLimit: '4.5mb',
-    serverActionsBodySizeLimit: '4.5mb',
-  },
   experimental: {
     serverActions: {
       bodySizeLimit: '4.5mb',
-      serverActionsBodySizeLimit: '4.5mb',
     },
     serverMinification: false,
   },

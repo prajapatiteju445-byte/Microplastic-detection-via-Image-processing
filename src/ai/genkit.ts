@@ -1,7 +1,23 @@
-import {genkit} from 'genkit';
+import {genkit, configureGenkit} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 
-export const ai = genkit({
-  plugins: [googleAI()],
-  model: 'googleai/gemini-2.5-pro',
+configureGenkit({
+  plugins: [
+    googleAI({
+      apiVersion: 'v1beta',
+    }),
+  ],
+  logLevel: 'debug',
+  enableTracingAndMetrics: true,
 });
+
+export const ai = {
+  defineFlow: genkit.defineFlow,
+  definePrompt: genkit.definePrompt,
+  defineTool: genkit.defineTool,
+  embed: genkit.embed,
+  generate: genkit.generate,
+  stream: genkit.stream,
+  model: genkit.model,
+  prompt: genkit.prompt,
+};

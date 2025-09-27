@@ -46,10 +46,10 @@ export type AnalyzeUploadedImageOutput = z.infer<typeof AnalysisResultSchema>;
 
 
 // This Genkit prompt performs the core AI analysis.
-const analysisPrompt = ai.definePrompt({
-  name: 'microplasticAnalysisPrompt',
-  input: {
-    schema: z.object({
+const analysisPrompt = ai.definePrompt(
+  {
+    name: 'microplasticAnalysisPrompt',
+    inputSchema: z.object({
       predictions: z.array(
         z.object({
           x: z.number(),
@@ -62,9 +62,10 @@ const analysisPrompt = ai.definePrompt({
         })
       ),
     }),
+    outputSchema: AnalysisResultSchema,
   },
-  output: { schema: AnalysisResultSchema },
-  prompt: `You are an expert in environmental science and machine learning, specializing in microplastic pollution analysis. You have been provided with a set of microplastic detections from a water sample image, identified by a Roboflow YOLO model.
+  async (input) => {
+    return `You are an expert in environmental science and machine learning, specializing in microplastic pollution analysis. You have been provided with a set of microplastic detections from a water sample image, identified by a Roboflow YOLO model.
 
 Your task is to interpret these raw detection results and generate a comprehensive analysis.
 
@@ -93,11 +94,15 @@ Based on the provided detection data, provide a result including:
 6. The original particle detection data, with coordinates normalized to a 0-1 scale.
 
 Detections:
-{{#each predictions}}
-- Class: {{class}}, Confidence: {{confidence}}, BoundingBox: [{{x}}, {{y}}, {{width}}, {{height}}]
-{{/each}}
-`,
-});
+${input.predictions
+  .map(
+    (p) =>
+      `- Class: ${p.class}, Confidence: ${p.confidence}, BoundingBox: [${p.x}, ${p.y}, ${p.width}, ${p.height}]`
+  )
+  .join('\n')}
+`;
+  }
+);
 
 
 // This is the main flow, now refactored to be a callable server action.
@@ -121,17 +126,19 @@ const analyzeUploadedImageFlow = ai.defineFlow(
     }));
 
     // 3. Get summary and detailed analysis from Gemini
-    const { output: analysisResult } = await analysisPrompt({
-      predictions: roboflowResult.predictions,
+    const analysisResult = await ai.generate({
+      prompt: await analysisPrompt({
+        predictions: roboflowResult.predictions,
+      }),
+      model: ai.model('gemini-pro'),
+      output: {
+        schema: AnalysisResultSchema,
+      },
     });
-    
-    if (!analysisResult) {
-      throw new Error('Failed to get analysis from the language model.');
-    }
     
     // 4. Combine all results into the final output
     const finalResult: AnalyzeUploadedImageOutput = {
-      ...analysisResult,
+      ...analysisResult.output()!,
       particleCount: roboflowResult.predictions.length,
       particles: normalizedParticles,
     };
