@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Eye } from 'lucide-react';
+import { Eye, Loader2 } from 'lucide-react';
 import type { Particle } from '@/lib/types';
 import type { AnalyzeUploadedImageOutput } from '@/ai/flows/schemas/analyze-uploaded-image-schema';
 
@@ -33,7 +33,12 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
                     <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Skeleton className="w-full aspect-video rounded-xl" />
+                    <div className="flex justify-center items-center w-full aspect-video rounded-xl border-2 border-dashed border-border/50 bg-background/20">
+                         <div className="text-center text-muted-foreground/60">
+                            <Loader2 className="h-12 w-12 mx-auto mb-2 text-primary/50 animate-spin" />
+                            <p className="text-sm">Analyzing image...</p>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
         );

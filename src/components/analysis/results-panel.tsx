@@ -54,7 +54,30 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
     const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
     
     if (isLoading) {
-        return <Skeleton className="h-full min-h-[400px] w-full" />
+        return (
+             <Card className="h-full flex flex-col shadow-sm bg-card transition-all duration-300">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                        <FilePenLine className="w-6 h-6 text-primary" />
+                        Analysis Results
+                    </CardTitle>
+                    <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                        <Skeleton className="h-28 w-full" />
+                        <Skeleton className="h-28 w-full" />
+                        <Skeleton className="h-28 w-full" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                        <Skeleton className="h-48 w-full rounded-lg" />
+                        <Skeleton className="h-48 w-full rounded-lg" />
+                    </div>
+                     <Skeleton className="h-40 w-full" />
+                     <Skeleton className="h-10 w-full" />
+                </CardContent>
+            </Card>
+        )
     }
 
     if (!analysisResult) {
@@ -91,17 +114,17 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                             <div className="p-4 bg-background/50 rounded-lg border">
                                 <FlaskConical className="mx-auto h-7 w-7 text-primary mb-2" />
-                                <p className="text-3xl font-bold" title={`${analysisResult?.particleCount ?? 0} particles`}>{analysisResult?.particleCount ?? <Loader2 className="h-7 w-7 mx-auto animate-spin"/>}</p>
+                                <p className="text-3xl font-bold">{analysisResult.particleCount}</p>
                                 <p className="text-sm text-muted-foreground">Total Particles</p>
                             </div>
                             <div className="p-4 bg-background/50 rounded-lg border">
                                 <Percent className="mx-auto h-7 w-7 text-green-500 mb-2" />
-                                {isAnalyzing ? <Loader2 className="h-7 w-7 mx-auto animate-spin"/> : <p className="text-3xl font-bold">{analysisResult?.contaminationPercentage?.toFixed(2)}%</p>}
+                                <p className="text-3xl font-bold">{analysisResult.contaminationPercentage.toFixed(2)}%</p>
                                 <p className="text-sm text-muted-foreground">Contamination</p>
                             </div>
                             <div className="p-4 bg-background/50 rounded-lg border">
                                 <Layers className="mx-auto h-7 w-7 text-yellow-500 mb-2" />
-                                {isAnalyzing ? <Loader2 className="h-7 w-7 mx-auto animate-spin"/> : <p className="text-3xl font-bold">~{((analysisResult?.particleCount ?? 0) / 0.5).toFixed(1)}</p>}
+                                <p className="text-3xl font-bold">~{(analysisResult.particleCount / 0.5).toFixed(1)}</p>
                                 <p className="text-sm text-muted-foreground">Particles/Liter</p>
                             </div>
                         </div>
@@ -160,7 +183,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                                         </div>
                                     </div>
                                ) : (
-                                <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground whitespace-pre-wrap font-sans">{analysisResult?.analysisSummary}</div>
+                                <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground whitespace-pre-wrap font-sans">{analysisResult.analysisSummary}</div>
                                )}
                             </ScrollArea>
                         </div>

@@ -25,8 +25,6 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     const { data: analysis, isLoading, error } = useDoc<Analysis>(analysisDocRef);
     
     if (!analysisId) {
-        // This component doesn't render anything if there's no analysisId
-        // The parent component is responsible for what to show in this case.
         return null;
     }
 
@@ -46,7 +44,6 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                 return 'Processing...';
         }
     }
-
 
     if (error) {
         return (

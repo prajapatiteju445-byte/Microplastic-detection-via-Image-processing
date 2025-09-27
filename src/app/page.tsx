@@ -59,6 +59,7 @@ export default function Home() {
   }
   
   const isComplete = analysis?.status === 'complete';
+  const isAnalyzingOrProcessing = isAnalysisLoading || (analysis?.status !== 'complete' && analysis?.status !== 'error');
 
   return (
     <div className="flex flex-col min-h-screen bg-secondary/50 dark:bg-background">
@@ -81,13 +82,13 @@ export default function Home() {
                     <VisualsPanel 
                        image={analysis?.imageDataUri || null}
                        particles={analysis?.result?.particles || []}
-                       isLoading={isAnalysisLoading && !!analysisId}
+                       isLoading={isAnalyzingOrProcessing && !!analysisId}
                        analysisResult={analysis?.result || null}
                     />
                     <ResultsPanel 
                        analysisResult={analysis?.result || null}
                        particles={analysis?.result?.particles || []}
-                       isLoading={isAnalysisLoading && !!analysisId}
+                       isLoading={isAnalyzingOrProcessing && !!analysisId}
                        isAnalyzing={analysis?.status === 'analyzing'}
                     />
                  </div>
