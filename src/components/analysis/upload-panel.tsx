@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { useFirebase } from '@/firebase';
+import { useFirebase } from '@/firebase/provider';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { processAnalysisQueue } from '@/ai/flows/process-analysis-queue';
 
@@ -16,16 +16,16 @@ type UploadPanelProps = {
 
 export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     const { toast } = useToast();
-    const { firestore, user, isUserLoading } = useFirebase();
+    const { firestore, user, isUserLoading, areServicesAvailable } = useFirebase();
 
     const [image, setImage] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const resetState = useCallback(() => {
         setImage(null);
-        setIsLoading(false);
+        setIsSubmitting(false);
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
@@ -43,8 +43,8 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
             return;
         }
         
-        // Limit file size to ~4MB for server action payload limit
-        if (file.size > 4 * 1024 * 1024) {
+        // Limit file size to ~4.4MB to be safe with base64 encoding overhead
+        if (file.size > 4.4 * 1024 * 1024) {
              toast({
                 title: 'Image Too Large',
                 description: 'Please upload an image smaller than 4MB.',
@@ -66,13 +66,13 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
         if (!image || !firestore || !user) {
             toast({
                 title: 'Error',
-                description: 'Could not submit analysis. Firebase not ready or user not authenticated.',
+                description: 'Cannot submit analysis. Services not ready or user not signed in.',
                 variant: 'destructive',
             });
             return;
         };
 
-        setIsLoading(true);
+        setIsSubmitting(true);
         toast({
             title: 'Sample Submitted',
             description: 'Your image has been queued for analysis. This may take a moment.',
@@ -94,6 +94,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
             setAnalysisId(docRef.id);
             
             // 3. Trigger the background processing flow and DO NOT wait for it.
+            // This is "fire-and-forget"
             processAnalysisQueue({ analysisId: docRef.id });
 
         } catch(e) {
@@ -103,7 +104,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                 description: `Could not queue analysis: ${error}`,
                 variant: 'destructive',
             });
-            setIsLoading(false);
+            setIsSubmitting(false);
         }
     };
     
@@ -131,14 +132,14 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
         }
     };
 
-    const canAnalyze = image && !isLoading && !!firestore && !!user && !isUserLoading;
+    const canAnalyze = image && !isSubmitting && areServicesAvailable && !isUserLoading;
 
     return (
         <Card className="h-full flex flex-col bg-card/50 border-border/20 shadow-lg transition-all duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                     <FileUp className="w-6 h-6 text-primary" />
-                    Upload Image
+                    Submit a Sample
                 </CardTitle>
                 <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
             </CardHeader>
@@ -151,7 +152,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                             size="icon"
                             className="absolute top-2 right-2 z-10 rounded-full h-8 w-8 opacity-70 hover:opacity-100 transition-opacity"
                             onClick={resetState}
-                            disabled={isLoading}
+                            disabled={isSubmitting}
                         >
                             <X className="h-4 w-4" />
                             <span className="sr-only">Remove image</span>
@@ -186,7 +187,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                 )}
 
                 <Button onClick={handleAnalyze} disabled={!canAnalyze} className="w-full text-lg py-6 shadow-md hover:shadow-lg transition-shadow" size="lg">
-                    {isLoading ? (
+                    {isSubmitting ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                             Submitting...
@@ -202,3 +203,5 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
         </Card>
     );
 }
+
+    
