@@ -7,11 +7,28 @@ import { useUser, useAuth } from '@/firebase';
 import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 import { Loader2 } from 'lucide-react';
 import AnalysisView from '@/components/analysis/analysis-view';
+import VisualsPanel from '@/components/analysis/visuals-panel';
+import ResultsPanel from '@/components/analysis/results-panel';
+import { useDoc } from '@/firebase/firestore/use-doc';
+import { doc, DocumentReference, DocumentData } from 'firebase/firestore';
+import { useFirebase, useMemoFirebase } from '@/firebase/provider';
+import type { Analysis } from '@/lib/types';
+import { Button } from '@/components/ui/button';
+import { FileUp } from 'lucide-react';
+
 
 export default function Home() {
   const [analysisId, setAnalysisId] = useState<string | null>(null);
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
+  const { firestore } = useFirebase();
+
+  const analysisDocRef = useMemoFirebase(() => {
+    if (!firestore || !analysisId) return null;
+    return doc(firestore, 'analyses', analysisId) as DocumentReference<DocumentData>;
+  }, [firestore, analysisId]);
+
+  const { data: analysis, isLoading: isAnalysisLoading, error: analysisError } = useDoc<Analysis>(analysisDocRef);
 
   useEffect(() => {
     if (!user && !isUserLoading) {
@@ -40,13 +57,17 @@ export default function Home() {
       </div>
     )
   }
+  
+  const isComplete = analysis?.status === 'complete';
 
   return (
     <div className="flex flex-col min-h-screen bg-background-gradient">
       <Header />
       <main className="flex-1 container mx-auto p-4 sm:p-6 md:p-8">
-          <div className="w-full max-w-6xl mx-auto">
+          <div className="w-full max-w-7xl mx-auto">
              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                
+                {/* Left Column */}
                 <div className="flex flex-col gap-8">
                   {analysisId ? (
                      <AnalysisView analysisId={analysisId} onReset={handleReset} />
@@ -54,10 +75,31 @@ export default function Home() {
                      <UploadPanel setAnalysisId={handleNewAnalysis} />
                   )}
                 </div>
+
+                {/* Right Column */}
                  <div className="flex flex-col gap-8">
-                    <AnalysisView analysisId={analysisId} onReset={handleReset} />
-                </div>
+                    <VisualsPanel 
+                       image={analysis?.imageDataUri || null}
+                       particles={analysis?.result?.particles || []}
+                       isLoading={isAnalysisLoading && !!analysisId}
+                       analysisResult={analysis?.result || null}
+                    />
+                    <ResultsPanel 
+                       analysisResult={analysis?.result || null}
+                       particles={analysis?.result?.particles || []}
+                       isLoading={isAnalysisLoading && !!analysisId}
+                       isAnalyzing={analysis?.status === 'analyzing'}
+                    />
+                 </div>
             </div>
+            {isComplete && (
+               <div className="text-center mt-8 col-span-1 lg:col-span-2">
+                   <Button onClick={handleReset} variant="outline" size="lg">
+                      <FileUp className="mr-2 h-4 w-4" />
+                      Analyze Another Sample
+                  </Button>
+              </div>
+            )}
           </div>
       </main>
     </div>
