@@ -7,9 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useFirebase } from '@/firebase';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, serverTimestamp } from 'firebase/firestore';
-import { analyzeUploadedImage } from '@/ai/flows/analyze-uploaded-image';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { processAnalysisQueue } from '@/ai/flows/process-analysis-queue';
 
 type UploadPanelProps = {
     setAnalysisId: (id: string) => void;
@@ -43,6 +42,16 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
             });
             return;
         }
+        
+        // Limit file size to ~4MB for server action payload limit
+        if (file.size > 4 * 1024 * 1024) {
+             toast({
+                title: 'Image Too Large',
+                description: 'Please upload an image smaller than 4MB.',
+                variant: 'destructive',
+            });
+            return;
+        }
 
         resetState();
         const reader = new FileReader();
@@ -66,47 +75,32 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
         setIsLoading(true);
         toast({
             title: 'Sample Submitted',
-            description: 'Your image is now being analyzed. This may take a moment.',
+            description: 'Your image has been queued for analysis. This may take a moment.',
         });
 
         try {
-            // 1. Call the server action to perform the heavy lifting first
-            const analysisResult = await analyzeUploadedImage({ imageDataUri: image });
-
-            // 2. Once analysis is complete, create the document with the full results
-            const finalAnalysisData = {
+            // 1. Create the initial analysis document in Firestore with 'new' status.
+            const initialAnalysisData = {
                 userId: user.uid,
                 imageDataUri: image,
-                status: 'complete' as const,
-                result: analysisResult,
+                status: 'new' as const,
                 createdAt: serverTimestamp(),
-                completedAt: serverTimestamp(),
             };
             
             const analysesCollection = collection(firestore, 'analyses');
-            const docRefPromise = addDocumentNonBlocking(analysesCollection, finalAnalysisData);
+            const docRef = await addDoc(analysesCollection, initialAnalysisData);
+
+            // 2. Immediately update the UI to show the analysis view.
+            setAnalysisId(docRef.id);
             
-            docRefPromise.then(docRef => {
-                if (docRef) {
-                    setAnalysisId(docRef.id);
-                } else {
-                     throw new Error("Failed to create analysis document in Firestore.");
-                }
-            }).catch(e => {
-                 const error = e instanceof Error ? e.message : 'An unknown error occurred during Firestore write.';
-                 toast({
-                    title: 'Analysis Failed',
-                    description: `Could not save analysis results: ${error}`,
-                    variant: 'destructive',
-                });
-                setIsLoading(false);
-            })
+            // 3. Trigger the background processing flow and DO NOT wait for it.
+            processAnalysisQueue({ analysisId: docRef.id });
 
         } catch(e) {
             const error = e instanceof Error ? e.message : 'An unknown error occurred';
             toast({
-                title: 'Analysis Failed',
-                description: `Could not complete analysis: ${error}`,
+                title: 'Submission Failed',
+                description: `Could not queue analysis: ${error}`,
                 variant: 'destructive',
             });
             setIsLoading(false);
@@ -184,7 +178,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                             <p className="text-sm text-muted-foreground">
                                 <span className="font-semibold text-primary">Click to upload</span> or drag and drop
                             </p>
-                            <p className="text-xs text-muted-foreground">PNG, JPG, or other image formats</p>
+                            <p className="text-xs text-muted-foreground">PNG, JPG, or other image formats (Max 4MB)</p>
                         </label>
                     </div>
                 )}
@@ -193,7 +187,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                     {isLoading ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            Analyzing...
+                            Submitting...
                         </>
                     ) : (
                         <>
