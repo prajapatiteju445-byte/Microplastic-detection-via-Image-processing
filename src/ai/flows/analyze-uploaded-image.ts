@@ -57,6 +57,8 @@ Based on the provided detection data, provide a result including:
 5. A concise summary of the findings.
 6. The original particle detection data, with coordinates normalized to a 0-1 scale.
 
+You MUST provide your response as a valid JSON object that conforms to the output schema.
+
 Detections:
 {{{json predictions}}}
 `
@@ -89,9 +91,13 @@ const analyzeUploadedImageFlow = ai.defineFlow(
         predictions: roboflowResult.predictions,
     });
     
+    if (!output) {
+      throw new Error("Analysis failed: AI model did not return a valid output.");
+    }
+    
     // 4. Combine all results into the final output
     const finalResult: AnalyzeUploadedImageOutput = {
-      ...output!,
+      ...output,
       particleCount: roboflowResult.predictions.length,
       particles: normalizedParticles,
     };
