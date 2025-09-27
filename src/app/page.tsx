@@ -46,12 +46,12 @@ export default function Home() {
 
   if (isUserLoading || !user) {
     return (
-       <div className="flex flex-col min-h-screen bg-background">
+       <div>
         <Header />
-        <main className="flex-1 flex items-center justify-center">
-            <div className="flex flex-col items-center gap-4 text-center">
+        <main>
+            <div>
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <p className="text-muted-foreground">Authenticating securely...</p>
+                <p>Authenticating securely...</p>
             </div>
         </main>
       </div>
@@ -62,39 +62,31 @@ export default function Home() {
   const isAnalyzingOrProcessing = isAnalysisLoading || (analysisId && analysis?.status !== 'complete' && analysis?.status !== 'error');
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div>
       <Header />
-      <main className="flex-1 container mx-auto p-4 sm:p-6 md:p-8">
-          <div className="w-full max-w-7xl mx-auto bg-background rounded-xl shadow-sm p-8">
-             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                
-                {/* Left Column */}
-                <div className="flex flex-col gap-8">
-                  {analysisId ? (
-                     <AnalysisView analysisId={analysisId} onReset={handleReset} />
-                  ) : (
-                     <UploadPanel setAnalysisId={handleNewAnalysis} />
-                  )}
-                </div>
+      <main>
+          <div>
+            {analysisId ? (
+                <AnalysisView analysisId={analysisId} onReset={handleReset} />
+            ) : (
+                <UploadPanel setAnalysisId={handleNewAnalysis} />
+            )}
 
-                {/* Right Column */}
-                 <div className="flex flex-col gap-8">
-                    <VisualsPanel 
-                       image={analysis?.imageDataUri || null}
-                       particles={analysis?.result?.particles || []}
-                       isLoading={isAnalyzingOrProcessing}
-                       analysisResult={analysis?.result || null}
-                    />
-                    <ResultsPanel 
-                       analysisResult={analysis?.result || null}
-                       particles={analysis?.result?.particles || []}
-                       isLoading={isAnalyzingOrProcessing}
-                       isAnalyzing={analysis?.status === 'analyzing'}
-                    />
-                 </div>
-            </div>
+            <VisualsPanel 
+                image={analysis?.imageDataUri || null}
+                particles={analysis?.result?.particles || []}
+                isLoading={isAnalyzingOrProcessing}
+                analysisResult={analysis?.result || null}
+            />
+            <ResultsPanel 
+                analysisResult={analysis?.result || null}
+                particles={analysis?.result?.particles || []}
+                isLoading={isAnalyzingOrProcessing}
+                isAnalyzing={analysis?.status === 'analyzing'}
+            />
+            
             {isComplete && (
-               <div className="text-center mt-8 col-span-1 lg:col-span-2">
+               <div>
                    <Button onClick={handleReset} variant="outline" size="lg">
                       <FileUp className="mr-2 h-4 w-4" />
                       Analyze Another Sample

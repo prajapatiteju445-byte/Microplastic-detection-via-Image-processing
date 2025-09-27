@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <head />
-      <body className="font-body antialiased bg-secondary/50 min-h-screen flex flex-col">
+      <body>
         <FirebaseClientProvider>
           <ThemeProvider
             attribute="class"
