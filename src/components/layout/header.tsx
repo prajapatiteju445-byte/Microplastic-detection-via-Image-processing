@@ -16,9 +16,9 @@ export default function Header() {
           </Link>
         </div>
         <div>
-          <Button variant="ghost" size="sm" asChild>
+          <Button variant="ghost" asChild>
             <Link href="/about">
-              <Info className="h-5 w-5 mr-1" />
+              <Info className="mr-1" />
               <span>About Us</span>
             </Link>
           </Button>

@@ -47,7 +47,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
 
     if (error) {
         return (
-            <div className="flex flex-col items-center justify-center gap-4 text-center max-w-lg mx-auto p-4 rounded-lg bg-card/80 border border-destructive/30">
+            <div>
                  <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>Error Loading Analysis</AlertTitle>
@@ -63,7 +63,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     
     if (analysis && analysis.status === 'error') {
         return (
-            <div className="flex flex-col items-center justify-center gap-4 text-center max-w-lg mx-auto p-4 rounded-lg bg-card/80 border border-destructive/30">
+            <div>
                  <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>Analysis Failed</AlertTitle>
@@ -79,19 +79,19 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
 
     if (isProcessing) {
         return (
-            <div className="flex flex-col items-center justify-center gap-4 text-center max-w-lg mx-auto p-4 rounded-lg bg-card/80 border-border/20 shadow-lg">
-                <div className="flex items-center gap-3 text-lg text-muted-foreground">
+            <div>
+                <div>
                     <Loader2 className="h-6 w-6 animate-spin text-primary" />
                     <p>
                         {getStatusMessage()}
                     </p>
                 </div>
-                 <div className="relative w-full aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner bg-secondary/20 mt-4">
+                 <div>
                     {analysis?.imageDataUri && (
                         <img src={analysis.imageDataUri} alt="Water sample preview" style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
                     )}
                  </div>
-                 <p className="text-xs text-muted-foreground mt-2">Analysis is running. The right panels will update automatically upon completion.</p>
+                 <p>Analysis is running. The right panels will update automatically upon completion.</p>
             </div>
         )
     }
@@ -99,14 +99,14 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     if (isComplete) {
        // When complete, we show the main visual panel instead of the loading state.
         return (
-             <div className="flex flex-col gap-8">
-                 <h2 className="text-2xl font-bold text-center">Analysis Complete</h2>
-                  <div className="relative w-full aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner bg-secondary/20">
+             <div>
+                 <h2>Analysis Complete</h2>
+                  <div>
                     {analysis?.imageDataUri && (
                         <img src={analysis.imageDataUri} alt="Water sample preview" style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
                     )}
                  </div>
-                 <p className="text-muted-foreground text-center">Review your results in the panels on the right. You can start a new analysis below.</p>
+                 <p>Review your results in the panels on the right. You can start a new analysis below.</p>
             </div>
         );
     }

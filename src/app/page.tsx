@@ -87,7 +87,7 @@ export default function Home() {
             
             {isComplete && (
                <div>
-                   <Button onClick={handleReset} variant="outline" size="lg">
+                   <Button onClick={handleReset} variant="outline">
                       <FileUp className="mr-2 h-4 w-4" />
                       Analyze Another Sample
                   </Button>

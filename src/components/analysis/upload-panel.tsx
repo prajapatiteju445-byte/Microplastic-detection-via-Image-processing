@@ -168,7 +168,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                 </div>
             )}
 
-            <Button onClick={handleAnalyze} disabled={!canAnalyze} size="lg">
+            <Button onClick={handleAnalyze} disabled={!canAnalyze}>
                 {isSubmitting ? (
                     <>
                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
