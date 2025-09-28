@@ -1,6 +1,5 @@
 'use client';
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, FlaskConical, TestTube2, Percent, Layers, Atom, Shapes, Loader2, FilePenLine } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -47,10 +46,12 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
 };
 
 const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center text-center p-8 min-h-[240px] border-2 border-dashed border-border/50 rounded-lg">
-        <TestTube2 className="h-10 w-10 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold text-foreground mb-1">Awaiting Analysis</h3>
-        <p className="text-sm text-muted-foreground max-w-xs">Upload an image and click "Analyze Sample" to see the results here.</p>
+    <div className="flex flex-col items-start justify-center text-left p-4 min-h-[100px]">
+        <div className="flex items-center gap-2">
+            <TestTube2 className="h-5 w-5 text-muted-foreground" />
+            <h3 className="text-lg font-semibold text-foreground">Awaiting Analysis</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mt-1">Upload an image and click "Analyze Sample" to see the results here.</p>
     </div>
 );
 
@@ -71,15 +72,15 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
     const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
     
     return (
-        <Card>
-            <CardHeader className="flex flex-row items-center gap-2">
+        <div>
+            <div className="flex flex-row items-center gap-2 mb-2">
                  <FilePenLine className="h-5 w-5" />
                  <div>
-                    <CardTitle>Analysis Results</CardTitle>
-                    <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
+                    <h2 className="text-xl font-semibold">Analysis Results</h2>
+                    <p className="text-sm text-muted-foreground">Detected microplastics and a summary of the findings.</p>
                  </div>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div>
                 {isLoading ? <LoadingState /> : !analysisResult ? <EmptyState /> : (
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
@@ -161,7 +162,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                         </Button>
                     </div>
                 )}
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }

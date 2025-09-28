@@ -13,7 +13,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 import { doc, DocumentReference, DocumentData } from 'firebase/firestore';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import type { Analysis } from '@/lib/types';
-import { Card } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 export default function Home() {
   const [analysisId, setAnalysisId] = useState<string | null>(null);
@@ -44,7 +44,7 @@ export default function Home() {
 
   if (isUserLoading || !user) {
     return (
-       <div className="flex flex-col min-h-screen bg-background-gradient">
+       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4 text-muted-foreground">
@@ -59,12 +59,11 @@ export default function Home() {
   const isAnalyzingOrProcessing = isAnalysisLoading || (analysisId && analysis?.status !== 'complete' && analysis?.status !== 'error');
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-gradient">
+    <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 w-full p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
-         <Card className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start p-8">
-            <div className="lg:col-span-3">
+        <div className="flex flex-col gap-8">
+            <div>
               {analysisId ? (
                   <AnalysisView analysisId={analysisId} onReset={handleReset} />
               ) : (
@@ -72,13 +71,16 @@ export default function Home() {
               )}
             </div>
 
-            <div className="lg:col-span-2 flex flex-col gap-8">
+            <Separator />
+
+            <div className="flex flex-col gap-8">
               <ResultsPanel 
                   analysisResult={analysis?.result || null}
                   particles={analysis?.result?.particles || []}
                   isLoading={isAnalyzingOrProcessing}
                   isAnalyzing={analysis?.status === 'analyzing'}
               />
+              <Separator />
               <VisualsPanel 
                   image={analysis?.imageDataUri || null}
                   particles={analysis?.result?.particles || []}
@@ -86,7 +88,6 @@ export default function Home() {
                   analysisResult={analysis?.result || null}
               />
             </div>
-          </Card>
         </div>
       </main>
     </div>

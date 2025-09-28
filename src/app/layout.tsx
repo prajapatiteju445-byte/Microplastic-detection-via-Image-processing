@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} dark`}>
       <head />
-      <body className="bg-background-gradient">
+      <body>
         <FirebaseClientProvider>
           <ThemeProvider
             attribute="class"

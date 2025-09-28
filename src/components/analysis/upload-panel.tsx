@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, DragEvent, useRef } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { UploadCloud, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -128,12 +127,13 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     const canAnalyze = image && !isSubmitting && areServicesAvailable && !isUserLoading;
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Upload Image</CardTitle>
-                <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
+        <div className="flex flex-col gap-4">
+            <div>
+                <h2 className="text-xl font-semibold">Upload Image</h2>
+                <p className="text-sm text-muted-foreground">Upload a water sample image to begin the analysis.</p>
+            </div>
+            
+            <div className="p-6">
                 {image ? (
                     <div className="relative group">
                         <div className="relative w-full h-80 rounded-lg overflow-hidden border border-border/50">
@@ -180,9 +180,9 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                         </div>
                     </div>
                 )}
-            </CardContent>
-            <CardFooter className="p-6">
-                <Button size="lg" onClick={handleAnalyze} disabled={!canAnalyze} className="w-full font-semibold text-base shadow-lg shadow-primary/20">
+            </div>
+            <div className="p-6">
+                <Button size="lg" onClick={handleAnalyze} disabled={!canAnalyze} className="w-full font-semibold text-base">
                     {isSubmitting ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -194,7 +194,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                         </>
                     )}
                 </Button>
-            </CardFooter>
-        </Card>
+            </div>
+        </div>
     );
 }

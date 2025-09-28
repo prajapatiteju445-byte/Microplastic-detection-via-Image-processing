@@ -7,7 +7,6 @@ import type { Analysis } from '@/lib/types';
 import { Button } from '../ui/button';
 import { Loader2, AlertTriangle, FileUp } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '../ui/alert';
-import { Card, CardContent } from '../ui/card';
 import Image from 'next/image';
 
 type AnalysisViewProps = {
@@ -48,78 +47,70 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
 
     if (error) {
         return (
-            <Card>
-                <CardContent className="p-8 flex flex-col items-center justify-center gap-4 text-center">
-                    <Alert variant="destructive">
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertTitle>Error Loading Analysis</AlertTitle>
-                        <AlertDescription>{error.message}</AlertDescription>
-                    </Alert>
-                    <Button onClick={onReset} variant="outline" className="mt-4">
-                        <FileUp className="mr-2 h-4 w-4" />
-                        Start a New Analysis
-                    </Button>
-                </CardContent>
-            </Card>
+            <div className="p-8 flex flex-col items-center justify-center gap-4 text-center">
+                <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Error Loading Analysis</AlertTitle>
+                    <AlertDescription>{error.message}</AlertDescription>
+                </Alert>
+                <Button onClick={onReset} variant="outline" className="mt-4">
+                    <FileUp className="mr-2 h-4 w-4" />
+                    Start a New Analysis
+                </Button>
+            </div>
         );
     }
     
     if (analysis && analysis.status === 'error') {
         return (
-            <Card>
-                 <CardContent className="p-8 flex flex-col items-center justify-center gap-4 text-center">
-                    <Alert variant="destructive">
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertTitle>Analysis Failed</AlertTitle>
-                        <AlertDescription>{analysis.error || 'An unknown error occurred during analysis.'}</AlertDescription>
-                    </Alert>
-                    <Button onClick={onReset} variant="outline" className="mt-4">
-                        <FileUp className="mr-2 h-4 w-4" />
-                        Start a New Analysis
-                    </Button>
-                </CardContent>
-            </Card>
+            <div className="p-8 flex flex-col items-center justify-center gap-4 text-center">
+                <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Analysis Failed</AlertTitle>
+                    <AlertDescription>{analysis.error || 'An unknown error occurred during analysis.'}</AlertDescription>
+                </Alert>
+                <Button onClick={onReset} variant="outline" className="mt-4">
+                    <FileUp className="mr-2 h-4 w-4" />
+                    Start a New Analysis
+                </Button>
+            </div>
         )
     }
 
     if (isProcessing) {
         return (
-            <Card>
-                <CardContent className="p-8 flex flex-col items-center justify-center gap-6 text-center">
-                    <div className="flex items-center gap-3 text-lg font-medium text-foreground">
-                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                        <p>
-                            {getStatusMessage()}
-                        </p>
-                    </div>
-                     <div className="relative w-full h-64 rounded-lg overflow-hidden border">
-                        {analysis?.imageDataUri && (
-                            <Image src={analysis.imageDataUri} alt="Water sample preview" layout="fill" objectFit="contain" />
-                        )}
-                     </div>
-                     <p className="text-muted-foreground text-sm">The results will appear on the right as soon as they are ready.</p>
-                </CardContent>
-            </Card>
+            <div className="p-8 flex flex-col items-center justify-center gap-6 text-center">
+                <div className="flex items-center gap-3 text-lg font-medium text-foreground">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                    <p>
+                        {getStatusMessage()}
+                    </p>
+                </div>
+                 <div className="relative w-full h-64 rounded-lg overflow-hidden border">
+                    {analysis?.imageDataUri && (
+                        <Image src={analysis.imageDataUri} alt="Water sample preview" layout="fill" objectFit="contain" />
+                    )}
+                 </div>
+                 <p className="text-muted-foreground text-sm">The results will appear below as soon as they are ready.</p>
+            </div>
         )
     }
     
     if (isComplete) {
        return (
-            <Card>
-                <CardContent className="p-8 flex flex-col items-center justify-center gap-6 text-center">
-                    <h2 className="text-2xl font-semibold">Analysis Complete</h2>
-                    <div className="relative w-full h-64 rounded-lg overflow-hidden border">
-                        {analysis?.imageDataUri && (
-                            <Image src={analysis.imageDataUri} alt="Analyzed water sample" layout="fill" objectFit="contain" />
-                        )}
-                    </div>
-                    <p className="text-muted-foreground">Review your results in the panels on the right.</p>
-                    <Button onClick={onReset} variant="outline" className="mt-4">
-                        <FileUp className="mr-2 h-4 w-4" />
-                        Analyze Another Sample
-                    </Button>
-                </CardContent>
-            </Card>
+            <div className="p-8 flex flex-col items-center justify-center gap-6 text-center">
+                <h2 className="text-2xl font-semibold">Analysis Complete</h2>
+                <div className="relative w-full h-64 rounded-lg overflow-hidden border">
+                    {analysis?.imageDataUri && (
+                        <Image src={analysis.imageDataUri} alt="Analyzed water sample" layout="fill" objectFit="contain" />
+                    )}
+                </div>
+                <p className="text-muted-foreground">Review your results below.</p>
+                <Button onClick={onReset} variant="outline" className="mt-4">
+                    <FileUp className="mr-2 h-4 w-4" />
+                    Analyze Another Sample
+                </Button>
+            </div>
         );
     }
     
