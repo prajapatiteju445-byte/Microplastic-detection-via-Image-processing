@@ -1,5 +1,178 @@
-import AquaLensPage from './aqualens/page';
+'use client';
+
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { UploadCloud, FileText, Eye, TestTube2, Loader2 } from 'lucide-react';
+import { useFirebase } from '@/firebase/provider';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection } from 'firebase/firestore';
+import AnalysisView from '@/components/analysis/analysis-view';
+import Header from '@/components/layout/header';
 
 export default function Home() {
-  return <AquaLensPage />;
+  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { firestore, user } = useFirebase();
+
+  const handleFileChange = (file: File | null) => {
+    if (file) {
+      if (file.size > 4.5 * 1024 * 1024) { // 4.5MB limit
+        setError('File is too large. Please select an image under 4.5MB.');
+        setImageFile(null);
+      } else {
+        setError(null);
+        setImageFile(file);
+      }
+    }
+  };
+  
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    handleFileChange(file || null);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    handleFileChange(file || null);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
+  const handleAnalyze = async () => {
+    if (!imageFile || !firestore || !user) {
+      setError('Please select a file and ensure you are logged in.');
+      return;
+    }
+    
+    setIsUploading(true);
+    setError(null);
+
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onload = async () => {
+        const imageDataUri = reader.result as string;
+        const analysesCollection = collection(firestore, 'analyses');
+        
+        const newAnalysisDoc = await addDocumentNonBlocking(analysesCollection, {
+          userId: user.uid,
+          status: 'new',
+          imageDataUri: imageDataUri,
+          createdAt: new Date(),
+        });
+        
+        setAnalysisId(newAnalysisDoc.id);
+        setIsUploading(false);
+      };
+      reader.onerror = () => {
+          throw new Error("Could not read file for analysis.");
+      }
+    } catch (e: any) {
+      setError(e.message || 'An error occurred during upload.');
+      setIsUploading(false);
+    }
+  };
+
+  const handleReset = () => {
+    setAnalysisId(null);
+    setImageFile(null);
+    setError(null);
+    setIsUploading(false);
+  };
+
+
+  if (analysisId) {
+    return (
+        <div className="min-h-screen w-full bg-secondary">
+            <Header />
+            <main className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
+                <AnalysisView analysisId={analysisId} onReset={handleReset}/>
+            </main>
+        </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen w-full bg-secondary">
+        <Header />
+        <main className="grid grid-cols-1 lg:grid-cols-5 gap-8 p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
+            {/* Left Column */}
+            <div className="lg:col-span-3">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-xl">1. Upload Image</CardTitle>
+                        <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-6">
+                        <div 
+                            onDrop={handleDrop}
+                            onDragOver={handleDragOver}
+                            onClick={() => document.getElementById('file-upload')?.click()}
+                            className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-12 text-center cursor-pointer hover:border-primary transition-colors"
+                        >
+                            <UploadCloud className="h-12 w-12 text-muted-foreground" />
+                            {imageFile ? (
+                                <p className="mt-4 font-semibold text-primary">{imageFile.name}</p>
+                            ): (
+                                <>
+                                 <p className="mt-4 font-semibold">Click to upload or drag and drop</p>
+                                 <p className="text-sm text-muted-foreground">PNG, JPG, or other image formats (max 4.5MB)</p>
+                                </>
+                            )}
+                            <input
+                                id="file-upload"
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleFileSelect}
+                             />
+                        </div>
+                        {error && <p className="text-sm font-medium text-destructive">{error}</p>}
+                        <Button size="lg" className="w-full" onClick={handleAnalyze} disabled={!imageFile || isUploading}>
+                            {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {isUploading ? 'Uploading...' : 'Analyze Sample'}
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Right Column */}
+            <div className="lg:col-span-2 flex flex-col gap-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-xl">
+                            <FileText className="h-5 w-5" />
+                            Analysis Results
+                        </CardTitle>
+                        <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center justify-center text-center text-muted-foreground py-16 border-2 border-dashed rounded-lg">
+                        <TestTube2 className="h-12 w-12 mb-4" />
+                        <p className="font-semibold">Awaiting Analysis</p>
+                        <p className="text-sm">Upload an image and click "Analyze Sample" to see results.</p>
+                    </CardContent>
+                </Card>
+                
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-xl">
+                            <Eye className="h-5 w-5" />
+                            Visual Analysis
+                        </CardTitle>
+                        <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-center border-2 border-dashed rounded-lg h-48">
+                         <Eye className="h-12 w-12 text-muted-foreground" />
+                    </CardContent>
+                </Card>
+            </div>
+        </main>
+    </div>
+  );
 }
