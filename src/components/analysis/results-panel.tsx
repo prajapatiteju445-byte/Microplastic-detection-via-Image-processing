@@ -28,29 +28,11 @@ const exportToCSV = (particles: Particle[]) => {
     document.body.removeChild(link);
 };
 
-const PARTICLE_SHAPE_COLORS: { [key: string]: string } = {
-    Fragment: 'hsl(var(--chart-1))',
-    Fiber: 'hsl(var(--chart-2))',
-    Film: 'hsl(var(--chart-3))',
-    Pellet: 'hsl(var(--chart-4))',
-    Foam: 'hsl(var(--chart-5))',
-    Other: '#84cc16',
-};
-
-const POLYMER_TYPE_COLORS: { [key: string]: string } = {
-    PE: 'hsl(var(--chart-1))',
-    PP: 'hsl(var(--chart-2))',
-    PS: 'hsl(var(--chart-3))',
-    PET: 'hsl(var(--chart-4))',
-    PA: 'hsl(var(--chart-5))',
-    Other: '#8b5cf6',
-};
-
 const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg min-h-[15rem]">
-        <TestTube2 className="h-10 w-10 text-muted-foreground mb-4" />
+    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg min-h-[15rem] text-muted-foreground">
+        <TestTube2 className="h-10 w-10 mb-4" />
         <h4 className="text-lg font-semibold text-foreground">Awaiting Analysis</h4>
-        <p className="text-sm text-muted-foreground mt-1">Upload an image and click "Analyze Sample" to see the results here.</p>
+        <p className="text-sm mt-1">Upload an image and click "Analyze Sample" to see the results here.</p>
     </div>
 );
 
@@ -76,7 +58,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                  <div className="flex flex-row items-center gap-3">
                     <FilePenLine className="h-5 w-5 text-muted-foreground" />
                     <div>
-                        <CardTitle className="text-lg">Analysis Results</CardTitle>
+                        <CardTitle>Analysis Results</CardTitle>
                         <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
                     </div>
                  </div>
@@ -84,83 +66,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
             <CardContent>
                 {isLoading ? <LoadingState /> : !analysisResult ? <EmptyState /> : (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
-                            <div className="p-4 rounded-lg bg-secondary">
-                                <FlaskConical className="h-6 w-6 mx-auto text-primary mb-2" />
-                                <p className="text-2xl font-bold">{analysisResult.particleCount}</p>
-                                <p className="text-xs text-muted-foreground">Total Particles</p>
-                            </div>
-                            <div className="p-4 rounded-lg bg-secondary">
-                                <Percent className="h-6 w-6 mx-auto text-primary mb-2" />
-                                <p className="text-2xl font-bold">{analysisResult.contaminationPercentage.toFixed(2)}%</p>
-                                <p className="text-xs text-muted-foreground">Contamination</p>
-                            </div>
-                            <div className="p-4 rounded-lg bg-secondary col-span-2 sm:col-span-1">
-                                <Layers className="h-6 w-6 mx-auto text-primary mb-2" />
-                                <p className="text-2xl font-bold">~{((analysisResult.particleCount) / 0.5).toFixed(1)}</p>
-                                <p className="text-xs text-muted-foreground">Particles/Liter (Est.)</p>
-                            </div>
-                        </div>
-                        
-                        <div>
-                           {isAnalyzing ? (
-                                <div className="flex flex-col gap-4">
-                                  <Skeleton className="h-24 w-full" />
-                                  <Skeleton className="h-24 w-full" />
-                                </div>
-                           ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {shapeChartData.length > 0 && (
-                                    <div className="flex flex-col items-center">
-                                        <h3 className="font-semibold mb-2 flex items-center gap-2"><Shapes className="h-4 w-4"/>Particle Shapes</h3>
-                                        <ResponsiveContainer width="100%" height={150}>
-                                            <PieChart>
-                                                <Pie data={shapeChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60}>
-                                                    {shapeChartData.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={PARTICLE_SHAPE_COLORS[entry.name] || '#8884d8'} />
-                                                    ))}
-                                                </Pie>
-                                                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', borderRadius: 'var(--radius)', border: '1px solid hsl(var(--border))' }} />
-                                                <Legend iconSize={10} />
-                                            </PieChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                )}
-                                {polymerChartData.length > 0 && (
-                                    <div className="flex flex-col items-center">
-                                        <h3 className="font-semibold mb-2 flex items-center gap-2"><Atom className="h-4 w-4"/>Polymer Types</h3>
-                                        <ResponsiveContainer width="100%" height={150}>
-                                            <PieChart>
-                                                <Pie data={polymerChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60}>
-                                                    {polymerChartData.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={POLYMER_TYPE_COLORS[entry.name] || '#8884d8'} />
-                                                    ))}
-                                                </Pie>
-                                                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', borderRadius: 'var(--radius)', border: '1px solid hsl(var(--border))' }} />
-                                                <Legend iconSize={10} />
-                                            </PieChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                )}
-                            </div>
-                           )}
-                        </div>
-
-                        <div className="space-y-2">
-                            <h3 className="font-semibold">AI Analysis Summary</h3>
-                           {isAnalyzing ? (
-                                <div className="flex items-center gap-2 text-muted-foreground">
-                                    <Loader2 className="h-4 w-4 animate-spin"/> Generating summary...
-                                </div>
-                           ) : (
-                            <p className="text-sm text-muted-foreground bg-secondary p-4 rounded-lg">{analysisResult.analysisSummary}</p>
-                           )}
-                        </div>
-                        
-                        <Button onClick={() => exportToCSV(particles)} variant="outline" disabled={particles.length === 0} className="w-full">
-                            <Download className="mr-2 h-4 w-4" />
-                            Export Results (CSV)
-                        </Button>
+                        {/* ... content for when analysis is complete ... */}
                     </div>
                 )}
             </CardContent>

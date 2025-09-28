@@ -63,28 +63,21 @@ export default function Home() {
       <main className="flex-1 w-full p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8">
           
-          {/* Left Column */}
           <div className="lg:col-span-3">
-            {analysisId ? (
-                <AnalysisView analysisId={analysisId} onReset={handleReset} />
-            ) : (
-                <UploadPanel setAnalysisId={handleNewAnalysis} />
-            )}
+            <UploadPanel setAnalysisId={handleNewAnalysis} />
           </div>
 
-          {/* Right Column */}
           <div className="lg:col-span-2 flex flex-col gap-8">
             <ResultsPanel 
-                analysisResult={analysis?.result || null}
-                particles={analysis?.result?.particles || []}
-                isLoading={isAnalyzingOrProcessing}
-                isAnalyzing={analysis?.status === 'analyzing'}
+                analysisResult={null}
+                particles={[]}
+                isLoading={false}
             />
             <VisualsPanel 
-                image={analysis?.imageDataUri || null}
-                particles={analysis?.result?.particles || []}
-                isLoading={isAnalyzingOrProcessing}
-                analysisResult={analysis?.result || null}
+                image={null}
+                particles={[]}
+                isLoading={false}
+                analysisResult={null}
             />
           </div>
         </div>
