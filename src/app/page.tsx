@@ -180,7 +180,7 @@ export default function Home() {
               <CardTitle className="flex items-center gap-2">
                 <Eye className="h-5 w-5" />
                 Visual Analysis
-              </Title>
+              </CardTitle>
               <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
             </CardHeader>
             <CardContent>
