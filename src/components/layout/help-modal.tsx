@@ -38,8 +38,8 @@ export default function HelpModal() {
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm">
-            <HelpCircle className="h-5 w-5 mr-1" />
-            <span className="hidden sm:inline">Help & Instructions</span>
+            <HelpCircle className="h-4 w-4 mr-2" />
+            <span>Help & Instructions</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
@@ -49,7 +49,7 @@ export default function HelpModal() {
             Information about microplastic detection, image processing, and data export.
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="h-[60vh] p-4 border rounded-md bg-secondary/50">
+        <ScrollArea className="h-[60vh] p-4 border rounded-md">
           {isLoading ? (
             <div className="space-y-4 p-2">
               <Skeleton className="h-4 w-3/4" />

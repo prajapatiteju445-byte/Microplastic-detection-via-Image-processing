@@ -22,13 +22,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} dark`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable}`}>
       <head />
-      <body>
+      <body className="bg-secondary">
         <FirebaseClientProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="light"
             enableSystem={false}
             disableTransitionOnChange
           >

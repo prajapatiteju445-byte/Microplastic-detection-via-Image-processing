@@ -13,7 +13,6 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 import { doc, DocumentReference, DocumentData } from 'firebase/firestore';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import type { Analysis } from '@/lib/types';
-import { Separator } from '@/components/ui/separator';
 
 export default function Home() {
   const [analysisId, setAnalysisId] = useState<string | null>(null);
@@ -59,39 +58,35 @@ export default function Home() {
   const isAnalyzingOrProcessing = isAnalysisLoading || (analysisId && analysis?.status !== 'complete' && analysis?.status !== 'error');
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-gradient">
+    <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 w-full p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto flex flex-col gap-8">
-            <div>
-              {analysisId ? (
-                  <AnalysisView analysisId={analysisId} onReset={handleReset} />
-              ) : (
-                  <UploadPanel setAnalysisId={handleNewAnalysis} />
-              )}
-            </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8">
+          
+          {/* Left Column */}
+          <div className="lg:col-span-3">
+            {analysisId ? (
+                <AnalysisView analysisId={analysisId} onReset={handleReset} />
+            ) : (
+                <UploadPanel setAnalysisId={handleNewAnalysis} />
+            )}
+          </div>
 
-            <Separator />
-
-            <div>
-              <ResultsPanel 
-                  analysisResult={analysis?.result || null}
-                  particles={analysis?.result?.particles || []}
-                  isLoading={isAnalyzingOrProcessing}
-                  isAnalyzing={analysis?.status === 'analyzing'}
-              />
-            </div>
-
-            <Separator />
-
-            <div>
-              <VisualsPanel 
-                  image={analysis?.imageDataUri || null}
-                  particles={analysis?.result?.particles || []}
-                  isLoading={isAnalyzingOrProcessing}
-                  analysisResult={analysis?.result || null}
-              />
-            </div>
+          {/* Right Column */}
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            <ResultsPanel 
+                analysisResult={analysis?.result || null}
+                particles={analysis?.result?.particles || []}
+                isLoading={isAnalyzingOrProcessing}
+                isAnalyzing={analysis?.status === 'analyzing'}
+            />
+            <VisualsPanel 
+                image={analysis?.imageDataUri || null}
+                particles={analysis?.result?.particles || []}
+                isLoading={isAnalyzingOrProcessing}
+                analysisResult={analysis?.result || null}
+            />
+          </div>
         </div>
       </main>
     </div>

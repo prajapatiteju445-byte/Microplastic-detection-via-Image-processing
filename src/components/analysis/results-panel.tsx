@@ -47,9 +47,9 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
 };
 
 const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg min-h-[300px]">
+    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg min-h-[15rem]">
         <TestTube2 className="h-10 w-10 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold text-foreground">Awaiting Analysis</h3>
+        <h4 className="text-lg font-semibold text-foreground">Awaiting Analysis</h4>
         <p className="text-sm text-muted-foreground mt-1">Upload an image and click "Analyze Sample" to see the results here.</p>
     </div>
 );
@@ -73,10 +73,10 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
     return (
         <Card>
             <CardHeader>
-                 <div className="flex flex-row items-center gap-2">
-                    <FilePenLine className="h-5 w-5" />
+                 <div className="flex flex-row items-center gap-3">
+                    <FilePenLine className="h-5 w-5 text-muted-foreground" />
                     <div>
-                        <CardTitle>Analysis Results</CardTitle>
+                        <CardTitle className="text-lg">Analysis Results</CardTitle>
                         <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
                     </div>
                  </div>
@@ -85,17 +85,17 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                 {isLoading ? <LoadingState /> : !analysisResult ? <EmptyState /> : (
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
-                            <div className="p-4 rounded-lg bg-secondary/50">
+                            <div className="p-4 rounded-lg bg-secondary">
                                 <FlaskConical className="h-6 w-6 mx-auto text-primary mb-2" />
                                 <p className="text-2xl font-bold">{analysisResult.particleCount}</p>
                                 <p className="text-xs text-muted-foreground">Total Particles</p>
                             </div>
-                            <div className="p-4 rounded-lg bg-secondary/50">
+                            <div className="p-4 rounded-lg bg-secondary">
                                 <Percent className="h-6 w-6 mx-auto text-primary mb-2" />
                                 <p className="text-2xl font-bold">{analysisResult.contaminationPercentage.toFixed(2)}%</p>
                                 <p className="text-xs text-muted-foreground">Contamination</p>
                             </div>
-                            <div className="p-4 rounded-lg bg-secondary/50 col-span-2 sm:col-span-1">
+                            <div className="p-4 rounded-lg bg-secondary col-span-2 sm:col-span-1">
                                 <Layers className="h-6 w-6 mx-auto text-primary mb-2" />
                                 <p className="text-2xl font-bold">~{((analysisResult.particleCount) / 0.5).toFixed(1)}</p>
                                 <p className="text-xs text-muted-foreground">Particles/Liter (Est.)</p>
@@ -153,7 +153,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                                     <Loader2 className="h-4 w-4 animate-spin"/> Generating summary...
                                 </div>
                            ) : (
-                            <p className="text-sm text-muted-foreground bg-secondary/30 p-4 rounded-lg">{analysisResult.analysisSummary}</p>
+                            <p className="text-sm text-muted-foreground bg-secondary p-4 rounded-lg">{analysisResult.analysisSummary}</p>
                            )}
                         </div>
                         

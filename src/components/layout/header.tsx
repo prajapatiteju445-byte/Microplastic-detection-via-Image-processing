@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Info, HelpCircle } from 'lucide-react';
+import { Info, HelpCircle, Sun } from 'lucide-react';
 import HelpModal from './help-modal';
 import { ThemeToggle } from './theme-toggle';
 import { Button } from '../ui/button';
@@ -20,26 +20,26 @@ const Logo = () => (
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
+    <header className="sticky top-0 z-50 w-full border-b bg-background">
+      <div className="container flex h-16 items-center">
         <div className="mr-auto flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Logo />
-            <span className="font-bold">
+            <span className="font-bold text-xl">
               AquaLens
             </span>
           </Link>
         </div>
-        <div className="flex items-center gap-2">
+        <nav className="flex items-center gap-4">
           <Button variant="ghost" asChild size="sm">
             <Link href="/about">
-              <Info className="mr-1 h-4 w-4" />
+              <Info className="mr-2 h-4 w-4" />
               <span>About Us</span>
             </Link>
           </Button>
           <HelpModal />
           <ThemeToggle />
-        </div>
+        </nav>
       </div>
     </header>
   );

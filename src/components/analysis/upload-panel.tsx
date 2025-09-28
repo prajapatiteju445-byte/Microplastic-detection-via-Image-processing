@@ -130,13 +130,13 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Upload Image</CardTitle>
+                <CardTitle className="text-2xl">1. Upload Image</CardTitle>
                 <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col gap-4">
+            <CardContent className="flex flex-col gap-6">
                 {image ? (
                     <div className="relative group">
-                        <div className="relative w-full h-80 rounded-lg overflow-hidden border border-border/50">
+                        <div className="relative w-full h-80 rounded-lg overflow-hidden border">
                           <Image src={image} alt="Water sample preview" layout="fill" objectFit="contain" />
                         </div>
                         <div className="absolute top-3 right-3 z-10">
@@ -158,7 +158,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                         onDragOver={onDragOver}
                         onDragLeave={onDragLeave}
                         className={cn(
-                            "flex flex-col items-center justify-center w-full h-80 border-2 border-dashed border-border/50 rounded-lg cursor-pointer bg-secondary/20 hover:bg-secondary/50 transition-colors",
+                            "flex flex-col items-center justify-center w-full min-h-[20rem] border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/50 transition-colors",
                             isDragging && "border-primary bg-primary/10"
                         )}
                         onClick={() => fileInputRef.current?.click()}
@@ -173,15 +173,15 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                         />
                         <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                             <UploadCloud className="w-12 h-12 mb-4 text-muted-foreground" />
-                            <p className="mb-2 text-lg text-foreground">
+                            <p className="mb-2 text-md">
                                 <span className="font-semibold text-primary">Click to upload</span> or drag and drop
                             </p>
-                            <p className="text-sm text-muted-foreground">PNG, JPG, or other image formats (max 4MB)</p>
+                            <p className="text-xs text-muted-foreground">PNG, JPG, or other image formats</p>
                         </div>
                     </div>
                 )}
                 <div>
-                    <Button size="lg" onClick={handleAnalyze} disabled={!canAnalyze} className="w-full font-semibold text-base">
+                    <Button variant="secondary" size="lg" onClick={handleAnalyze} disabled={!canAnalyze} className="w-full font-bold text-base">
                         {isSubmitting ? (
                             <>
                                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
