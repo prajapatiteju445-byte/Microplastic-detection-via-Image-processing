@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import type { Particle } from '@/lib/types';
 import type { AnalyzeUploadedImageOutput } from '@/ai/flows/schemas/analyze-uploaded-image-schema';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 
 type ResultsPanelProps = {
     analysisResult: AnalyzeUploadedImageOutput | null;
@@ -46,11 +47,9 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
 };
 
 const EmptyState = () => (
-    <div className="flex flex-col items-start justify-center text-left p-4 min-h-[100px]">
-        <div className="flex items-center gap-2">
-            <TestTube2 className="h-5 w-5 text-muted-foreground" />
-            <h3 className="text-lg font-semibold text-foreground">Awaiting Analysis</h3>
-        </div>
+    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg min-h-[300px]">
+        <TestTube2 className="h-10 w-10 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-semibold text-foreground">Awaiting Analysis</h3>
         <p className="text-sm text-muted-foreground mt-1">Upload an image and click "Analyze Sample" to see the results here.</p>
     </div>
 );
@@ -72,15 +71,17 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
     const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
     
     return (
-        <div>
-            <div className="flex flex-row items-center gap-2 mb-2">
-                 <FilePenLine className="h-5 w-5" />
-                 <div>
-                    <h2 className="text-xl font-semibold">Analysis Results</h2>
-                    <p className="text-sm text-muted-foreground">Detected microplastics and a summary of the findings.</p>
+        <Card>
+            <CardHeader>
+                 <div className="flex flex-row items-center gap-2">
+                    <FilePenLine className="h-5 w-5" />
+                    <div>
+                        <CardTitle>Analysis Results</CardTitle>
+                        <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
+                    </div>
                  </div>
-            </div>
-            <div>
+            </CardHeader>
+            <CardContent>
                 {isLoading ? <LoadingState /> : !analysisResult ? <EmptyState /> : (
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
@@ -162,7 +163,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                         </Button>
                     </div>
                 )}
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 }

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Eye, Loader2 } from 'lucide-react';
 import type { Particle } from '@/lib/types';
 import type { AnalyzeUploadedImageOutput } from '@/ai/flows/schemas/analyze-uploaded-image-schema';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 
 type VisualsPanelProps = {
     image: string | null;
@@ -14,17 +15,15 @@ type VisualsPanelProps = {
 };
 
 const EmptyState = () => (
-    <div className="flex flex-col items-start justify-center text-left p-4 min-h-[100px]">
-        <div className="flex items-center gap-2">
-            <Eye className="h-5 w-5 text-muted-foreground" />
-             <h3 className="text-lg font-semibold text-foreground">Visual Analysis</h3>
-        </div>
+    <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg min-h-[300px]">
+        <Eye className="h-10 w-10 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-semibold text-foreground">Visual Analysis</h3>
         <p className="text-sm text-muted-foreground mt-1">Analysis visualization appears here.</p>
     </div>
 );
 
 const LoadingState = () => (
-     <div className="flex flex-col items-center justify-center text-center p-8 rounded-lg h-48 bg-secondary/50 animate-pulse">
+     <div className="flex flex-col items-center justify-center text-center p-8 rounded-lg min-h-[300px] bg-secondary/50 animate-pulse">
         <Loader2 className="h-10 w-10 text-muted-foreground mb-4 animate-spin" />
         <p className="text-sm text-muted-foreground">Processing Image...</p>
     </div>
@@ -39,15 +38,17 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
     }, []);
 
     return (
-        <div>
-            <div className="flex flex-row items-center gap-2 mb-2">
-                <Eye className="h-5 w-5" />
-                <div>
-                    <h2 className="text-xl font-semibold">Visual Analysis</h2>
-                    <p className="text-sm text-muted-foreground">Highlighted microplastic particles in the sample.</p>
+        <Card>
+            <CardHeader>
+                <div className="flex flex-row items-center gap-2">
+                    <Eye className="h-5 w-5" />
+                    <div>
+                        <CardTitle>Visual Analysis</CardTitle>
+                        <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
+                    </div>
                 </div>
-            </div>
-            <div>
+            </CardHeader>
+            <CardContent>
                 {isLoading ? <LoadingState /> : !analysisResult || !image ? <EmptyState /> : (
                     <div className="relative w-full aspect-video rounded-lg overflow-hidden border-2 border-primary/20 shadow-inner">
                         <Image src={image!} alt="Analyzed water sample" layout="fill" objectFit="contain" />
@@ -71,7 +72,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
                         ))}
                     </div>
                  )}
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 }

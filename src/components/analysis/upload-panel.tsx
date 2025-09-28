@@ -9,6 +9,7 @@ import { useFirebase } from '@/firebase/provider';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { processAnalysisQueue } from '@/ai/flows/process-analysis-queue';
 import Image from 'next/image';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 
 type UploadPanelProps = {
     setAnalysisId: (id: string) => void;
@@ -127,13 +128,12 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
     const canAnalyze = image && !isSubmitting && areServicesAvailable && !isUserLoading;
 
     return (
-        <div className="flex flex-col gap-4">
-            <div>
-                <h2 className="text-xl font-semibold">Upload Image</h2>
-                <p className="text-sm text-muted-foreground">Upload a water sample image to begin the analysis.</p>
-            </div>
-            
-            <div className="p-6">
+        <Card>
+            <CardHeader>
+                <CardTitle>Upload Image</CardTitle>
+                <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
                 {image ? (
                     <div className="relative group">
                         <div className="relative w-full h-80 rounded-lg overflow-hidden border border-border/50">
@@ -180,21 +180,21 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                         </div>
                     </div>
                 )}
-            </div>
-            <div className="p-6">
-                <Button size="lg" onClick={handleAnalyze} disabled={!canAnalyze} className="w-full font-semibold text-base">
-                    {isSubmitting ? (
-                        <>
-                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            Submitting...
-                        </>
-                    ) : (
-                        <>
-                            Analyze Sample
-                        </>
-                    )}
-                </Button>
-            </div>
-        </div>
+                <div>
+                    <Button size="lg" onClick={handleAnalyze} disabled={!canAnalyze} className="w-full font-semibold text-base">
+                        {isSubmitting ? (
+                            <>
+                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                Submitting...
+                            </>
+                        ) : (
+                            <>
+                                Analyze Sample
+                            </>
+                        )}
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
     );
 }

@@ -59,10 +59,10 @@ export default function Home() {
   const isAnalyzingOrProcessing = isAnalysisLoading || (analysisId && analysis?.status !== 'complete' && analysis?.status !== 'error');
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-background-gradient">
       <Header />
       <main className="flex-1 w-full p-4 sm:p-6 lg:p-8">
-        <div className="flex flex-col gap-8">
+        <div className="max-w-7xl mx-auto flex flex-col gap-8">
             <div>
               {analysisId ? (
                   <AnalysisView analysisId={analysisId} onReset={handleReset} />
@@ -73,14 +73,18 @@ export default function Home() {
 
             <Separator />
 
-            <div className="flex flex-col gap-8">
+            <div>
               <ResultsPanel 
                   analysisResult={analysis?.result || null}
                   particles={analysis?.result?.particles || []}
                   isLoading={isAnalyzingOrProcessing}
                   isAnalyzing={analysis?.status === 'analyzing'}
               />
-              <Separator />
+            </div>
+
+            <Separator />
+
+            <div>
               <VisualsPanel 
                   image={analysis?.imageDataUri || null}
                   particles={analysis?.result?.particles || []}
