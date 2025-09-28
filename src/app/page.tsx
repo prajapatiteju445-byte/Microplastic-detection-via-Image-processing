@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { UploadCloud, FileText, Eye, TestTube2, Loader2 } from 'lucide-react';
@@ -15,7 +15,12 @@ export default function Home() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
   const { firestore, user } = useFirebase();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleFileChange = (file: File | null) => {
     if (file) {
@@ -86,7 +91,7 @@ export default function Home() {
     setIsUploading(false);
   };
 
-  if (analysisId) {
+  if (isClient && analysisId) {
     return (
         <div className="min-h-screen w-full bg-secondary">
             <Header />
