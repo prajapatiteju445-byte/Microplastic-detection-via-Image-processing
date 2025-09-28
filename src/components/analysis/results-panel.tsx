@@ -47,7 +47,7 @@ const POLYMER_TYPE_COLORS: { [key: string]: string } = {
 };
 
 const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center text-center p-8 min-h-[240px] border-2 border-dashed rounded-lg bg-card">
+    <div className="flex flex-col items-center justify-center text-center p-8 min-h-[240px] border-2 border-dashed border-border/50 rounded-lg">
         <TestTube2 className="h-10 w-10 text-muted-foreground mb-4" />
         <h3 className="text-lg font-semibold text-foreground mb-1">Awaiting Analysis</h3>
         <p className="text-sm text-muted-foreground max-w-xs">Upload an image and click "Analyze Sample" to see the results here.</p>
@@ -71,7 +71,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
     const polymerChartData = analysisResult?.polymerTypes?.map(pt => ({ name: pt.type, value: pt.count })) || [];
     
     return (
-        <Card className="shadow-sm bg-background">
+        <Card>
             <CardHeader className="flex flex-row items-center gap-2">
                  <FilePenLine className="h-5 w-5" />
                  <div>
@@ -118,7 +118,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                                                         <Cell key={`cell-${index}`} fill={PARTICLE_SHAPE_COLORS[entry.name] || '#8884d8'} />
                                                     ))}
                                                 </Pie>
-                                                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', borderRadius: 'var(--radius)' }} />
+                                                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', borderRadius: 'var(--radius)', border: '1px solid hsl(var(--border))' }} />
                                                 <Legend iconSize={10} />
                                             </PieChart>
                                         </ResponsiveContainer>
@@ -134,7 +134,7 @@ export default function ResultsPanel({ analysisResult, particles, isLoading, isA
                                                         <Cell key={`cell-${index}`} fill={POLYMER_TYPE_COLORS[entry.name] || '#8884d8'} />
                                                     ))}
                                                 </Pie>
-                                                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', borderRadius: 'var(--radius)' }} />
+                                                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', borderRadius: 'var(--radius)', border: '1px solid hsl(var(--border))' }} />
                                                 <Legend iconSize={10} />
                                             </PieChart>
                                         </ResponsiveContainer>

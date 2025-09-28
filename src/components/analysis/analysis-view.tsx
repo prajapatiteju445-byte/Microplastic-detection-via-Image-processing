@@ -48,8 +48,8 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
 
     if (error) {
         return (
-            <Card className="p-8">
-                <CardContent className="flex flex-col items-center justify-center gap-4 text-center">
+            <Card>
+                <CardContent className="p-8 flex flex-col items-center justify-center gap-4 text-center">
                     <Alert variant="destructive">
                         <AlertTriangle className="h-4 w-4" />
                         <AlertTitle>Error Loading Analysis</AlertTitle>
@@ -66,8 +66,8 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     
     if (analysis && analysis.status === 'error') {
         return (
-            <Card className="p-8">
-                 <CardContent className="flex flex-col items-center justify-center gap-4 text-center">
+            <Card>
+                 <CardContent className="p-8 flex flex-col items-center justify-center gap-4 text-center">
                     <Alert variant="destructive">
                         <AlertTriangle className="h-4 w-4" />
                         <AlertTitle>Analysis Failed</AlertTitle>
@@ -84,8 +84,8 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
 
     if (isProcessing) {
         return (
-            <Card className="p-8">
-                <CardContent className="flex flex-col items-center justify-center gap-6 text-center">
+            <Card>
+                <CardContent className="p-8 flex flex-col items-center justify-center gap-6 text-center">
                     <div className="flex items-center gap-3 text-lg font-medium text-foreground">
                         <Loader2 className="h-6 w-6 animate-spin text-primary" />
                         <p>
@@ -105,8 +105,8 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     
     if (isComplete) {
        return (
-            <Card className="p-8">
-                <CardContent className="flex flex-col items-center justify-center gap-6 text-center">
+            <Card>
+                <CardContent className="p-8 flex flex-col items-center justify-center gap-6 text-center">
                     <h2 className="text-2xl font-semibold">Analysis Complete</h2>
                     <div className="relative w-full h-64 rounded-lg overflow-hidden border">
                         {analysis?.imageDataUri && (

@@ -51,7 +51,7 @@ const facultyMembers = [
 
 export default function AboutPage() {
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex flex-col min-h-screen bg-background-gradient">
             <Header />
             <main className="flex-1 container mx-auto p-4 sm:p-6 md:p-8">
                 <div className="max-w-4xl mx-auto">
@@ -73,7 +73,7 @@ export default function AboutPage() {
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             {teamMembers.map((member) => (
-                                <Card key={member.name} className="flex flex-col text-center items-center shadow-lg bg-card/80 backdrop-blur-sm border-border/20 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-1">
+                                <Card key={member.name} className="flex flex-col text-center items-center transform hover:-translate-y-1 transition-all duration-300">
                                     <CardHeader className="items-center">
                                          <Avatar className="h-24 w-24 mb-4 border-4 border-primary/20">
                                             <AvatarImage
@@ -104,7 +104,7 @@ export default function AboutPage() {
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {facultyMembers.map((faculty) => (
-                                <Card key={faculty.name} className="flex flex-col text-center items-center shadow-lg bg-card/80 backdrop-blur-sm border-border/20 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-1">
+                                <Card key={faculty.name} className="flex flex-col text-center items-center transform hover:-translate-y-1 transition-all duration-300">
                                     <CardHeader className="items-center">
                                         <div className="p-3 bg-primary/10 rounded-full mb-3">
                                             {faculty.icon}

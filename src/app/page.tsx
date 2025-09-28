@@ -13,6 +13,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 import { doc, DocumentReference, DocumentData } from 'firebase/firestore';
 import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import type { Analysis } from '@/lib/types';
+import { Card } from '@/components/ui/card';
 
 export default function Home() {
   const [analysisId, setAnalysisId] = useState<string | null>(null);
@@ -43,9 +44,9 @@ export default function Home() {
 
   if (isUserLoading || !user) {
     return (
-       <div className="flex flex-col min-h-screen">
+       <div className="flex flex-col min-h-screen bg-background-gradient">
         <Header />
-        <main className="flex-1 flex items-center justify-center bg-background">
+        <main className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4 text-muted-foreground">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
                 <p>Authenticating securely...</p>
@@ -58,11 +59,11 @@ export default function Home() {
   const isAnalyzingOrProcessing = isAnalysisLoading || (analysisId && analysis?.status !== 'complete' && analysis?.status !== 'error');
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-background-gradient">
       <Header />
       <main className="flex-1 w-full p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+         <Card className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start p-8">
             <div className="lg:col-span-3">
               {analysisId ? (
                   <AnalysisView analysisId={analysisId} onReset={handleReset} />
@@ -85,7 +86,7 @@ export default function Home() {
                   analysisResult={analysis?.result || null}
               />
             </div>
-          </div>
+          </Card>
         </div>
       </main>
     </div>

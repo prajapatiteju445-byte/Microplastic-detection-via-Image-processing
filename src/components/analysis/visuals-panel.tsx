@@ -15,7 +15,7 @@ type VisualsPanelProps = {
 };
 
 const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center text-center p-8 min-h-[240px] border-2 border-dashed rounded-lg bg-card">
+    <div className="flex flex-col items-center justify-center text-center p-8 min-h-[240px] border-2 border-dashed border-border/50 rounded-lg">
         <Eye className="h-10 w-10 text-muted-foreground mb-4" />
         <h3 className="text-lg font-semibold text-foreground mb-1">Visual Analysis</h3>
         <p className="text-sm text-muted-foreground">Analysis visualization appears here.</p>
@@ -38,7 +38,7 @@ export default function VisualsPanel({ image, particles, isLoading, analysisResu
     }, []);
 
     return (
-        <Card className="shadow-sm bg-background">
+        <Card>
             <CardHeader className="flex flex-row items-center gap-2">
                 <Eye className="h-5 w-5" />
                 <div>

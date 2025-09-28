@@ -11,30 +11,16 @@ const Logo = () => (
       viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-foreground"
+      className="text-primary"
     >
-      <rect width="32" height="32" rx="8" fill="currentColor" />
-      <path
-        d="M10 22V13C10 12.4477 10.4477 12 11 12H21C21.5523 12 22 12.4477 22 13V22"
-        stroke="hsl(var(--background))"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M16 22V18M16 18C17.1046 18 18 17.1046 18 16C18 14.8954 17.1046 14 16 14C14.8954 14 14 14.8954 14 16C14 17.1046 14.8954 18 16 18Z"
-        stroke="hsl(var(--background))"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+        <path d="M16 3C8.82 3 3 8.82 3 16C3 23.18 8.82 29 16 29C23.18 29 29 23.18 29 16C29 8.82 23.18 3 16 3ZM16 27C10.486 27 6 22.514 6 17C6 13.629 9.052 10.224 10.938 9.002C11.536 11.231 13.561 13 16 13C18.439 13 20.464 11.231 21.062 9.002C22.948 10.224 26 13.629 26 17C26 22.514 21.514 27 16 27Z" fill="currentColor"/>
     </svg>
 );
 
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <div className="mr-auto flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
