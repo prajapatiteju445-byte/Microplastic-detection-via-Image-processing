@@ -43,7 +43,7 @@ const StatusDisplay = ({ status }: { status: Analysis['status'] }) => {
     const { text, icon, progress } = getStatusInfo();
     
     return (
-        <Card className="lg:col-span-2">
+        <Card>
             <CardHeader>
                 <CardTitle>Analysis Status</CardTitle>
             </CardHeader>
@@ -118,9 +118,9 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
 
     if (isProcessing) {
         return (
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div className="space-y-8">
                 <StatusDisplay status={analysis.status} />
-                <Card className="lg:col-span-3">
+                <Card>
                     <CardHeader>
                         <CardTitle>Uploaded Image</CardTitle>
                     </CardHeader>
@@ -154,115 +154,110 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                     </Button>
                 </div>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                    {/* Left side */}
-                    <div className="lg:col-span-3 space-y-8">
-                        <Card>
-                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><Eye className="h-5 w-5" />Visual Analysis</CardTitle>
-                                <CardDescription>Detected particles highlighted on your image.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="relative w-full aspect-video rounded-lg overflow-hidden border bg-gray-900">
-                                    <Image src={analysis.imageDataUri} alt="Analyzed water sample" layout="fill" objectFit="contain" />
-                                     {result.particles.map((p, i) => (
-                                        <div key={i} className="absolute rounded-sm" style={{
-                                            left: `${p.x * 100}%`,
-                                            top: `${p.y * 100}%`,
-                                            width: '10px', 
-                                            height: '10px',
-                                            transform: 'translate(-50%, -50%)',
-                                            border: `2px solid hsl(var(--chart-${(i % 5) + 1}))`,
-                                            opacity: p.confidence,
-                                            boxShadow: `0 0 8px 2px hsl(var(--chart-${(i % 5) + 1}))`,
-                                        }}/>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-                         <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5" />Analysis Details</CardTitle>
-                                <CardDescription>A breakdown of the detected particles and their types.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Tabs defaultValue="particle-types">
-                                    <TabsList className="grid w-full grid-cols-2">
-                                        <TabsTrigger value="particle-types">Particle Shapes</TabsTrigger>
-                                        <TabsTrigger value="polymer-types">Polymer Types</TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="particle-types" className="pt-4">
-                                        <ResponsiveContainer width="100%" height={300}>
-                                            <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="name" />
-                                                <YAxis allowDecimals={false}/>
-                                                <Tooltip
-                                                    contentStyle={{
-                                                        backgroundColor: 'hsl(var(--background))',
-                                                        border: '1px solid hsl(var(--border))'
-                                                    }}
-                                                />
-                                                <Bar dataKey="count" name="Count">
-                                                     {chartData.map((_entry, index) => (
-                                                        <Bar key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
-                                                    ))}
-                                                </Bar>
-                                            </BarChart>
-                                        </ResponsiveContainer>
-                                    </TabsContent>
-                                    <TabsContent value="polymer-types" className="pt-4">
-                                         <ResponsiveContainer width="100%" height={300}>
-                                            <BarChart data={polymerChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="name" />
-                                                <YAxis allowDecimals={false} />
-                                                <Tooltip
-                                                    contentStyle={{
-                                                        backgroundColor: 'hsl(var(--background))',
-                                                        border: '1px solid hsl(var(--border))'
-                                                    }}
-                                                />
-                                                <Bar dataKey="count" name="Count">
-                                                     {polymerChartData.map((_entry, index) => (
-                                                        <Bar key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
-                                                    ))}
-                                                </Bar>
-                                            </BarChart>
-                                        </ResponsiveContainer>
-                                    </TabsContent>
-                                </Tabs>
-                            </CardContent>
-                        </Card>
-                    </div>
-                    {/* Right side */}
-                    <div className="lg:col-span-2 space-y-8">
-                         <Card>
-                            <CardHeader>
-                                <CardTitle>Summary</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">{result.analysisSummary}</p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><TestTube2 className="h-5 w-5" />Key Metrics</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <span className="font-medium text-muted-foreground">Total Particles</span>
-                                    <Badge variant="default" className="text-lg">{result.particleCount}</Badge>
-                                </div>
-                                <Separator/>
-                                <div className="flex justify-between items-center">
-                                    <span className="font-medium text-muted-foreground">Surface Contamination</span>
-                                     <Badge variant="secondary" className="text-base">{result.contaminationPercentage.toFixed(2)}%</Badge>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
+                <Card>
+                     <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Eye className="h-5 w-5" />Visual Analysis</CardTitle>
+                        <CardDescription>Detected particles highlighted on your image.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="relative w-full aspect-video rounded-lg overflow-hidden border bg-gray-900">
+                            <Image src={analysis.imageDataUri} alt="Analyzed water sample" layout="fill" objectFit="contain" />
+                             {result.particles.map((p, i) => (
+                                <div key={i} className="absolute rounded-sm" style={{
+                                    left: `${p.x * 100}%`,
+                                    top: `${p.y * 100}%`,
+                                    width: '10px', 
+                                    height: '10px',
+                                    transform: 'translate(-50%, -50%)',
+                                    border: `2px solid hsl(var(--chart-${(i % 5) + 1}))`,
+                                    opacity: p.confidence,
+                                    boxShadow: `0 0 8px 2px hsl(var(--chart-${(i % 5) + 1}))`,
+                                }}/>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+                
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Summary</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">{result.analysisSummary}</p>
+                    </CardContent>
+                </Card>
+                
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><TestTube2 className="h-5 w-5" />Key Metrics</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex justify-between items-center">
+                            <span className="font-medium text-muted-foreground">Total Particles</span>
+                            <Badge variant="default" className="text-lg">{result.particleCount}</Badge>
+                        </div>
+                        <Separator/>
+                        <div className="flex justify-between items-center">
+                            <span className="font-medium text-muted-foreground">Surface Contamination</span>
+                             <Badge variant="secondary" className="text-base">{result.contaminationPercentage.toFixed(2)}%</Badge>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5" />Analysis Details</CardTitle>
+                        <CardDescription>A breakdown of the detected particles and their types.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Tabs defaultValue="particle-types">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="particle-types">Particle Shapes</TabsTrigger>
+                                <TabsTrigger value="polymer-types">Polymer Types</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="particle-types" className="pt-4">
+                                <ResponsiveContainer width="100%" height={300}>
+                                    <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="name" />
+                                        <YAxis allowDecimals={false}/>
+                                        <Tooltip
+                                            contentStyle={{
+                                                backgroundColor: 'hsl(var(--background))',
+                                                border: '1px solid hsl(var(--border))'
+                                            }}
+                                        />
+                                        <Bar dataKey="count" name="Count">
+                                             {chartData.map((_entry, index) => (
+                                                <Bar key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </TabsContent>
+                            <TabsContent value="polymer-types" className="pt-4">
+                                 <ResponsiveContainer width="100%" height={300}>
+                                    <BarChart data={polymerChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="name" />
+                                        <YAxis allowDecimals={false} />
+                                        <Tooltip
+                                            contentStyle={{
+                                                backgroundColor: 'hsl(var(--background))',
+                                                border: '1px solid hsl(var(--border))'
+                                            }}
+                                        />
+                                        <Bar dataKey="count" name="Count">
+                                             {polymerChartData.map((_entry, index) => (
+                                                <Bar key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </TabsContent>
+                        </Tabs>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
