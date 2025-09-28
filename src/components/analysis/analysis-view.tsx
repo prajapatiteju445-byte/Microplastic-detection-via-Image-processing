@@ -5,13 +5,16 @@ import { doc, DocumentReference, DocumentData } from 'firebase/firestore';
 import { useFirebase } from '@/firebase/provider';
 import type { Analysis } from '@/lib/types';
 import { Button } from '../ui/button';
-import { Loader2, AlertTriangle, FileUp, Microscope } from 'lucide-react';
+import { Loader2, AlertTriangle, FileUp, Microscope, Eye, FileText, TestTube2 } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '../ui/alert';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Separator } from '../ui/separator';
 import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+
 
 type AnalysisViewProps = {
     analysisId: string | null;
@@ -40,7 +43,7 @@ const StatusDisplay = ({ status }: { status: Analysis['status'] }) => {
     const { text, icon, progress } = getStatusInfo();
     
     return (
-        <Card>
+        <Card className="lg:col-span-2">
             <CardHeader>
                 <CardTitle>Analysis Status</CardTitle>
             </CardHeader>
@@ -90,7 +93,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
         </Card>
     );
 
-    if (!analysisId) return null; // Should not happen if component is rendered
+    if (!analysisId) return null;
     
     if (error) return renderError('Error Loading Analysis', error.message);
 
@@ -115,14 +118,14 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
 
     if (isProcessing) {
         return (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                 <StatusDisplay status={analysis.status} />
-                <Card>
+                <Card className="lg:col-span-3">
                     <CardHeader>
                         <CardTitle>Uploaded Image</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="relative w-full h-64 rounded-lg overflow-hidden border">
+                        <div className="relative w-full h-96 rounded-lg overflow-hidden border">
                             <Image src={analysis.imageDataUri} alt="Water sample being analyzed" layout="fill" objectFit="contain" />
                         </div>
                     </CardContent>
@@ -133,12 +136,17 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
     
     if (analysis.status === 'complete' && analysis.result) {
         const { result } = analysis;
+
+        const chartData = result.particleTypes.map(p => ({ name: p.type, count: p.count }));
+        const polymerChartData = result.polymerTypes.map(p => ({ name: p.type, count: p.count }));
+
+
        return (
             <div className="space-y-8">
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                     <div>
-                        <h2 className="text-3xl font-bold tracking-tight">Analysis Complete</h2>
-                        <p className="text-muted-foreground">Review your detailed results below.</p>
+                        <h1 className="text-3xl font-bold tracking-tight">Analysis Complete</h1>
+                        <p className="text-muted-foreground">Review your detailed results for this water sample.</p>
                     </div>
                     <Button onClick={onReset} variant="outline">
                         <Microscope className="mr-2 h-4 w-4" />
@@ -151,25 +159,79 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                     <div className="lg:col-span-3 space-y-8">
                         <Card>
                              <CardHeader>
-                                <CardTitle>Visual Analysis</CardTitle>
+                                <CardTitle className="flex items-center gap-2"><Eye className="h-5 w-5" />Visual Analysis</CardTitle>
                                 <CardDescription>Detected particles highlighted on your image.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="relative w-full aspect-video rounded-lg overflow-hidden border">
+                                <div className="relative w-full aspect-video rounded-lg overflow-hidden border bg-gray-900">
                                     <Image src={analysis.imageDataUri} alt="Analyzed water sample" layout="fill" objectFit="contain" />
                                      {result.particles.map((p, i) => (
-                                        <div key={i} className="absolute border-2 border-red-500 rounded-sm" style={{
+                                        <div key={i} className="absolute rounded-sm" style={{
                                             left: `${p.x * 100}%`,
                                             top: `${p.y * 100}%`,
-                                            // Note: Roboflow gives center x,y. We need to offset.
-                                            // Assuming a fixed size for now as width/height are not in normalized output
                                             width: '10px', 
                                             height: '10px',
                                             transform: 'translate(-50%, -50%)',
-                                            opacity: p.confidence
+                                            border: `2px solid hsl(var(--chart-${(i % 5) + 1}))`,
+                                            opacity: p.confidence,
+                                            boxShadow: `0 0 8px 2px hsl(var(--chart-${(i % 5) + 1}))`,
                                         }}/>
                                     ))}
                                 </div>
+                            </CardContent>
+                        </Card>
+                         <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5" />Analysis Details</CardTitle>
+                                <CardDescription>A breakdown of the detected particles and their types.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Tabs defaultValue="particle-types">
+                                    <TabsList className="grid w-full grid-cols-2">
+                                        <TabsTrigger value="particle-types">Particle Shapes</TabsTrigger>
+                                        <TabsTrigger value="polymer-types">Polymer Types</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="particle-types" className="pt-4">
+                                        <ResponsiveContainer width="100%" height={300}>
+                                            <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                                <CartesianGrid strokeDasharray="3 3" />
+                                                <XAxis dataKey="name" />
+                                                <YAxis allowDecimals={false}/>
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        backgroundColor: 'hsl(var(--background))',
+                                                        border: '1px solid hsl(var(--border))'
+                                                    }}
+                                                />
+                                                <Bar dataKey="count" name="Count">
+                                                     {chartData.map((_entry, index) => (
+                                                        <Bar key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
+                                                    ))}
+                                                </Bar>
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </TabsContent>
+                                    <TabsContent value="polymer-types" className="pt-4">
+                                         <ResponsiveContainer width="100%" height={300}>
+                                            <BarChart data={polymerChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                                <CartesianGrid strokeDasharray="3 3" />
+                                                <XAxis dataKey="name" />
+                                                <YAxis allowDecimals={false} />
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        backgroundColor: 'hsl(var(--background))',
+                                                        border: '1px solid hsl(var(--border))'
+                                                    }}
+                                                />
+                                                <Bar dataKey="count" name="Count">
+                                                     {polymerChartData.map((_entry, index) => (
+                                                        <Bar key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
+                                                    ))}
+                                                </Bar>
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </TabsContent>
+                                </Tabs>
                             </CardContent>
                         </Card>
                     </div>
@@ -185,17 +247,17 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                         </Card>
                         <Card>
                             <CardHeader>
-                                <CardTitle>Key Metrics</CardTitle>
+                                <CardTitle className="flex items-center gap-2"><TestTube2 className="h-5 w-5" />Key Metrics</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <span className="font-medium">Total Particles</span>
-                                    <Badge variant="default">{result.particleCount}</Badge>
+                                    <span className="font-medium text-muted-foreground">Total Particles</span>
+                                    <Badge variant="default" className="text-lg">{result.particleCount}</Badge>
                                 </div>
                                 <Separator/>
                                 <div className="flex justify-between items-center">
-                                    <span className="font-medium">Contamination</span>
-                                     <Badge variant="secondary">{result.contaminationPercentage.toFixed(2)}%</Badge>
+                                    <span className="font-medium text-muted-foreground">Surface Contamination</span>
+                                     <Badge variant="secondary" className="text-base">{result.contaminationPercentage.toFixed(2)}%</Badge>
                                 </div>
                             </CardContent>
                         </Card>

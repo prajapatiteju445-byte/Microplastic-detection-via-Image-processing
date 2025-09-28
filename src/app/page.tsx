@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { UploadCloud, FileText, Eye, TestTube2, Loader2 } from 'lucide-react';
+import { UploadCloud, FileText, Eye, TestTube2, Loader2, Microscope } from 'lucide-react';
 import { useFirebase } from '@/firebase/provider';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { collection } from 'firebase/firestore';
@@ -86,12 +86,11 @@ export default function Home() {
     setIsUploading(false);
   };
 
-
   if (analysisId) {
     return (
         <div className="min-h-screen w-full bg-secondary">
             <Header />
-            <main className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
+            <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
                 <AnalysisView analysisId={analysisId} onReset={handleReset}/>
             </main>
         </div>
@@ -101,7 +100,7 @@ export default function Home() {
   return (
     <div className="min-h-screen w-full bg-secondary">
         <Header />
-        <main className="grid grid-cols-1 lg:grid-cols-5 gap-8 p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
+        <main className="grid grid-cols-1 lg:grid-cols-5 gap-8 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
             {/* Left Column */}
             <div className="lg:col-span-3">
                 <Card>
