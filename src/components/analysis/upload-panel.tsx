@@ -158,7 +158,7 @@ export default function UploadPanel({ setAnalysisId }: UploadPanelProps) {
                         onDragOver={onDragOver}
                         onDragLeave={onDragLeave}
                         className={cn(
-                            "flex flex-col items-center justify-center w-full h-80 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-secondary transition-colors",
+                            "flex flex-col items-center justify-center w-full h-80 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-secondary/50 transition-colors",
                             isDragging && "border-primary bg-primary/10"
                         )}
                         onClick={() => fileInputRef.current?.click()}
