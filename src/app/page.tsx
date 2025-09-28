@@ -115,7 +115,6 @@ export default function Home() {
                             <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <Separator />
                             <div 
                                 onDrop={handleDrop}
                                 onDragOver={handleDragOver}
@@ -163,7 +162,6 @@ export default function Home() {
                             <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Separator />
                             <div className="flex flex-col items-center justify-center text-center text-muted-foreground py-12 bg-gray-50 rounded-lg mt-6">
                                 <TestTube2 className="h-10 w-10 mb-3 text-gray-400" />
                                 <p className="font-semibold text-gray-600">Awaiting Analysis</p>
@@ -178,7 +176,6 @@ export default function Home() {
                             <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Separator />
                             <div className="flex flex-col items-center justify-center text-center text-muted-foreground py-12 bg-gray-50 rounded-lg mt-6">
                                 <Eye className="h-10 w-10 text-gray-400" />
                                 <p className="font-semibold text-gray-600 mt-3">Awaiting Analysis</p>
