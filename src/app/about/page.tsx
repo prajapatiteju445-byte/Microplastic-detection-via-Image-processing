@@ -35,27 +35,27 @@ const facultyMembers = [
     {
         name: 'Dr. Rajesh K. Behra',
         role: 'Project Head',
-        icon: <Award className="h-8 w-8 text-primary" />,
+        icon: <Award className="h-6 w-6 text-foreground" />,
     },
     {
         name: 'Prof. Swapnil M. Kondawar',
         role: 'Project Co-Ordinator',
-        icon: <Users className="h-8 w-8 text-primary" />,
+        icon: <Users className="h-6 w-6 text-foreground" />,
     },
     {
         name: 'Prof. Nikhil Khatekar',
         role: 'Project Guide',
-        icon: <BookOpen className="h-8 w-8 text-primary" />,
+        icon: <BookOpen className="h-6 w-6 text-foreground" />,
     },
 ];
 
 export default function AboutPage() {
     return (
-        <div className="flex flex-col min-h-screen bg-background-gradient">
+        <div className="flex flex-col min-h-screen bg-background">
             <Header />
             <main className="flex-1 container mx-auto p-4 sm:p-6 md:p-8">
                 <div className="max-w-4xl mx-auto">
-                    <section className="text-center mb-12">
+                    <section className="text-center mb-16">
                         <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
                             About Us: APSIT TEAM 1
                         </h1>
@@ -67,7 +67,7 @@ export default function AboutPage() {
                         </p>
                     </section>
 
-                    <section className="mb-12">
+                    <section className="mb-16">
                         <h2 className="text-3xl font-bold text-center mb-8 text-foreground">
                             Meet Our Team
                         </h2>
@@ -99,25 +99,25 @@ export default function AboutPage() {
                         <h2 className="text-3xl font-bold text-center mb-8 text-foreground">
                             Meet Our Faculty
                         </h2>
-                        <p className="text-center text-muted-foreground mb-8">
+                        <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
                             This project is undertaken under the esteemed supervision and guidance of the following faculty members. Their leadership and expertise are instrumental in steering the project towards its objectives.
                         </p>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="max-w-md mx-auto space-y-8">
                             {facultyMembers.map((faculty) => (
-                                <Card key={faculty.name} className="flex flex-col text-center items-center transform hover:-translate-y-1 transition-all duration-300">
-                                    <CardHeader className="items-center">
-                                        <div className="p-3 bg-primary/10 rounded-full mb-3">
-                                            {faculty.icon}
-                                        </div>
-                                        <CardTitle className="text-lg whitespace-nowrap">{faculty.name}</CardTitle>
-                                        <CardDescription className="text-primary font-semibold">{faculty.role}</CardDescription>
-                                    </CardHeader>
-                                </Card>
+                                <div key={faculty.name} className="grid grid-cols-[auto_1fr] items-start gap-4">
+                                    <div className="flex justify-center items-center h-full">
+                                        {faculty.icon}
+                                    </div>
+                                    <div>
+                                        <p className="text-lg font-semibold text-foreground">{faculty.name}</p>
+                                        <p className="text-md text-muted-foreground">{faculty.role}</p>
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     </section>
 
-                    <section className="text-center mt-12">
+                    <section className="text-center mt-16">
                         <p className="text-xl font-semibold italic text-foreground/80">"Continuously Improving Analysis, For Better Precision"</p>
                     </section>
                 </div>
