@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Info, HelpCircle, Droplet, Microscope } from 'lucide-react';
+import { Info, HelpCircle } from 'lucide-react';
 import HelpModal from './help-modal';
 import { ThemeToggle } from './theme-toggle';
 import { Button } from '../ui/button';
@@ -25,7 +25,7 @@ const Logo = () => (
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
+      <div className="container flex h-16 items-center max-w-7xl">
         <div className="mr-auto flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-3">
             <Logo />
@@ -34,7 +34,7 @@ export default function Header() {
             </span>
           </Link>
         </div>
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-1">
           <Button variant="ghost" asChild size="sm">
             <Link href="/about">
               <Info className="mr-2 h-4 w-4" />

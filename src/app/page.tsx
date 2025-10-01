@@ -95,7 +95,7 @@ export default function Home() {
     return (
         <div className="min-h-screen w-full bg-secondary">
             <Header />
-            <main className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
+            <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
                 <AnalysisView analysisId={analysisId} onReset={handleReset}/>
             </main>
         </div>
@@ -105,21 +105,21 @@ export default function Home() {
   return (
     <div className="min-h-screen w-full bg-secondary">
         <Header />
-        <main className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+        <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                 {/* Left Column */}
-                <div className="lg:col-span-3 space-y-8">
-                    <Card>
+                <div className="lg:col-span-3">
+                    <Card className="h-full flex flex-col">
                         <CardHeader>
                             <CardTitle className="text-xl">1. Upload Image</CardTitle>
                             <CardDescription>Upload a water sample image to begin the analysis.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div 
+                        <CardContent className="flex-grow flex flex-col justify-center">
+                             <div 
                                 onDrop={handleDrop}
                                 onDragOver={handleDragOver}
                                 onClick={() => document.getElementById('file-upload')?.click()}
-                                className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-8 text-center cursor-pointer hover:border-primary transition-colors bg-background"
+                                className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center cursor-pointer hover:border-primary transition-colors bg-background"
                             >
                                 <UploadCloud className="h-10 w-10 text-gray-400 mb-4" />
                                 {imageFile ? (
@@ -127,7 +127,7 @@ export default function Home() {
                                 ): (
                                     <>
                                     <p className="font-semibold text-foreground">Click to upload or drag and drop</p>
-                                    <p className="text-sm text-muted-foreground mt-1">PNG, JPG, or other image formats (max 4.5MB)</p>
+                                    <p className="text-sm text-muted-foreground mt-1">PNG, JPG, or other image formats</p>
                                     </>
                                 )}
                                 <input
@@ -138,10 +138,10 @@ export default function Home() {
                                     onChange={handleFileSelect}
                                 />
                             </div>
-                            
-                            {error && <p className="text-sm font-medium text-destructive text-center">{error}</p>}
-                            
-                            <Button 
+                            {error && <p className="text-sm font-medium text-destructive text-center mt-4">{error}</p>}
+                        </CardContent>
+                        <div className="p-6 pt-0">
+                             <Button 
                                 size="lg" 
                                 className="w-full text-lg py-6" 
                                 onClick={handleAnalyze} 
@@ -150,7 +150,7 @@ export default function Home() {
                                 {isUploading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
                                 {isUploading ? 'Uploading...' : 'Analyze Sample'}
                             </Button>
-                        </CardContent>
+                        </div>
                     </Card>
                 </div>
                 
@@ -158,12 +158,15 @@ export default function Home() {
                 <div className="lg:col-span-2 space-y-8">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg">Analysis Results</CardTitle>
+                            <CardTitle className="flex items-center gap-2">
+                                <TestTube2 className="h-5 w-5 text-muted-foreground"/>
+                                Analysis Results
+                            </CardTitle>
                             <CardDescription>Detected microplastics and a summary of the findings.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex flex-col items-center justify-center text-center text-muted-foreground py-12 bg-gray-50 rounded-lg mt-6">
-                                <TestTube2 className="h-10 w-10 mb-3 text-gray-400" />
+                            <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8 bg-gray-50/50 rounded-lg mt-2">
+                                <TestTube2 className="h-10 w-10 mb-4 text-gray-400" />
                                 <p className="font-semibold text-gray-600">Awaiting Analysis</p>
                                 <p className="text-sm mt-1">Upload an image and click "Analyze Sample" to see the results here.</p>
                             </div>
@@ -172,13 +175,16 @@ export default function Home() {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg">Visual Analysis</CardTitle>
+                           <CardTitle className="flex items-center gap-2">
+                                <Eye className="h-5 w-5 text-muted-foreground"/>
+                                Visual Analysis
+                           </CardTitle>
                             <CardDescription>Highlighted microplastic particles in the sample.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex flex-col items-center justify-center text-center text-muted-foreground py-12 bg-gray-50 rounded-lg mt-6">
-                                <Eye className="h-10 w-10 text-gray-400" />
-                                <p className="font-semibold text-gray-600 mt-3">Awaiting Analysis</p>
+                             <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8 bg-gray-50/50 rounded-lg mt-2">
+                                <Eye className="h-10 w-10 mb-4 text-gray-400" />
+                                <p className="font-semibold text-gray-600">Awaiting Analysis</p>
                             </div>
                         </CardContent>
                     </Card>

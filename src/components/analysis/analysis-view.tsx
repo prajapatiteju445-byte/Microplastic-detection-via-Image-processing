@@ -13,7 +13,7 @@ import { Separator } from '../ui/separator';
 import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 
 
 type AnalysisViewProps = {
@@ -126,7 +126,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                     </CardHeader>
                     <CardContent>
                         <div className="relative w-full h-96 rounded-lg overflow-hidden border">
-                            <Image src={analysis.imageDataUri} alt="Water sample being analyzed" layout="fill" objectFit="contain" />
+                            <Image src={analysis.imageDataUri} alt="Water sample being analyzed" fill objectFit="contain" />
                         </div>
                     </CardContent>
                 </Card>
@@ -161,7 +161,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                     </CardHeader>
                     <CardContent>
                         <div className="relative w-full aspect-video rounded-lg overflow-hidden border bg-gray-900">
-                            <Image src={analysis.imageDataUri} alt="Analyzed water sample" layout="fill" objectFit="contain" />
+                            <Image src={analysis.imageDataUri} alt="Analyzed water sample" fill objectFit="contain" />
                              {result.particles.map((p, i) => (
                                 <div key={i} className="absolute rounded-sm" style={{
                                     left: `${p.x * 100}%`,
@@ -229,7 +229,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                                         />
                                         <Bar dataKey="count" name="Count">
                                              {chartData.map((_entry, index) => (
-                                                <Bar key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
+                                                <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
                                             ))}
                                         </Bar>
                                     </BarChart>
@@ -249,7 +249,7 @@ export default function AnalysisView({ analysisId, onReset }: AnalysisViewProps)
                                         />
                                         <Bar dataKey="count" name="Count">
                                              {polymerChartData.map((_entry, index) => (
-                                                <Bar key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
+                                                <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
                                             ))}
                                         </Bar>
                                     </BarChart>
