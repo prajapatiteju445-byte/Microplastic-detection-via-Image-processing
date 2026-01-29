@@ -15,6 +15,7 @@ Our solution combines a **$20 smartphone microscope attachment (TinyScope)** wit
 - ✅ **Portable**: Smartphone-based field detection
 - ✅ **Real-time**: YOLOv11 inference with 60+ FPS capability
 - ✅ **Accessible**: Web interface for non-technical users
+##Note: limited dataset we have used it ,so when your analyze new image sample may be not showing result due to limited datasets have model trained on and this a Development Phase.
 
 ---
 
